@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../styles/image_styles.css">
+        <title>Sports Data Home Page</title>
+    </head>
+
+    <body>
+        <h1>Welcome to Sports Data!</h1>
+
+        <p>We have port <%= port %></p>
+
+        <h3>Choose a Sports League:</h3>
+        <br>
+        <div id = 'imageSection'>
+            <div id = "NFL-logo" class = 'logo'>
+                <a href="http://localhost:8000/games?sport=football&league=nfl">
+                    <img src = '../images/nfl_logo.png' alt = 'NFL Logo'>
+                </a>
+            </div>
+            <div id = "NHL-logo" class = "logo">
+                <a href="http://localhost:5500/games?sport=hockey&league=nhl">
+                    <img src = '../images/nhl_logo.png' alt = 'NHL Logo'>
+                </a>
+            </div>
+            <div id = "MLB-logo" class = "logo">
+                <a href="http://localhost:5500/games?sport=baseball&league=mlb">
+                    <img src = '../images/mlb_logo.png' alt = 'MLB Logo'>
+                </a>
+            </div>
+            <div id = "NBA-logo" class = "logo">
+                <a href="http://localhost:5500/games?sport=basketball&league=nba">
+                    <img src = '../images/nba_logo.png' alt = 'NBA Logo'>
+                </a>
+            </div>
+        </div>
+        
+        <script src="../../src/index.ts"></script>
+    </body>
+</html>
