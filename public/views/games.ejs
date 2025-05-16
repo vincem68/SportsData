@@ -5,9 +5,12 @@
     <title>Today's Sports Games</title>
 </head>
 <body>
-    <h1>Here are today's sports games around the league:</h1>
+    <h1>Today is <%= new Date(); %></h1>
+    <h1>Here are today's <%= sport %> games around the <%= league.toUpperCase() %>:</h1>
 
     <p><%= JSON.stringify(scores); %></p>
+
+    <!--This is where we'll put the sports data, nest sub EJS files here-->
     
 </body>
 </html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title><%= sport %> Teams</title> <!--Use EJS to put league name here-->
+    </head>
+    <body>
+        <h1>Here's a list of every <%= sport %> team in the <%= league.toUpperCase() %></h1>
+        <h3>Select a team to get stats and roster info</h3>
+
+        <!--The NBA and MLB have 30 teams, NFL and NHL have 32, use this for even layout-->
+        <!--Pick image depending on league name-->
+        <% if (league.toUpperCase() == "MLB"){ %>
+            <img src = '../images/mlb_logo.png' alt = 'MLB Logo'>
+        <% } else if (league.toUpperCase() == "NBA"){ %>
+            <img src = '../images/nba_logo.png' alt = 'NBA Logo'>
+        <% } else if (league.toUpperCase() == "NFL"){ %>
+            <img src = '../images/nfl_logo.png' alt = 'NFL Logo'>
+        <% } else { %>
+            <img src = '../images/nhl_logo.png' alt = 'NHL Logo'>
+        <% } %>
+
+        <% for (let i = 0; i < teams.length; i++){ %>
+
+            <% if (teams.length == 30) { %>
+                <div class = 'teamRow'>
+                <% for (let j = 0; j < 6; j++){ %>
+                    <div class = 'teamCol'>
+                        <img src = "<%= teams[i].team.logos[0].href %>">
+                        <p><%= teams[i].team.displayName %></p>
+                    </div>
+                    <% i++ %>
+                <% } %>
+                </div>
+            <% } else { %>
+                <div class = 'teamRow'>
+                <% for (let j = 0; j < 8; j++){ %>
+                    <div class = 'teamCol'>
+                        <img src = "<%= teams[i].team.logos[0].href %>">
+                        <label><%= teams[i].team.displayName %></label>
+                    </div>
+                    <% i++ %>
+                <% } %>
+                </div>
+            <% } %>
+        <% } %>
+
+            
+    </body>
+</html>
