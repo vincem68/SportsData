@@ -15,6 +15,9 @@ app.use(express.urlencoded({extended: true}));
 
 const port = 8000;
 
+/**
+ * For the games page, will get the league and sport names and get the games in each league
+ */
 app.get('/games', async function(req: Request, res: Response) {
 
     const sport = req.query.sport;
@@ -34,10 +37,13 @@ app.get('/teams', async function(req: Request, res: Response){
     const league = req.query.league;
     const response = await fetch(`http://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams`);
     const data = await response.json();
-    const teams = data.sports[0].leagues[0].teams;
-    res.render('team_selection', {sport, league, teams: teams});
+    res.render('team_selection', {sport: sport, league: league, teams: data.sports[0].leagues[0].teams});
 })
 
+
+/**
+ * For the home page, gets index.ejs
+ */
 app.get('/', (req: Request, res: Response) => {
     res.render('index', { port: port });
 }) 
