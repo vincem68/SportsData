@@ -32,7 +32,7 @@
 
                     <div class = 'singleTeamDiv'>
                         <img src = '<%= teams[(j * i) + j].team.logos[0].href %>'>
-                        <a href=`http://localhost:8000/games?sport=${<%= sport %>}&league=${<%= league %>}/${<%= teams[(j * i) + j].team.displayName %>}`>
+                        <a href="http://localhost:8000/teams?sport=<%= sport %>&league=<%= league %>/<%= teams[(j * i) + j].team.displayName %>">
                             <%= teams[(j * i) + j].team.displayName %>
                         </a>
                     </div>
