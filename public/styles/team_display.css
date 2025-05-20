@@ -1,0 +1,27 @@
+.teamLogo {
+    height: 100px;
+    width: 100px;
+}
+
+#mainLogo {
+    height: 25%;
+    width: 25%;
+}
+
+#mainLogoContainer {
+    display: flex;
+    justify-content: center;
+}
+
+#teamsContainer {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
+.displayedTeam {
+    margin: 20px;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+}

@@ -3,42 +3,31 @@
 <html>
     <head>
         <title>Team Selection</title>
-        <link rel="stylesheet" href="../styles/image_styles.css">
+        <link rel="stylesheet" href="/styles/team_display.css">
     </head>
     <body>
         <h1>Here's a list of every <%= sport %> team in the <%= league.toUpperCase() %></h1>
         <h3>Select a team to get stats and roster info</h3>
 
-        <!--The NBA and MLB have 30 teams, NFL and NHL have 32, use this for even layout-->
-        <!--Pick image depending on league name-->
-        <% if (league.toUpperCase() == "MLB"){ %>
-            <img src = '../images/mlb_logo.png' alt = 'MLB Logo'>
-        <% } else if (league.toUpperCase() == "NBA"){ %>
-            <img src = '../images/nba_logo.png' alt = 'NBA Logo'>
-        <% } else if (league.toUpperCase() == "NFL"){ %>
-            <img src = '../images/nfl_logo.png' alt = 'NFL Logo'>
-        <% } else { %>
-            <img src = '../images/nhl_logo.png' alt = 'NHL Logo'>
-        <% } %>
-
-        <% 
-            let rowCounter = (teams.length == 30) ? 5 : 4;
-            for (let i = 0; i < rowCounter; i++){ 
-            
-                let divCounter = (rowCounter == 5) ? 6 : 8; %>
-
-                <div class = 'teamRow'>
-                <% for (let j = 0; j < divCounter; j++){ %>
-
-                    <div class = 'singleTeamDiv'>
-                        <img src = '<%= teams[(j * i) + j].team.logos[0].href %>'>
-                        <a href="http://localhost:8000/teams?sport=<%= sport %>&league=<%= league %>/<%= teams[(j * i) + j].team.displayName %>">
-                            <%= teams[(j * i) + j].team.displayName %>
-                        </a>
-                    </div>
-
-                <% } %>
-                </div>
+        <div id = "mainLogoContainer">
+            <% if (league.toUpperCase() == "MLB"){ %>
+                <img src = '/images/mlb_logo.png' id = 'mainLogo' alt = 'MLB Logo'>
+            <% } else if (league.toUpperCase() == "NBA"){ %>
+                <img src = '/images/nba_logo.png' id = 'mainLogo' alt = 'NBA Logo'>
+            <% } else if (league.toUpperCase() == "NFL"){ %>
+                <img src = '/images/nfl_logo.png' id = 'mainLogo' alt = 'NFL Logo'>
+            <% } else { %>
+                <img src = '/images/nhl_logo.png' id = 'mainLogo' alt = 'NHL Logo'>
             <% } %>
+        </div>
+
+        <div id="teamsContainer">
+            <% teams.forEach(team => { %>
+                <div class = 'displayedTeam'>
+                    <img src = '<%= team.team.logos[0].href %>' class="teamLogo">
+                    <p><%= team.team.displayName %></p>
+                </div>
+            <% }) %>
+        </div>
     </body>
 </html>

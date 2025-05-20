@@ -12,6 +12,7 @@ app.set('views', path.join(__dirname, '../public/views'));
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(express.static('public'));
 
 const port = 8000;
 
