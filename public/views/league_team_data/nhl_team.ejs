@@ -1,0 +1,70 @@
+
+<!--Table for the Centers-->
+<table>
+    <tr>
+        <th>Picture</th>
+        <th>Name</th>
+        <th>Jersey No.</th>
+    </tr>
+
+    <% data.athletes[0].items.forEach(center => { %>
+        <tr>
+            <td><img class="headshot" src="<%= center.headshot.href %>"></td>
+            <td><%= center.displayName %></td>
+            <td><%= center.jersey %></td>
+        </tr>
+    <% }) %>
+</table>
+
+<!--Table for the Left Wingers-->
+<table>
+    <tr>
+        <th>Picture</th>
+        <th>Name</th>
+        <th>Jersey No.</th>
+    </tr>
+
+    <% data.athletes[1].items.forEach(winger => { %>
+        <tr>
+            <td><img class="headshot" src="<%= winger.headshot.href %>"></td>
+            <td><%= winger.displayName %></td>
+            <td><%= winger.jersey %></td>
+        </tr>
+    <% }) %>
+</table>
+
+<!--Table for the Right Wingers-->
+<table>
+    <tr>
+        <th>Picture</th>
+        <th>Name</th>
+        <th>Jersey No.</th>
+    </tr>
+
+    <% data.athletes[2].items.forEach(winger => { %>
+        <tr>
+            <td><img class="headshot" src="<%= winger.headshot.href %>"></td>
+            <td><%= winger.displayName %></td>
+            <td><%= winger.jersey %></td>
+        </tr>
+    <% }) %>
+</table>
+
+<!--Table for the Defensemen-->
+<table>
+    <tr>
+        <th>Picture</th>
+        <th>Name</th>
+        <th>Jersey No.</th>
+    </tr>
+
+    <% data.athletes[3].items.forEach(dman => { %>
+        <tr>
+            <td><img class="headshot" src="<%= dman.headshot.href %>"></td>
+            <td><%= dman.displayName %></td>
+            <td><%= dman.jersey %></td>
+        </tr>
+    <% }) %>
+</table>
+
+<!--Table for the goalies-->

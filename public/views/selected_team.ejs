@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title><%= data.team.displayName %></title>
+        <link rel="stylesheet" href="/styles/selected_team.css">
+    </head>
+    <body>
+
+        <div id = 'teamTitleDispayDiv'>
+
+            <img id="teamLogo" src="<%= data.team.logo %>" alt="Logo of <%= data.team.displayName %>">
+
+            <h3>Roster of the <%= data.team.displayName %></h3>
+        </div>
+
+        <p>Head Coach: <%= data.coach[0].firstName + ' ' + data.coach[0].lastName %></p>
+
+        <p>Roster:</p>
+
+        <% if (league.toUpperCase() == "NHL"){ %>
+
+            <%- include('league_team_data/nhl_team') %>
+
+        <% } else if (league.toUpperCase() == "NBA"){ %>
+
+            <%- include('league_team_data/nba_team') %>
+
+        <% } else if (league.toUpperCase() == "NFL") { %>
+
+            <%- include('league_team_data/nfl_team') %>
+
+        <% } else { %>
+
+            <%- include('league_team_data/mlb_team') %>
+
+        <% } %>
+
+        <a href="http://localhost:8000/<%= sport %>/<%= league %>/teams">Back to <%= league %> Teams</a>
+    </body>
+</html>

@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" href="../styles/image_styles.css">
-        <link rel="stylesheet" href="../styles/generic.css">
+        <link rel="stylesheet" href="/styles/home.css">
         <title>Sports Data Home Page</title>
     </head>
 
@@ -11,31 +10,34 @@
 
         <h3>Choose a Sports League:</h3>
         <br>
-        <div class = 'image-section'>
 
+        <div class = "imageRow">
             <div id = "NFL-logo" class = 'logo'>
                 <img src = '../images/nfl_logo.png' alt = 'NFL Logo'>
-                <a href="http://localhost:8000/games?sport=football&league=nfl">Games</a>
-                <a href="http://localhost:8000/teams?sport=football&league=nfl">Teams</a>
+                <a href="http://localhost:8000/football/nfl/games">Games</a>
+                <a href="http://localhost:8000/football/nfl/teams">Teams</a>
             </div>
 
             <div id = "NBA-logo" class = 'logo'>
                 <img src = '../images/nba_logo.png' alt = 'NBA Logo'>
-                <a href="http://localhost:8000/games?sport=basketball&league=nba">Games</a>
-                <a href="http://localhost:8000/teams?sport=basketball&league=nba">Teams</a>
+                <a href="http://localhost:8000/basketball/nba/games">Games</a>
+                <a href="http://localhost:8000/basketball/nba/teams">Teams</a>
             </div>
+        </div>
 
+        <div class = "imageRow">
             <div id = "MLB-logo" class = 'logo'>
                 <img src = '../images/mlb_logo.png' alt = 'MLB Logo'>
-                <a href="http://localhost:8000/games?sport=baseball&league=mlb">Games</a>
-                <a href="http://localhost:8000/teams?sport=baseball&league=mlb">Teams</a>
+                <a href="http://localhost:8000/baseball/mlb/games">Games</a>
+                <a href="http://localhost:8000/baseball/mlb/teams">Teams</a>
             </div>
 
             <div id = "NHL-logo" class = 'logo'>
                 <img src = '../images/nhl_logo.png' alt = 'NHL Logo'>
-                <a href="http://localhost:8000/games?sport=hockey&league=nhl">Games</a>
-                <a href="http://localhost:8000/teams?sport=hockey&league=nhl">Teams</a>
+                <a href="http://localhost:8000/hockey/nhl/games">Games</a>
+                <a href="http://localhost:8000/hockey/nhl/teams">Teams</a>
             </div>
+        </div>
 
         <script src="../../src/index.ts"></script>
     </body>
