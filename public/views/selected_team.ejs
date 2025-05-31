@@ -11,12 +11,13 @@
 
             <img id="teamLogo" src="<%= data.team.logo %>" alt="Logo of <%= data.team.displayName %>">
 
-            <h3>Roster of the <%= data.team.displayName %></h3>
+            <h3><%= data.team.displayName %></h3>
+            <h4>Season: <%= data.team.seasonSummary %></h4>
+            <h4>Record: <%= data.team.recordSummary %></h4>
+            <h4>Head Coach: <%= data.coach[0].firstName + ' ' + data.coach[0].lastName %></h4>
         </div>
 
-        <p>Head Coach: <%= data.coach[0].firstName + ' ' + data.coach[0].lastName %></p>
-
-        <p>Roster:</p>
+        <h2>Roster:</h2>
 
         <% if (league.toUpperCase() == "NHL"){ %>
 

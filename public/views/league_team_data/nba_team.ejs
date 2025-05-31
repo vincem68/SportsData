@@ -1,0 +1,28 @@
+
+<!--We're just gonna have one table for the basketball players-->
+<table>
+    <tr>
+        <th>Picture</th>
+        <th>Name</th>
+        <th>Position</th>
+        <th>Jersey No.</th>
+    </tr>
+    
+    <% data.athletes.forEach(athlete => { %>
+
+        <tr>
+            <% if (athlete.headshot !== undefined){ %>
+                <td><img class="headshot" src="<%= athlete.headshot.href %>"></td>
+            <% } else { %>
+                <td><img class="headshot" src="/images/default_headshot.png"></td>
+            <% } %>
+
+            <td><%= athlete.displayName %></td>
+
+            <td><%= athlete.position.name %></td>
+
+            <td><%= athlete.jersey %></td>
+        </tr>
+        
+    <% }) %>
+</table>

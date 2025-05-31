@@ -1,0 +1,335 @@
+<!--Lets have three types of divisions: one for offense and one for defense and STs. And lets break them up
+by position-->
+
+<% 
+    let QBs = data.athletes[0].items.filter(athlete => athlete.position.abbreviation == "QB");
+    let RBs = data.athletes[0].items.filter(athlete => athlete.position.abbreviation == "RB");
+    let WRs = data.athletes[0].items.filter(athlete => athlete.position.abbreviation == "WR");
+    let TEs = data.athletes[0].items.filter(athlete => athlete.position.abbreviation == "TE");
+    let OTs = data.athletes[0].items.filter(athlete => athlete.position.abbreviation == "OT");
+    let Gs = data.athletes[0].items.filter(athlete => athlete.position.abbreviation == "G");
+    let Cs = data.athletes[0].items.filter(athlete => athlete.position.abbreviation == "C");
+
+    let DTs = data.athletes[1].items.filter(athlete => athlete.position.abbreviation == "DT");
+    let LBs = data.athletes[1].items.filter(athlete => athlete.position.abbreviation == "LB");
+    let DEs = data.athletes[1].items.filter(athlete => athlete.position.abbreviation == "DE");
+    let CBs = data.athletes[1].items.filter(athlete => athlete.position.abbreviation == "CB");
+    let Ss = data.athletes[1].items.filter(athlete => athlete.position.abbreviation == "S");
+
+    let Ks = data.athletes[2].items.filter(athlete => athlete.position.abbreviation == "K");
+    let Ps = data.athletes[2].items.filter(athlete => athlete.position.abbreviation == "P");
+    let LSs = data.athletes[2].items.filter(athlete => athlete.position.abbreviation == "LS");
+%>
+
+<h3>Offenseive Roster</h3>
+<div>
+
+    <h4>Quaterbacks</h4>
+    <table>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Jersey No.</th>
+        </tr>
+        <% QBs.forEach(athlete => { %>
+            <tr>
+                <% if (athlete.headshot !== undefined){ %>
+                    <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
+                <% } else { %>
+                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <% } %>
+                <td><%= athlete.displayName %></td>
+                <td><%= athlete.jersey %></td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <h4>Running backs</h4>
+    <table>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Jersey No.</th>
+        </tr>
+        <% RBs.forEach(athlete => { %>
+            <tr>
+                <% if (athlete.headshot !== undefined){ %>
+                    <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
+                <% } else { %>
+                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <% } %>
+                <td><%= athlete.displayName %></td>
+                <td><%= athlete.jersey %></td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <h4>Wide Receivers</h4>
+    <table>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Jersey No.</th>
+        </tr>
+        <% WRs.forEach(athlete => { %>
+            <tr>
+                <% if (athlete.headshot !== undefined){ %>
+                    <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
+                <% } else { %>
+                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <% } %>
+                <td><%= athlete.displayName %></td>
+                <td><%= athlete.jersey %></td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <h4>Tight Ends</h4>
+    <table>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Jersey No.</th>
+        </tr>
+        <% TEs.forEach(athlete => { %>
+            <tr>
+                <% if (athlete.headshot !== undefined){ %>
+                    <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
+                <% } else { %>
+                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <% } %>
+                <td><%= athlete.displayName %></td>
+                <td><%= athlete.jersey %></td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <h4>Offensive Tackles</h4>
+    <table>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Jersey No.</th>
+        </tr>
+        <% OTs.forEach(athlete => { %>
+            <tr>
+                <% if (athlete.headshot !== undefined){ %>
+                    <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
+                <% } else { %>
+                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <% } %>
+                <td><%= athlete.displayName %></td>
+                <td><%= athlete.jersey %></td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <h4>Guards</h4>
+    <table>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Jersey No.</th>
+        </tr>
+        <% Gs.forEach(athlete => { %>
+            <tr>
+                <% if (athlete.headshot !== undefined){ %>
+                    <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
+                <% } else { %>
+                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <% } %>
+                <td><%= athlete.displayName %></td>
+                <td><%= athlete.jersey %></td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <h4>Centers</h4>
+    <table>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Jersey No.</th>
+        </tr>
+        <% Cs.forEach(athlete => { %>
+            <tr>
+                <% if (athlete.headshot !== undefined){ %>
+                    <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
+                <% } else { %>
+                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <% } %>
+                <td><%= athlete.displayName %></td>
+                <td><%= athlete.jersey %></td>
+            </tr>
+        <% }) %>
+    </table>
+</div>
+
+<h3>Defensive Roster</h3>
+<div>
+
+    <h4>Defensive Tackles</h4>
+    <table>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Jersey No.</th>
+        </tr>
+        <% DTs.forEach(athlete => { %>
+            <tr>
+                <% if (athlete.headshot !== undefined){ %>
+                    <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
+                <% } else { %>
+                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <% } %>
+                <td><%= athlete.displayName %></td>
+                <td><%= athlete.jersey %></td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <h4>Defensive Ends</h4>
+    <table>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Jersey No.</th>
+        </tr>
+        <% DEs.forEach(athlete => { %>
+            <tr>
+                <% if (athlete.headshot !== undefined){ %>
+                    <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
+                <% } else { %>
+                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <% } %>
+                <td><%= athlete.displayName %></td>
+                <td><%= athlete.jersey %></td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <h4>Linebackers</h4>
+    <table>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Jersey No.</th>
+        </tr>
+        <% LBs.forEach(athlete => { %>
+            <tr>
+                <% if (athlete.headshot !== undefined){ %>
+                    <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
+                <% } else { %>
+                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <% } %>
+                <td><%= athlete.displayName %></td>
+                <td><%= athlete.jersey %></td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <h4>Corner Backs</h4>
+    <table>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Jersey No.</th>
+        </tr>
+        <% CBs.forEach(athlete => { %>
+            <tr>
+                <% if (athlete.headshot !== undefined){ %>
+                    <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
+                <% } else { %>
+                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <% } %>
+                <td><%= athlete.displayName %></td>
+                <td><%= athlete.jersey %></td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <h4>Safeties</h4>
+    <table>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Jersey No.</th>
+        </tr>
+        <% Ss.forEach(athlete => { %>
+            <tr>
+                <% if (athlete.headshot !== undefined){ %>
+                    <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
+                <% } else { %>
+                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <% } %>
+                <td><%= athlete.displayName %></td>
+                <td><%= athlete.jersey %></td>
+            </tr>
+        <% }) %>
+    </table>
+</div>
+
+<h3>Special Teams</h3>
+<div>
+
+    <h4>Kickers</h4>
+    <table>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Jersey No.</th>
+        </tr>
+        <% Ks.forEach(athlete => { %>
+            <tr>
+                <% if (athlete.headshot !== undefined){ %>
+                    <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
+                <% } else { %>
+                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <% } %>
+                <td><%= athlete.displayName %></td>
+                <td><%= athlete.jersey %></td>
+            </tr>
+        <% }) %>
+    </table>
+
+    <h4>Punters</h4>
+    <table>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Jersey No.</th>
+        </tr>
+        <% Ps.forEach(athlete => { %>
+            <tr>
+                <% if (athlete.headshot !== undefined){ %>
+                    <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
+                <% } else { %>
+                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <% } %>
+                <td><%= athlete.displayName %></td>
+                <td><%= athlete.jersey %></td>
+            </tr>
+        <% }) %>
+    </table>
+
+
+    <h4>Long Snappers</h4>
+    <table>
+        <tr>
+                <th>Picture</th>
+                <th>Name</th>
+                <th>Jersey No.</th>
+            </tr>
+            <% LSs.forEach(athlete => { %>
+                <tr>
+                    <% if (athlete.headshot !== undefined){ %>
+                        <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
+                    <% } else { %>
+                        <td><img class="headshot" src="/images/default_headshot.png"></td>
+                    <% } %>
+                    <td><%= athlete.displayName %></td>
+                    <td><%= athlete.jersey %></td>
+                </tr>
+            <% }) %>
+    </table>
+</div>

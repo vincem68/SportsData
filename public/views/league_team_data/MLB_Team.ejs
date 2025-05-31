@@ -1,0 +1,114 @@
+<%
+    let relievers = data.athletes[0].items.filter(pitcher => pitcher.position.abbreviation == "RP");
+    let starters = data.athletes[0].items.filter(pitcher => pitcher.position.abbreviation == "SP");
+%>
+
+<h4>Starting Pitchers</h4>
+<table>
+    <tr>
+        <th>Picture</th>
+        <th>Name</th>
+        <th>Throws</th>
+        <th>Jersey No.</th>
+    </tr>
+    <% starters.forEach(player => { %>
+        <tr>
+            <% if (player.headshot !== undefined){ %>
+                <td><img class="headshot" src="<%= player.headshot.href %>"></td>
+            <% } else { %>
+                <td><img class="headshot" src="/images/default_headshot.png"></td>
+            <% } %>
+            <td><%= player.displayName %></td>
+            <td><%= player.throws.abbreviation %></td>
+            <td><%= player.jersey %></td>
+        </tr>
+    <% }) %>
+</table>
+
+<h4>Relief Pitchers</h4>
+<table>
+    <tr>
+        <th>Picture</th>
+        <th>Name</th>
+        <th>Throws</th>
+        <th>Jersey No.</th>
+    </tr>
+    <% relievers.forEach(player => { %>
+        <tr>
+            <% if (player.headshot !== undefined){ %>
+                <td><img class="headshot" src="<%= player.headshot.href %>"></td>
+            <% } else { %>
+                <td><img class="headshot" src="/images/default_headshot.png"></td>
+            <% } %>
+            <td><%= player.displayName %></td>
+            <td><%= player.throws.abbreviation %></td>
+            <td><%= player.jersey %></td>
+        </tr>
+    <% }) %>
+</table>
+
+<h4>Infielders</h4>
+<table>
+    <tr>
+        <th>Picture</th>
+        <th>Name</th>
+        <th>Bats</th>
+        <th>Jersey No.</th>
+    </tr>
+    <% data.athletes[2].items.forEach(player => { %>
+        <tr>
+            <% if (player.headshot !== undefined){ %>
+                <td><img class="headshot" src="<%= player.headshot.href %>"></td>
+            <% } else { %>
+                <td><img class="headshot" src="/images/default_headshot.png"></td>
+            <% } %>
+            <td><%= player.displayName %></td>
+            <td><%= player.bats.abbreviation %></td>
+            <td><%= player.jersey %></td>
+        </tr>
+    <% }) %>
+</table>
+
+<h4>Outfielders</h4>
+<table>
+    <tr>
+        <th>Picture</th>
+        <th>Name</th>
+        <th>Bats</th>
+        <th>Jersey No.</th>
+    </tr>
+    <% data.athletes[3].items.forEach(player => { %>
+        <tr>
+            <% if (player.headshot !== undefined){ %>
+                <td><img class="headshot" src="<%= player.headshot.href %>"></td>
+            <% } else { %>
+                <td><img class="headshot" src="/images/default_headshot.png"></td>
+            <% } %>
+            <td><%= player.displayName %></td>
+            <td><%= player.bats.abbreviation %></td>
+            <td><%= player.jersey %></td>
+        </tr>
+    <% }) %>
+</table>
+
+<h4>Catchers</h4>
+<table>
+    <tr>
+        <th>Picture</th>
+        <th>Name</th>
+        <th>Bats</th>
+        <th>Jersey No.</th>
+    </tr>
+    <% data.athletes[1].items.forEach(player => { %>
+        <tr>
+            <% if (player.headshot !== undefined){ %>
+                <td><img class="headshot" src="<%= player.headshot.href %>"></td>
+            <% } else { %>
+                <td><img class="headshot" src="/images/default_headshot.png"></td>
+            <% } %>
+            <td><%= player.displayName %></td>
+            <td><%= player.bats.abbreviation %></td>
+            <td><%= player.jersey %></td>
+        </tr>
+    <% }) %>
+</table>
