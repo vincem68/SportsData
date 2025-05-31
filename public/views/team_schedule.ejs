@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title><%= data.team.displayName %> Schedule</title>
+        <link rel="stylesheet" href="/styles/schedules.css">
+    </head>
+
+    <body>
+
+        <div id="headlineDiv">
+            <img id="teamLogo" src="<%= data.team.logo %>">
+            <h4><%= data.team.displayName %></h4>
+            <h4><%= data.season.name %></h4>
+            <h4>Season Record: <%= data.team.recordSummary %></h4>
+        </div>
+
+        <div>
+            <!--Idea: have the home and road games be different colors-->
+            <table>
+                <tr>
+                    <th>Date</th>
+                    <th>-</th>
+                    <th>Opposing Team</th>
+                    <th>Status</th> <!--W/L, not played, in progress?-->
+                </tr>
+                <% data.events.forEach(game => {
+                    let opp = 1; %>
+                    <tr>
+                        <td><%= game.date %></td>
+                        <td>
+                            <% if (game.competitions[0].competitors[0].team.abbreviation == team){ %>
+                                vs
+                            <% } else { 
+                                opp = 0; %>
+                                @
+                            <% } %>
+                        </td>
+                        <td>
+                            <div>
+                                <img class="scheduleLogo" src="<%= game.competitions[0].competitors[opp].team.logos.href %>">
+                                <h6><%= game.competitions[0].competitors[opp].team.displayName %></h6>
+                            </div>
+                        </td>
+                        <td>
+                            <% if (game.competitions[0].status.type.state == "post"){
+
+                                if (game.competitions[0].competitors[opp].winner){ %>
+                                    <h3>L</h3>
+                                <% } else { %>
+                                    <h3>W</h3>
+                                <% } %>
+
+                            <% } else if (game.competitions[0].status.type.state == "pre"){ %>
+                                ---
+                            <% } else { %>
+                                In Progress
+                            <% } %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </table>
+        </div>
+    </body>
+</html>

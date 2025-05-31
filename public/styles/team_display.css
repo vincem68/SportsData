@@ -10,7 +10,8 @@
 
 #mainLogoContainer {
     display: flex;
-    justify-content: center;
+    flex-flow: column wrap;
+    justify-content: baseline;
 }
 
 #teamsContainer {
@@ -22,6 +23,10 @@
 .displayedTeam {
     margin: 20px;
     display: flex;
-    flex-flow: column wrap;
+    flex-direction: column;
     justify-content: center;
+}
+
+body {
+    background-color: rgb(188, 188, 148);
 }

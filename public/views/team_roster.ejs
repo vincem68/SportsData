@@ -21,19 +21,19 @@
 
         <% if (league.toUpperCase() == "NHL"){ %>
 
-            <%- include('league_team_data/nhl_team') %>
+            <%- include('team_roster_data/nhl_team_roster') %>
 
         <% } else if (league.toUpperCase() == "NBA"){ %>
 
-            <%- include('league_team_data/nba_team') %>
+            <%- include('team_roster_data/nba_team_roster') %>
 
         <% } else if (league.toUpperCase() == "NFL") { %>
 
-            <%- include('league_team_data/nfl_team') %>
+            <%- include('team_roster_data/nfl_team_roster') %>
 
         <% } else { %>
 
-            <%- include('league_team_data/mlb_team') %>
+            <%- include('team_roster_data/mlb_team_roster') %>
 
         <% } %>
 

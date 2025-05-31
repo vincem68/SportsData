@@ -6,8 +6,6 @@
         <link rel="stylesheet" href="/styles/team_display.css">
     </head>
     <body>
-        <h1>Here's a list of every <%= sport %> team in the <%= league.toUpperCase() %></h1>
-        <h3>Select a team to get stats and roster info</h3>
 
         <div id = "mainLogoContainer">
             <% if (league.toUpperCase() == "MLB"){ %>
@@ -19,14 +17,24 @@
             <% } else { %>
                 <img src = '/images/nhl_logo.png' id = 'mainLogo' alt = 'NHL Logo'>
             <% } %>
+
+            <h1><%= league.toUpperCase() %> Teams</h1>
+            <h3>Select a Team to Get Stats and Roster Info</h3>
         </div>
 
         <div id="teamsContainer">
             <% teams.forEach(team => { %>
                 <div class = 'displayedTeam'>
                     <img src = '<%= team.team.logos[0].href %>' class="teamLogo">
-                    <a href="http://localhost:8000/<%= sport %>/<%= league %>/teams/<%= team.team.abbreviation %>">
-                        <%= team.team.displayName %>
+                    <h4><%= team.team.displayName %></h4>
+                    <a href="http://localhost:8000/<%= sport %>/<%= league %>/teams/<%= team.team.abbreviation %>/roster">
+                        Roster
+                    </a>
+                    <a href="http://localhost:8000/<%= sport %>/<%= league %>/teams/<%= team.team.abbreviation %>/schedule">
+                        Schedule
+                    </a>
+                    <a href="http://localhost:8000/<%= sport %>/<%= league %>/teams/<%= team.team.abbreviation %>/stats">
+                        Stats
                     </a>
                 </div>
             <% }) %>

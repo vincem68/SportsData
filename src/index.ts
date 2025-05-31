@@ -26,7 +26,7 @@ app.get('/:sport/:league/games', async function(req: Request, res: Response) {
 /**
  * Used when the user has selected a specific team
  */
-app.get('/:sport/:league/teams/:team', async function(req: Request, res: Response){
+app.get('/:sport/:league/teams/:team/roster', async function(req: Request, res: Response){
 
     const sport = req.params.sport;
     const league = req.params.league;
@@ -36,7 +36,53 @@ app.get('/:sport/:league/teams/:team', async function(req: Request, res: Respons
         `${sport}/${league}/teams/${team}/roster`);
     
     const data = await response.json();
-    res.render('selected_team', {league: league, sport: sport, data: data});
+    res.render('team_roster', {league: league, sport: sport, data: data});
+})
+
+/**
+ * This route will get the schedule for the specified team
+ */
+app.get('/:sport/:league/teams/:team/schedule', async function(req: Request, res: Response){
+    const sport = req.params.sport;
+    const league = req.params.league;
+    const team = req.params.team;
+
+    const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
+        `/teams/${team}/schedule`);
+
+    const data = await response.json();
+    res.render('team_schedule', {team: team, data: data});
+})
+
+/**
+ * This will be for stats
+ */
+app.get('/:sport/:league/teams/:team/stats', async function(req: Request, res: Response){
+    const sport = req.params.sport;
+    const league = req.params.league;
+    const team = req.params.team;
+
+    const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
+        `/teams/${team}/statistics`);
+
+    const data = await response.json();
+    res.render('team_stats', {data: data});
+})
+
+/**
+ * This will act as sort of the home page for the selected team. Will feature the logo, any scheduled games, 
+ * and the links to the roster, stats or schedule pages
+ */
+app.get('/:sport/:league/teams/:team', async function(req: Request, res: Response){
+    const sport = req.params.sport;
+    const league = req.params.league;
+    const team = req.params.team;
+
+    const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
+        `/teams/${team}/schedule`);
+
+    const data = await response.json();
+    res.render('selected_team', {data: data});
 })
 
 /**
@@ -57,7 +103,7 @@ app.get('/:sport/:league/teams', async function(req: Request, res: Response){
  * For the home page, gets index.ejs
  */
 app.get('/', (req: Request, res: Response) => {
-    res.render('index', { port: port });
+    res.render('index');
 }) 
 
 app.listen(port, () => {
