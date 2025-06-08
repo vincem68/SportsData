@@ -1,5 +1,6 @@
 import express, {Request, Response} from 'express';
 import path from 'path';
+import Abbreviation from './classes/Abbreviation';
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -19,8 +20,8 @@ app.get('/:sport/:league/games', async function(req: Request, res: Response) {
     const sport = req.params.sport;
     const league = req.params.league;
     const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard`);
-    const scores = await response.json();
-    res.render('games', { sport, league, scores: scores });
+    const data = await response.json();
+    res.render('scheduled_games', { sport: sport, league: league, data: data });
 })
 
 /**
@@ -36,7 +37,7 @@ app.get('/:sport/:league/teams/:team/roster', async function(req: Request, res: 
         `${sport}/${league}/teams/${team}/roster`);
     
     const data = await response.json();
-    res.render('team_roster', {league: league, sport: sport, data: data});
+    res.render('team_roster', {league: league, sport: sport, team: team, data: data});
 })
 
 /**
@@ -79,10 +80,10 @@ app.get('/:sport/:league/teams/:team', async function(req: Request, res: Respons
     const team = req.params.team;
 
     const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
-        `/teams/${team}/schedule`);
+        `/teams/${team}`);
 
     const data = await response.json();
-    res.render('selected_team', {data: data});
+    res.render('selected_team', {sport: sport, league: league, team: team, data: data});
 })
 
 /**
@@ -98,6 +99,23 @@ app.get('/:sport/:league/teams', async function(req: Request, res: Response){
     res.render('team_selection', {sport: sport, league: league, teams: data.sports[0].leagues[0].teams});
 })
 
+/*
+app.get(':sport/:league/stats', async function(req: Request, res: Response){
+    
+    const sport = req.params.sport;
+    const league = req.params.league;
+
+    const team_names: string[] = [];
+    const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams`);
+    const name_list = await response.json();
+    name_list.sports[0].leagues[0].teams.forEach(team => {
+        team_names.push(team.team.abbreviation);
+    })
+
+
+    const team_stats: any[] = [];
+})
+*/
 
 /**
  * For the home page, gets index.ejs

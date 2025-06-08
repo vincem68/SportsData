@@ -1,0 +1,28 @@
+
+.teamLogo {
+    height: 50px;
+    width: 50px;
+}
+
+.gamesLayout {
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.gameContainer {
+    display: flex;
+    flex-direction: row;
+
+    border-style: solid;
+    border-color: black;
+
+    margin: 20px;
+}
+
+.awayTeamDiv, .homeTeamDiv {
+    margin: 5px;
+}
+
+.gameTimeDiv {
+    margin: 10px;
+}

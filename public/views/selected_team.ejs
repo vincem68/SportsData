@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title><%= data.team.displayName %></title>
+    </head>
+    <body>
+
+        <div id="titleSection">
+            <img id="teamLogo" src="<%= data.team.logos[0].href %>">
+            <h1><%= data.team.displayName %></h1>
+        </div>
+
+        <div id="gameSection">
+            <h2>Scheduled Games Today:</h2>
+            <!--Have a conditional here that checks to see if there's anything scheduled-->
+        </div>
+
+        <div id="linkSection">
+            <a href="http://localhost:8000/<%= sport %>/<%= league %>/teams/<%= team %>/roster">
+                <%= data.team.displayName %> Roster
+            </a>
+            <a href="http://localhost:8000/<%= sport %>/<%= league %>/teams/<%= team %>/schedule">
+                <%= data.team.displayName %> Schedule
+            </a>
+            <a href="http://localhost:8000/<%= sport %>/<%= league %>/teams/<%= team %>/stats">
+                <%= data.team.displayName %> Stats
+            </a>
+        </div>
+    </body>
+</html>

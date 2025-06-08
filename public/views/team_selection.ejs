@@ -26,15 +26,8 @@
             <% teams.forEach(team => { %>
                 <div class = 'displayedTeam'>
                     <img src = '<%= team.team.logos[0].href %>' class="teamLogo">
-                    <h4><%= team.team.displayName %></h4>
-                    <a href="http://localhost:8000/<%= sport %>/<%= league %>/teams/<%= team.team.abbreviation %>/roster">
-                        Roster
-                    </a>
-                    <a href="http://localhost:8000/<%= sport %>/<%= league %>/teams/<%= team.team.abbreviation %>/schedule">
-                        Schedule
-                    </a>
-                    <a href="http://localhost:8000/<%= sport %>/<%= league %>/teams/<%= team.team.abbreviation %>/stats">
-                        Stats
+                    <a href="http://localhost:8000/<%= sport %>/<%= league %>/teams/<%= team.team.abbreviation %>">
+                        <%= team.team.displayName %>
                     </a>
                 </div>
             <% }) %>

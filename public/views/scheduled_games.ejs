@@ -1,0 +1,113 @@
+<%
+    const upcomingGames = data.events.filter(game => game.status.type.state == "pre");
+    const activeGames = data.events.filter(game => game.status.type.state == "in");
+    const completedGames = data.events.filter(game => game.status.type.state == "post");
+
+    const scheduledGames = data.events.filter(game => game.date.substring(0, 10) == data.day.date);
+%>
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title><%= league.toUpperCase() %> Games</title>
+    <link rel="stylesheet" href="/styles/league_schedule.css">
+</head>
+
+<body>
+    <h1>Today is <%= new Date('mm-dd-yyyy') %></h1>
+
+    <% if (scheduledGames.length == 0) { %>
+        <h1>There Are No Scheduled Games Today. Please Check Back Tomorrow!</h1>
+    <% } else { %>
+
+        <% if (activeGames.length != 0){ %>
+            <h3>Active Games</h3>
+            <div class="gamesLayout">
+                <% activeGames.forEach(game => { %>
+
+                    <div class="gameContainer">
+                        <div class="awayTeamDiv">
+                            <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
+                            <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
+                        </div>
+
+                        <div class="gameTimeDiv">
+                            <p><%= game.competitions[0].status.type.detail %></p>
+                            <p><%= game.competitions[0].competitors[1].score %> - 
+                                <%= game.competitions[0].competitors[0].score %></p>
+                            <a></a>
+                        </div>
+
+                        <div class="homeTeamDiv">
+                            <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
+                            <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
+                        </div>
+                    </div>
+
+                <% }) %>
+            </div>
+        <% } %>
+
+        <% if (upcomingGames.length != 0){ %>
+            <h3>Upcoming Games</h3>
+            <div class="gamesLayout">
+                <% upcomingGames.forEach(game => { %>
+
+                    <div class="gameContainer">
+                        <div class="awayTeamDiv">
+                            <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
+                            <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
+                        </div>
+
+                        <div class="gameTimeDiv">
+                            <p><%= game.competitions[0].status.type.shortDetail %></p>
+                            <a></a>
+                        </div>
+
+                        <div class="homeTeamDiv">
+                            <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
+                            <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
+                        </div>
+                    </div>
+
+                <% }) %>
+            </div>
+        <% } %>
+
+        <% if (completedGames.length != 0){ %>
+            <h3>Completed Games</h3>
+            <div class="gamesLayout">
+                
+                 <% completedGames.forEach(game => { %>
+
+                    <div class="gameContainer">
+                        <div class="awayTeamDiv">
+                            <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
+                            <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
+                        </div>
+
+                        <div class="gameTimeDiv">
+                            <p><%= game.competitions[0].status.type.detail %></p>
+                            <p><%= game.competitions[0].competitors[1].score %> - 
+                                <%= game.competitions[0].competitors[0].score %></p>
+                            <a></a>
+                        </div>
+
+                        <div class="homeTeamDiv">
+                            <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
+                            <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
+                        </div>
+                    </div>
+
+                <% }) %>
+            </div>
+        <% } %>
+
+    <% } %>
+
+
+    <!--This is where we'll put the sports data, nest sub EJS files here-->
+    
+</body>
+</html>
