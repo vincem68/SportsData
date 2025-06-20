@@ -1,6 +1,5 @@
 import express, {Request, Response} from 'express';
 import path from 'path';
-import Abbreviation from './classes/Abbreviation';
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -12,6 +11,23 @@ app.use(express.static('public'));
 
 const port = 8000;
 
+app.get('/:sport/:league/games/:id', async function(req: Request, res: Response){
+
+    const sport = req.params.sport;
+    const league = req.params.league;
+    const game_id = req.params.id;
+
+    const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard/${game_id}`);
+    const overview = await response.json();
+
+    const response2 = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/summary?event=${game_id}`);
+    const summary = await response2.json();
+
+    //maybe we need to see what kinds of data is available in the pre state
+    //overview will be used for selected_game, boxscore will be used for the more specific subfile
+    res.render('selected_game', {league: league, overview: overview, boxscore: summary.boxscore});
+})
+
 /**
  * For the games page, will get the league and sport names and get the games in each league
  */
@@ -19,7 +35,15 @@ app.get('/:sport/:league/games', async function(req: Request, res: Response) {
 
     const sport = req.params.sport;
     const league = req.params.league;
-    const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard`);
+    let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard`;
+
+    //gotta take out the hyphons I think
+    if (req.query.date !== undefined){
+        const date = req.query.date.toString();
+        endpoint += `?dates=${date.replace(/-/g, "")}`;
+    }
+
+    const response = await fetch(endpoint);
     const data = await response.json();
     res.render('scheduled_games', { sport: sport, league: league, data: data });
 })
@@ -66,8 +90,8 @@ app.get('/:sport/:league/teams/:team/stats', async function(req: Request, res: R
     const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
         `/teams/${team}/statistics`);
 
-    const data = await response.json();
-    res.render('team_stats', {data: data});
+    const game = await response.json();
+    res.render('team_stats', {game: game});
 })
 
 /**

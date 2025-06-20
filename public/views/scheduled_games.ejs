@@ -20,7 +20,14 @@
 </head>
 
 <body>
+    
     <h1>Today is <%= new Date() %></h1>
+
+    <form id="dateSelection" method="GET">
+        <input id="date" name="date" type="date" min="<%= data.leagues[0].season.startDate.substring(0, 10) %>"
+            max="<%= data.leagues[0].season.endDate.substring(0, 10) %>">
+        <button type="submit">Submit</button>
+    </form>
 
     <% if (Date.parse(data.leagues[0].season.startDate) > new Date()){ %>
         <h2>We are in the Offseason. No Games for Now.</h2>
@@ -31,7 +38,7 @@
             <div class="gamesLayout">
                 <% activeGames.forEach(game => { %>
 
-                    <div class="gameContainer">
+                    <div id="<%= game.id %>" class="gameContainer">
                         <div class="awayTeamDiv">
                             <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
                             <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
@@ -41,7 +48,9 @@
                             <p><%= game.competitions[0].status.type.detail %></p>
                             <p><%= game.competitions[0].competitors[1].score %> - 
                                 <%= game.competitions[0].competitors[0].score %></p>
-                            <a></a>
+                            <a href="http://localhost:8000/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                                Game Stats
+                            </a>
                         </div>
 
                         <div class="homeTeamDiv">
@@ -59,7 +68,7 @@
             <div class="gamesLayout">
                 <% upcomingGames.forEach(game => { %>
 
-                    <div class="gameContainer">
+                    <div id="<%= game.id %>" class="gameContainer">
                         <div class="awayTeamDiv">
                             <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
                             <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
@@ -78,8 +87,9 @@
                             if (data.leagues[0].season.type.type == 3){ %>
                                 <p><%= game.competitions[0].series.summary %></p>
                             <% } %>
-
-                            <a></a>
+                            <a href="http://localhost:8000/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                                Game Stats
+                            </a>
                         </div>
 
                         <div class="homeTeamDiv">
@@ -98,7 +108,7 @@
                 
                     <% completedGames.forEach(game => { %>
 
-                    <div class="gameContainer">
+                    <div id="<%= game.id %>" class="gameContainer">
                         <div class="awayTeamDiv">
                             <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
                             <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
@@ -108,7 +118,12 @@
                             <p><%= game.competitions[0].status.type.detail %></p>
                             <p><%= game.competitions[0].competitors[1].score %> - 
                                 <%= game.competitions[0].competitors[0].score %></p>
-                            <a></a>
+                            <% if (data.leagues[0].season.type.type == 3){ %>
+                                <p><%= game.competitions[0].series.summary %></p>
+                            <% } %>
+                            <a href="http://localhost:8000/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                                Game Stats
+                            </a>
                         </div>
 
                         <div class="homeTeamDiv">
@@ -121,5 +136,20 @@
             </div>
         <% } %>
     <% } %>
+
+    <script>
+        const form = document.getElementById("dateSelection");
+        const dateInput = document.getElementById('date');
+
+        form.addEventListener("submit", function() {
+            const dateValue = date.value;
+
+            if (!dateValue) {
+                event.preventDefault();
+                alert('Please select a date.');
+                return;
+            }
+        });
+  </script>
 </body>
 </html>

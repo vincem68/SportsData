@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title><%= overview.name %></title>
+    </head>
+
+    <body>
+
+        <div id="overview">
+
+            <div class="teamOverview">
+                <img src="<%= overview.competitions[0].competitors[1].team.logo %>">
+                <h3><%= overview.competitions[0].competitors[1].team.displayName %></h3>
+                <% if (overview.status.type.state != "pre"){ %>
+                    <h4><%= overview.competitions[0].competitors[1].score %></h4> <!--score-->
+                <% } %>
+            </div>
+
+            <div id="gameInfoOverview"> <!--Put status of game here-->
+                <h4>vs.</h4>
+                <% if (overview.status.type.state == "pre"){ %><!--Show scheduled time here-->
+
+                    <h4><%= overview.competitions[0].status.type.shortDetail.substring(
+                                    overview.competitions[0].status.type.shortDetail.indexOf("-") + 2); %>
+                    </h4>
+
+                <% } else if (overview.status.type.state == "in"){ %> <!--Show game time here-->
+
+                    <% if (league.toUpperCase() == "MLB"){ %>
+
+                        <h4><%= overview.status.type.shortDetail %></h4>
+                        <h4>
+                            <%= overview.competitions[0].situation.balls %> - 
+                            <%= overview.competitions[0].situation.strikes %> <%= 
+                                overview.competitions[0].situation.outs %>
+                        </h4>
+                    <% } else { %>
+
+                        <h4><%= overview.status.period %></h4>
+                        <h4><%= overview.status.displayClock %></h4>
+                    <% } 
+                } else { %>
+                    <h4>Final</h4>
+                <% } %>
+            </div>
+
+            <div class="teamOverview">
+                <img src="<%= overview.competitions[0].competitors[0].team.logo %>">
+                <h3><%= overview.competitions[0].competitors[0].team.displayName %></h3>
+                <% if (overview.status.type.state != "pre"){ %>
+                    <h4><%= overview.competitions[0].competitors[0].score %></h4> <!--score-->
+                <% } %>
+            </div>
+        </div>
+
+        <% if (league.toUpperCase() == "NFL"){ %>
+
+            <%- include('league_game_data/nfl_game') %>
+
+        <% } else if (league.toUpperCase() == "MLB"){ %>
+
+            <%- include('league_game_data/mlb_game') %>
+
+        <% } else if (league.toUpperCase() == "NBA"){ %>
+
+            <%- include('league_game_data/nba_game') %>
+
+        <% } else { %>
+
+            <%- include('league_game_data/nhl_game') %>
+
+        <% } %>
+
+    </body>
+</html>

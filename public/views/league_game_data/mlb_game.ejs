@@ -1,0 +1,223 @@
+<!--We should have separate intsances depending on whether the game is active, scheduled or completed-->
+
+<!--
+Ideas for this page:
+
+have the two teams displayed at the top with their abbreviations
+
+if applicable, show the score if active or final
+
+if in progress, show what point of the game we're in.
+
+if the game has yet to begin, show the probable starters, and any stats of the team leading up to the game
+
+try to show the stats of every player if the game is in duration
+-->
+
+<!--Box Score segment-->
+
+
+
+<% if (overview.status.type.state != "pre") { %>
+
+    <div class="statsDiv">
+
+        <div id="teamStats">
+            <table>
+                <tr>
+                    <th>Team</th>
+                    <% overview.competitions[0].competitors[1].linescores.forEach(score => { %>
+                        <td><%= score.period %></td>
+                    <% }) %>
+                    <th>R</th>
+                    <th>H</th>
+                    <th>E</th>
+                </tr>
+                <tr>
+                    <td><%= overview.competitions[0].competitors[1].team.abbreviation %></td>
+                    <% overview.competitions[0].competitors[1].linescores.forEach(score => { %>
+                        <td><%= score.displayValue %></td>
+                    <% }) %>
+                    <td><%= overview.competitions[0].competitors[1].statistics[1].displayValue %></td>
+                    <td><%= overview.competitions[0].competitors[1].statistics[0].displayValue %></td>
+                    <td><%= overview.competitions[0].competitors[1].statistics[7].displayValue %></td>
+                </tr>
+                <tr>
+                    <td><%= overview.competitions[0].competitors[0].team.abbreviation %></td>
+                    <% overview.competitions[0].competitors[0].linescores.forEach(score => { %>
+                        <td><%= score.displayValue %></td>
+                    <% }) %>
+                    <td><%= overview.competitions[0].competitors[0].statistics[1].displayValue %></td>
+                    <td><%= overview.competitions[0].competitors[0].statistics[0].displayValue %></td>
+                    <td><%= overview.competitions[0].competitors[0].statistics[7].displayValue %></td>
+                </tr>
+            </table>
+        </div>
+    
+
+    <div id="playerStats">
+
+        <div id="awayTeamPlayerStats">
+            <p><%+ boxscore.teams[0].team.shortDisplayName %></p>
+
+            <table> <!--For batters-->
+
+                <tr>
+                    <th>POS</th>
+                    <th>Batter</th>
+                    <th>AB</th>
+                    <th>R</th>
+                    <th>H</th>
+                    <th>RBI</th>
+                    <th>HR</th>
+                    <th>BB</th>
+                    <th>K</th>
+                    <th>AVG</th>
+                    <th>OBP</th>
+                    <th>SLG</th>
+                </tr>
+
+                <!--Maybe have a different class for pinch hitters, make them display a different color-->
+                <% boxscore.players[0].statistics[0].athletes.forEach(batter => { %>
+                    <tr>
+                        <td><%= batter.athlete.position.abbreviation %></td>
+                        <td>
+                            <div>
+                                <img src="<%= batter.athlete.headshot.href %>">
+                                <p><%= batter.athlete.displayname %></p>
+                            </div>
+                        </td>
+                        <td><%= batter.stats[1] %></td>
+                        <td><%= batter.stats[2] %></td>
+                        <td><%= batter.stats[3] %></td>
+                        <td><%= batter.stats[4] %></td>
+                        <td><%= batter.stats[5] %></td>
+                        <td><%= batter.stats[6] %></td>
+                        <td><%= batter.stats[7] %></td>
+                        <td><%= batter.stats[9] %></td>
+                        <td><%= batter.stats[10] %></td>
+                        <td><%= batter.stats[11] %></td>
+                    </tr>
+                <% }) %>
+
+            </table>
+
+            <table> <!--For pitchers-->
+
+                <tr>
+                    <th>Pitcher</th>
+                    <th>IP</th>
+                    <th>H</th>
+                    <th>R</th>
+                    <th>ER</th>
+                    <th>BB</th>
+                    <th>K</th>
+                    <th>HR</th>
+                    <th>ERA</th>
+                </tr>
+
+                <% boxscore.players[0].statistics[1].athletes.forEach(pitcher => { %>
+                    <tr>
+                        <td>
+                            <div>
+                                <img src="<%= pitcher.athlete.headshot.href %>">
+                                <p><%= pitcher.athlete.displayName %></p>
+                            </div>
+                        </td>
+                        <td><%= pitcher.stats[0] %></td>
+                        <td><%= pitcher.stats[1] %></td>
+                        <td><%= pitcher.stats[2] %></td>
+                        <td><%= pitcher.stats[3] %></td>
+                        <td><%= pitcher.stats[4] %></td>
+                        <td><%= pitcher.stats[5] %></td>
+                        <td><%= pitcher.stats[6] %></td>
+                        <td><%= pitcher.stats[8] %></td>
+                    </tr>
+                <% }) %>
+            </table>
+        </div>
+
+
+        <div id="homeTeamPlayerStats">
+            <p><%+ boxscore.teams[1].team.shortDisplayName %></p>
+
+            <table> <!--For batters-->
+
+                <tr>
+                    <th>POS</th>
+                    <th>Batter</th>
+                    <th>AB</th>
+                    <th>R</th>
+                    <th>H</th>
+                    <th>RBI</th>
+                    <th>HR</th>
+                    <th>BB</th>
+                    <th>K</th>
+                    <th>AVG</th>
+                    <th>OBP</th>
+                    <th>SLG</th>
+                </tr>
+
+                <!--Maybe have a different class for pinch hitters, make them display a different color-->
+                <% boxscore.players[1].statistics[0].athletes.forEach(batter => { %>
+                    <tr>
+                        <td><%= batter.athlete.position.abbreviation %></td>
+                        <td>
+                            <div>
+                                <img src="<%= batter.athlete.headshot.href %>">
+                                <p><%= batter.athlete.displayname %></p>
+                            </div>
+                        </td>
+                        <td><%= batter.stats[1] %></td>
+                        <td><%= batter.stats[2] %></td>
+                        <td><%= batter.stats[3] %></td>
+                        <td><%= batter.stats[4] %></td>
+                        <td><%= batter.stats[5] %></td>
+                        <td><%= batter.stats[6] %></td>
+                        <td><%= batter.stats[7] %></td>
+                        <td><%= batter.stats[9] %></td>
+                        <td><%= batter.stats[10] %></td>
+                        <td><%= batter.stats[11] %></td>
+                    </tr>
+                <% }) %>
+
+            </table>
+
+            <table> <!--For pitchers-->
+
+                <tr>
+                    <th>Pitcher</th>
+                    <th>IP</th>
+                    <th>H</th>
+                    <th>R</th>
+                    <th>ER</th>
+                    <th>BB</th>
+                    <th>K</th>
+                    <th>HR</th>
+                    <th>ERA</th>
+                </tr>
+
+                <% boxscore.players[1].statistics[1].athletes.forEach(pitcher => { %>
+                    <tr>
+                        <td>
+                            <div>
+                                <img src="<%= pitcher.athlete.headshot.href %>">
+                                <p><%= pitcher.athlete.displayName %></p>
+                            </div>
+                        </td>
+                        <td><%= pitcher.stats[0] %></td>
+                        <td><%= pitcher.stats[1] %></td>
+                        <td><%= pitcher.stats[2] %></td>
+                        <td><%= pitcher.stats[3] %></td>
+                        <td><%= pitcher.stats[4] %></td>
+                        <td><%= pitcher.stats[5] %></td>
+                        <td><%= pitcher.stats[6] %></td>
+                        <td><%= pitcher.stats[8] %></td>
+                    </tr>
+                <% }) %>
+            </table>
+        </div>
+    </div>
+
+
+<% } %>

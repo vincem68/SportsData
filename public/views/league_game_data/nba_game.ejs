@@ -1,0 +1,192 @@
+
+<% if (overview.status.type.state == "pre") { %> <!--Overall team stats go here if game is scheduled-->
+
+    <div id="pregameTeamStats">
+
+        <table>
+            <tr>
+                <th>Teams</th>
+                <td><%= boxscore.teams[0].team.abbreviation %></td>
+                <td><%= boxscore.teams[1].team.abbreviation %></td>
+            </tr>
+            <tr>
+                <th>Avg PTs</th>
+                <td><%= boxscore.teams[0].statistics[2].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[2].displayValue %></td>
+            </tr>
+            <tr>
+                <th>FG%</th>
+                <td><%= boxscore.teams[0].statistics[3].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[3].displayValue %></td>
+            </tr>
+            <tr>
+                <th>3PT%</th>
+                <td><%= boxscore.teams[0].statistics[4].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[4].displayValue %></td>
+            </tr>
+            <tr>
+                <th>Avg REB</th>
+                <td><%= boxscore.teams[0].statistics[5].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[5].displayValue %></td>
+            </tr>
+            <tr>
+                <th>Avg AST</th>
+                <td><%= boxscore.teams[0].statistics[6].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[6].displayValue %></td>
+            </tr>
+            <tr>
+                <th>Avg BLKs</th>
+                <td><%= boxscore.teams[0].statistics[7].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[7].displayValue %></td>
+            </tr>
+            <tr>
+                <th>Avg STLs</th>
+                <td><%= boxscore.teams[0].statistics[8].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[8].displayValue %></td>
+            </tr>
+            <tr>
+                <th>Avg TOs</th>
+                <td><%= boxscore.teams[0].statistics[10].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[10].displayValue %></td>
+            </tr>
+        </table>
+    </div>
+
+<% } else { <!--Games in progress and completed show the ongoing/final stats here-->
+
+    const activeAwayPlayers = boxscore.players[0].statistics[0].athletes.filter(athlete => athlete.didNotPlay == false);
+    const activeHomePlayers = boxscore.players[1].statistics[0].athletes.filter(athlete => athlete.didNotPlay == false);
+%>
+
+    <div id="teamStats">
+        <table>
+            <tr>
+                <th>Team</th>
+                <td><%= boxscore.teams[0].team.abbreviation %></td>
+                <td><%= boxscore.teams[1].team.abbreviation %></td>
+            </tr>
+            <tr>
+                <th>Field Goal %</th>
+                <td><%= boxscore.teams[0].statistics[1].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[1].displayValue %></td>
+            </tr>
+            <tr>
+                <th>3 Point %</th>
+                <td><%= boxscore.teams[0].statistics[3].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[3].displayValue %></td>
+            </tr>
+            <tr>
+                <th>Free Throw %</th>
+                <td><%= boxscore.teams[0].statistics[5].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[5].displayValue %></td>
+            </tr>
+            <tr>
+                <th>Offensive Rebounds</th>
+                <td><%= boxscore.teams[0].statistics[7].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[7].displayValue %></td>
+            </tr>
+            <tr>
+                <th>Defensive Rebounds</th>
+                <td><%= boxscore.teams[0].statistics[8].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[8].displayValue %></td>
+            </tr>
+            <tr>
+                <th>Total Rebounds</th>
+                <td><%= boxscore.teams[0].statistics[6].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[6].displayValue %></td>
+            </tr>
+            <tr>
+                <th>Assists</th>
+                <td><%= boxscore.teams[0].statistics[9].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[9].displayValue %></td>
+            </tr>
+            <tr>
+                <th>Steals</th>
+                <td><%= boxscore.teams[0].statistics[10].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[10].displayValue %></td>
+            </tr>
+            <tr>
+                <th>Blocks</th>
+                <td><%= boxscore.teams[0].statistics[11].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[11].displayValue %></td>
+            </tr>
+            <tr>
+                <th>Turnovers</th>
+                <td><%= boxscore.teams[0].statistics[14].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[14].displayValue %></td>
+            </tr>
+            <tr>
+                <th>Turnover Points</th>
+                <td><%= boxscore.teams[0].statistics[18].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[18].displayValue %></td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="teamPlayersDiv"> <!--We'll put the player stats here-->
+
+        <table id="awayTeamPlayerStats">
+
+            <tr>
+                <th>PIC</th>
+                <th>NAME</th>
+                <th>MIN</th>
+                <th>PTS</th>
+                <th>FG%</th>
+                <th>3PT%</th>
+                <th>FT%</th>
+                <th>OREB</th>
+                <th>DREB</th>
+                <th>REB</th>
+                <th>AST</th>
+                <th>STL</th>
+                <th>BLK</th>
+                <th>TO</th>
+                <th>PF</th>
+            </tr>
+
+            <% activeAwayPlayers.forEach(player => { %>
+
+                <tr>
+                    <td><img src="<%= player.athlete.headshot.href %>"></td>
+                    <td><%= player.athlete.shortName %></td>
+                    <td><%= player.stats[0] %></td>
+                    <td><%= player.stats[13] %></td>
+                    <td><%= player.stats[1] %></td>
+                    <td><%= player.stats[2] %></td>
+                    <td><%= player.stats[3] %></td>
+                    <td><%= player.stats[4] %></td>
+                    <td><%= player.stats[5] %></td>
+                    <td><%= player.stats[6] %></td>
+                    <td><%= player.stats[7] %></td>
+                    <td><%= player.stats[8] %></td>
+                    <td><%= player.stats[9] %></td>
+                    <td><%= player.stats[10] %></td>
+                    <td><%= player.stats[11] %></td>
+                </tr>
+            <% }) %>
+        </table>
+
+        <table id="homeTeamPlayerStats">
+            <% activeHomePlayers.forEach(player => { %>
+                <tr>
+                    <td><img src="<%= player.athlete.headshot.href %>"></td>
+                    <td><%= player.athlete.shortName %></td>
+                    <td><%= player.stats[0] %></td>
+                    <td><%= player.stats[13] %></td>
+                    <td><%= player.stats[1] %></td>
+                    <td><%= player.stats[2] %></td>
+                    <td><%= player.stats[3] %></td>
+                    <td><%= player.stats[4] %></td>
+                    <td><%= player.stats[5] %></td>
+                    <td><%= player.stats[6] %></td>
+                    <td><%= player.stats[7] %></td>
+                    <td><%= player.stats[8] %></td>
+                    <td><%= player.stats[9] %></td>
+                    <td><%= player.stats[10] %></td>
+                    <td><%= player.stats[11] %></td>
+                </tr>
+            <% }) %>
+        </table>
+    </div>
+<% } %>
