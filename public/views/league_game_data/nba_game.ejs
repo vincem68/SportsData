@@ -148,8 +148,14 @@
             <% activeAwayPlayers.forEach(player => { %>
 
                 <tr>
-                    <td><img src="<%= player.athlete.headshot.href %>"></td>
-                    <td><%= player.athlete.shortName %></td>
+                    <td>
+                        <% if (player.athlete.headshot !== undefined){ %>
+                            <img src="<%= player.athlete.headshot.href %>">
+                        <% } else { %>
+                            <img src="/images/default_headshot.png">
+                        <% } %>
+                        <p><%= player.athlete.shortName %></p>
+                    </td>
                     <td><%= player.stats[0] %></td>
                     <td><%= player.stats[13] %></td>
                     <td><%= player.stats[1] %></td>
@@ -170,8 +176,14 @@
         <table id="homeTeamPlayerStats">
             <% activeHomePlayers.forEach(player => { %>
                 <tr>
-                    <td><img src="<%= player.athlete.headshot.href %>"></td>
-                    <td><%= player.athlete.shortName %></td>
+                    <td>
+                        <% if (player.athlete.headshot !== undefined){ %>
+                            <img src="<%= player.athlete.headshot.href %>">
+                        <% } else { %>
+                            <img src="/images/default_headshot.png">
+                        <% } %>
+                        <p><%= player.athlete.shortName %></p>
+                    </td>
                     <td><%= player.stats[0] %></td>
                     <td><%= player.stats[13] %></td>
                     <td><%= player.stats[1] %></td>

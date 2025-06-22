@@ -25,7 +25,7 @@ app.get('/:sport/:league/games/:id', async function(req: Request, res: Response)
 
     //maybe we need to see what kinds of data is available in the pre state
     //overview will be used for selected_game, boxscore will be used for the more specific subfile
-    res.render('selected_game', {league: league, overview: overview, boxscore: summary.boxscore});
+    res.render('selected_game', {port: port, league: league, overview: overview, boxscore: summary.boxscore});
 })
 
 /**
@@ -45,7 +45,7 @@ app.get('/:sport/:league/games', async function(req: Request, res: Response) {
 
     const response = await fetch(endpoint);
     const data = await response.json();
-    res.render('scheduled_games', { sport: sport, league: league, data: data });
+    res.render('scheduled_games', { port: port, sport: sport, league: league, data: data });
 })
 
 /**
@@ -61,7 +61,7 @@ app.get('/:sport/:league/teams/:team/roster', async function(req: Request, res: 
         `${sport}/${league}/teams/${team}/roster`);
     
     const data = await response.json();
-    res.render('team_roster', {league: league, sport: sport, team: team, data: data});
+    res.render('team_roster', {port: port, league: league, sport: sport, team: team, data: data});
 })
 
 /**
@@ -76,7 +76,7 @@ app.get('/:sport/:league/teams/:team/schedule', async function(req: Request, res
         `/teams/${team}/schedule`);
 
     const data = await response.json();
-    res.render('team_schedule', {team: team, data: data});
+    res.render('team_schedule', {port: port, team: team, data: data});
 })
 
 /**
@@ -91,7 +91,7 @@ app.get('/:sport/:league/teams/:team/stats', async function(req: Request, res: R
         `/teams/${team}/statistics`);
 
     const game = await response.json();
-    res.render('team_stats', {game: game});
+    res.render('team_stats', {port: port, game: game});
 })
 
 /**
@@ -107,7 +107,7 @@ app.get('/:sport/:league/teams/:team', async function(req: Request, res: Respons
         `/teams/${team}`);
 
     const data = await response.json();
-    res.render('selected_team', {sport: sport, league: league, team: team, data: data});
+    res.render('selected_team', {port: port, sport: sport, league: league, team: team, data: data});
 })
 
 /**
@@ -120,7 +120,7 @@ app.get('/:sport/:league/teams', async function(req: Request, res: Response){
     const league = req.params.league;
     const response = await fetch(`http://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams`);
     const data = await response.json();
-    res.render('team_selection', {sport: sport, league: league, teams: data.sports[0].leagues[0].teams});
+    res.render('team_selection', {port: port, sport: sport, league: league, teams: data.sports[0].leagues[0].teams});
 })
 
 /*
@@ -145,7 +145,7 @@ app.get(':sport/:league/stats', async function(req: Request, res: Response){
  * For the home page, gets index.ejs
  */
 app.get('/', (req: Request, res: Response) => {
-    res.render('index');
+    res.render('index', {port: port});
 }) 
 
 app.listen(port, () => {

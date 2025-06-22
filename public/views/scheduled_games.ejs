@@ -20,7 +20,7 @@
 </head>
 
 <body>
-    
+
     <h1>Today is <%= new Date() %></h1>
 
     <form id="dateSelection" method="GET">
@@ -48,7 +48,7 @@
                             <p><%= game.competitions[0].status.type.detail %></p>
                             <p><%= game.competitions[0].competitors[1].score %> - 
                                 <%= game.competitions[0].competitors[0].score %></p>
-                            <a href="http://localhost:8000/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                            <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
                                 Game Stats
                             </a>
                         </div>
@@ -87,7 +87,7 @@
                             if (data.leagues[0].season.type.type == 3){ %>
                                 <p><%= game.competitions[0].series.summary %></p>
                             <% } %>
-                            <a href="http://localhost:8000/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                            <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
                                 Game Stats
                             </a>
                         </div>
@@ -121,7 +121,7 @@
                             <% if (data.leagues[0].season.type.type == 3){ %>
                                 <p><%= game.competitions[0].series.summary %></p>
                             <% } %>
-                            <a href="http://localhost:8000/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                            <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
                                 Game Stats
                             </a>
                         </div>

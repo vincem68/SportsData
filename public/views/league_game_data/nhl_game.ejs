@@ -61,8 +61,8 @@
             <table>
                 <tr>
                     <th>Teams</th>
-                    <td><%= boxscores.teams[0].team.abbreviation %></td>
-                    <td><%= boxscores.teams[1].team.abbreviation %></td>
+                    <td><%= boxscore.teams[0].team.abbreviation %></td>
+                    <td><%= boxscore.teams[1].team.abbreviation %></td>
                 </tr>
                 <tr>
                     <th>Shots</th>
@@ -144,7 +144,11 @@
                         <tr>
                             <td>
                                 <div>
-                                    <img src="<%= forward.athlete.headshot.href %>">
+                                    <% if (forward.athlete.headshot !== undefined){ %>
+                                        <img src="<%= forward.athlete.headshot.href %>">
+                                    <% } else { %>
+                                        <img src="/images/default_headshot.png">
+                                    <% } %>
                                     <p><%= forward.athlete.shortName %></p>
                                 </div>
                             </td>
@@ -188,22 +192,26 @@
                         <tr>
                             <td>
                                 <div>
-                                    <img src="<%= dmen.athlete.headshot.href %>">
-                                    <p><%= dmen.athlete.shortName %></p>
+                                    <% if (dman.athlete.headshot !== undefined){ %>
+                                        <img src="<%= dman.athlete.headshot.href %>">
+                                    <% } else { %>
+                                        <img src="/images/default_headshot.png">
+                                    <% } %>
+                                    <p><%= dman.athlete.shortName %></p>
                                 </div>
                             </td>
-                            <td><%= dmen.stats[4] %></td>
-                            <td><%= dmen.stats[9] %></td>
-                            <td><%= dmen.stats[11] %></td>
-                            <td><%= parseInt(dmen.stats[9]) + parseInt(dmen.stats[11]) %></td>
-                            <td><%= dmen.stats[3] %></td>
-                            <td><%= dmen.stats[14] %></td>
-                            <td><%= dmen.stats[0] %></td>
-                            <td><%= dmen.stats[17] %></td>
-                            <td><%= dmen.stats[20] %></td>
-                            <td><%= dmen.stats[1] %></td>
-                            <td><%= dmen.stats[2] %></td>
-                            <td><%= dmen.stats[18] %></td>
+                            <td><%= dman.stats[4] %></td>
+                            <td><%= dman.stats[9] %></td>
+                            <td><%= dman.stats[11] %></td>
+                            <td><%= parseInt(dman.stats[9]) + parseInt(dman.stats[11]) %></td>
+                            <td><%= dman.stats[3] %></td>
+                            <td><%= dman.stats[14] %></td>
+                            <td><%= dman.stats[0] %></td>
+                            <td><%= dman.stats[17] %></td>
+                            <td><%= dman.stats[20] %></td>
+                            <td><%= dman.stats[1] %></td>
+                            <td><%= dman.stats[2] %></td>
+                            <td><%= dman.stats[18] %></td>
                         </tr>
                     <% }) %>
                 </table>
@@ -224,7 +232,11 @@
                         <tr>
                             <td>
                                 <div>
-                                    <img src="<%= goalie.athlete.headshot.href %>">
+                                    <% if (goalie.athlete.headshot !== undefined){ %>
+                                        <img src="<%= goalie.athlete.headshot.href %>">
+                                    <% } else { %>
+                                        <img src="/images/default_headshot.png">
+                                    <% } %>
                                     <p><%= goalie.athlete.shortName %></p>
                                 </div>
                             </td>
@@ -264,7 +276,11 @@
                         <tr>
                             <td>
                                 <div>
-                                    <img src="<%= forward.athlete.headshot.href %>">
+                                    <% if (forward.athlete.headshot !== undefined){ %>
+                                        <img src="<%= forward.athlete.headshot.href %>">
+                                    <% } else { %>
+                                        <img src="/images/default_headshot.png">
+                                    <% } %>
                                     <p><%= forward.athlete.shortName %></p>
                                 </div>
                             </td>
@@ -308,22 +324,26 @@
                         <tr>
                             <td>
                                 <div>
-                                    <img src="<%= dmen.athlete.headshot.href %>">
-                                    <p><%= dmen.athlete.shortName %></p>
+                                    <% if (dman.athlete.headshot !== undefined){ %>
+                                        <img src="<%= dman.athlete.headshot.href %>">
+                                    <% } else { %>
+                                        <img src="/images/default_headshot.png">
+                                    <% } %>
+                                    <p><%= dman.athlete.shortName %></p>
                                 </div>
                             </td>
-                            <td><%= dmen.stats[4] %></td>
-                            <td><%= dmen.stats[9] %></td>
-                            <td><%= dmen.stats[11] %></td>
-                            <td><%= parseInt(dmen.stats[9]) + parseInt(dmen.stats[11]) %></td>
-                            <td><%= dmen.stats[3] %></td>
-                            <td><%= dmen.stats[14] %></td>
-                            <td><%= dmen.stats[0] %></td>
-                            <td><%= dmen.stats[17] %></td>
-                            <td><%= dmen.stats[20] %></td>
-                            <td><%= dmen.stats[1] %></td>
-                            <td><%= dmen.stats[2] %></td>
-                            <td><%= dmen.stats[18] %></td>
+                            <td><%= dman.stats[4] %></td>
+                            <td><%= dman.stats[9] %></td>
+                            <td><%= dman.stats[11] %></td>
+                            <td><%= parseInt(dman.stats[9]) + parseInt(dman.stats[11]) %></td>
+                            <td><%= dman.stats[3] %></td>
+                            <td><%= dman.stats[14] %></td>
+                            <td><%= dman.stats[0] %></td>
+                            <td><%= dman.stats[17] %></td>
+                            <td><%= dman.stats[20] %></td>
+                            <td><%= dman.stats[1] %></td>
+                            <td><%= dman.stats[2] %></td>
+                            <td><%= dman.stats[18] %></td>
                         </tr>
                     <% }) %>
                 </table>
@@ -344,7 +364,11 @@
                         <tr>
                             <td>
                                 <div>
-                                    <img src="<%= goalie.athlete.headshot.href %>">
+                                    <% if (goalie.athlete.headshot !== undefined){ %>
+                                        <img src="<%= goalie.athlete.headshot.href %>">
+                                    <% } else { %>
+                                        <img src="/images/default_headshot.png">
+                                    <% } %>
                                     <p><%= goalie.athlete.shortName %></p>
                                 </div>
                             </td>

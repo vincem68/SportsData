@@ -83,7 +83,11 @@ try to show the stats of every player if the game is in duration
                         <td><%= batter.athlete.position.abbreviation %></td>
                         <td>
                             <div>
-                                <img src="<%= batter.athlete.headshot.href %>">
+                                <% if (batter.athlete.headshot !== undefined){ %>
+                                    <img src="<%= batter.athlete.headshot.href %>">
+                                <% } else { %>
+                                    <img src="/images/default_headshot.png">
+                                <% } %>
                                 <p><%= batter.athlete.displayname %></p>
                             </div>
                         </td>
@@ -120,7 +124,11 @@ try to show the stats of every player if the game is in duration
                     <tr>
                         <td>
                             <div>
-                                <img src="<%= pitcher.athlete.headshot.href %>">
+                                <% if (pitcher.athlete.headshot !== undefined){ %>
+                                    <img src="<%= pitcher.athlete.headshot.href %>">
+                                <% } else { %>
+                                    <img src="/images/default_headshot.png">
+                                <% } %>
                                 <p><%= pitcher.athlete.displayName %></p>
                             </div>
                         </td>
@@ -164,7 +172,11 @@ try to show the stats of every player if the game is in duration
                         <td><%= batter.athlete.position.abbreviation %></td>
                         <td>
                             <div>
-                                <img src="<%= batter.athlete.headshot.href %>">
+                                <% if (batter.athlete.headshot !== undefined){ %>
+                                    <img src="<%= batter.athlete.headshot.href %>">
+                                <% } else { %>
+                                    <img src="/images/default_headshot.png">
+                                <% } %>
                                 <p><%= batter.athlete.displayname %></p>
                             </div>
                         </td>
@@ -201,7 +213,11 @@ try to show the stats of every player if the game is in duration
                     <tr>
                         <td>
                             <div>
-                                <img src="<%= pitcher.athlete.headshot.href %>">
+                                <% if (pitcher.athlete.headshot !== undefined){ %>
+                                    <img src="<%= pitcher.athlete.headshot.href %>">
+                                <% } else { %>
+                                    <img src="/images/default_headshot.png">
+                                <% } %>
                                 <p><%= pitcher.athlete.displayName %></p>
                             </div>
                         </td>
