@@ -16,6 +16,30 @@
             <!--Have a conditional here that checks to see if there's anything scheduled-->
         </div>
 
+        <div id="newsSection">
+
+            <h2>Latest News</h2>
+
+            <% const articles = news.articles.filter(article => article.type == "HeadlineNews");
+
+            if (articles.length == 0){ %>
+
+                <h3>Nothing to Report. Check Back Later!</h3>
+
+            <% } else {
+
+                articles.forEach(article => { %>
+
+                    <div class="article">
+                        <img class="newsImage" src="<%= article.images[0].url %>">
+                        <h3><%= article.headline %></h3>
+                        <p><%= article.description %></p>
+                        <a href=" <%= article.links.web.href %>">Read More</a>
+                    </div>
+                <% })
+            } %>
+        </div>
+
         <div id="linkSection">
             <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/teams/<%= team %>/roster">
                 <%= data.team.displayName %> Roster

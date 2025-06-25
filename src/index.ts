@@ -43,6 +43,13 @@ app.get('/:sport/:league/games', async function(req: Request, res: Response) {
         endpoint += `?dates=${date.replace(/-/g, "")}`;
     }
 
+    if (req.query.season !== undefined && req.query.week !== undefined){
+        const season = req.query.season;
+        const week = req.query.week;
+        endpoint += `?dates=${season}&week=${week}`;
+        console.log(endpoint);
+    }
+
     const response = await fetch(endpoint);
     const data = await response.json();
     res.render('scheduled_games', { port: port, sport: sport, league: league, data: data });
@@ -72,10 +79,15 @@ app.get('/:sport/:league/teams/:team/schedule', async function(req: Request, res
     const league = req.params.league;
     const team = req.params.team;
 
-    const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
-        `/teams/${team}/schedule`);
+    let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/schedule`;
 
+    if (req.query.season !== undefined && req.query.seasonType !== undefined){
+        endpoint += `?season=${req.query.season}&seasonType=${req.query.seasonType}`;
+    }
+
+    const response = await fetch(endpoint);
     const data = await response.json();
+
     res.render('team_schedule', {port: port, team: team, data: data});
 })
 
@@ -103,11 +115,15 @@ app.get('/:sport/:league/teams/:team', async function(req: Request, res: Respons
     const league = req.params.league;
     const team = req.params.team;
 
-    const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
-        `/teams/${team}`);
+    //get basic team data
+    const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}`);
+
+    //get news on team
+    const response2 = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/news?team=${team}`);
+    const news = await response2.json();
 
     const data = await response.json();
-    res.render('selected_team', {port: port, sport: sport, league: league, team: team, data: data});
+    res.render('selected_team', {port: port, sport: sport, league: league, team: team, data: data, news: news});
 })
 
 /**
@@ -122,24 +138,6 @@ app.get('/:sport/:league/teams', async function(req: Request, res: Response){
     const data = await response.json();
     res.render('team_selection', {port: port, sport: sport, league: league, teams: data.sports[0].leagues[0].teams});
 })
-
-/*
-app.get(':sport/:league/stats', async function(req: Request, res: Response){
-    
-    const sport = req.params.sport;
-    const league = req.params.league;
-
-    const team_names: string[] = [];
-    const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams`);
-    const name_list = await response.json();
-    name_list.sports[0].leagues[0].teams.forEach(team => {
-        team_names.push(team.team.abbreviation);
-    })
-
-
-    const team_stats: any[] = [];
-})
-*/
 
 /**
  * For the home page, gets index.ejs

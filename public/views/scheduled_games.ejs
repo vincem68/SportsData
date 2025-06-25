@@ -21,120 +21,152 @@
 
 <body>
 
-    <h1>Today is <%= new Date() %></h1>
+    <h1>Today is <%= month + "/" + day + "/" + year %></h1>
 
-    <form id="dateSelection" method="GET">
-        <input id="date" name="date" type="date" min="<%= data.leagues[0].season.startDate.substring(0, 10) %>"
-            max="<%= data.leagues[0].season.endDate.substring(0, 10) %>">
-        <button type="submit">Submit</button>
-    </form>
+    <% if (league.toUpperCase() == "NFL"){ %>
+
+        <!--This will be what we select for the week, will show all games for the week-->
+        <form method="GET">
+            <label for="season">Select Season:</label>
+            <select name="season">
+                <% for (let i = year; i >= 2000; i--){ %>
+                    <option value="<%= i %>"><%= i %></option>
+                <% } %>
+            </select>
+            <label for="week">Select Week:</label>
+            <select name="week">
+                <% for (let i = 1; i <= 18; i++){ %>
+                    <option value="<%= i %>"><%= i %></option>
+                <% } %>
+            </select>
+            <button>Submit</button>
+        </form>
+
+        <% if (data.season.type == 3){ %>
+            <form> <!--maybe use this for postseason games-->
+
+            </form>
+        <% } %>
+
+    <% } else { %>
+        <form id="dateSelection" method="GET">
+            <input id="date" name="date" type="date" min="<%= data.leagues[0].season.startDate.substring(0, 10) %>"
+                max="<%= data.leagues[0].season.endDate.substring(0, 10) %>">
+            <button type="submit">Submit</button>
+        </form>
+    <% } %>
 
     <% if (Date.parse(data.leagues[0].season.startDate) > new Date()){ %>
-        <h2>We are in the Offseason. No Games for Now.</h2>
-    <% } else { %>
 
-        <% if (activeGames.length != 0){ %>
-            <h3>Active Games</h3>
-            <div class="gamesLayout">
-                <% activeGames.forEach(game => { %>
+        <h2>We are in the Offseason. No Games for Now, but Take a Look Ahead Next Year:</h2>
 
-                    <div id="<%= game.id %>" class="gameContainer">
-                        <div class="awayTeamDiv">
-                            <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
-                            <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
-                        </div>
+    <% } %>
 
-                        <div class="gameTimeDiv">
-                            <p><%= game.competitions[0].status.type.detail %></p>
-                            <p><%= game.competitions[0].competitors[1].score %> - 
-                                <%= game.competitions[0].competitors[0].score %></p>
-                            <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
-                                Game Stats
-                            </a>
-                        </div>
+    <% if (league.toUpperCase() == "NFL") { %> 
+        <h2>Week <%= data.week.number %></h2> 
+    <% } %>
 
-                        <div class="homeTeamDiv">
-                            <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
-                            <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
-                        </div>
+    <% if (activeGames.length != 0){ %>
+        <h3>Active Games</h3>
+        <div class="gamesLayout">
+            <% activeGames.forEach(game => { %>
+
+                <div id="<%= game.id %>" class="gameContainer">
+                    <div class="awayTeamDiv">
+                        <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
+                        <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
                     </div>
 
-                <% }) %>
-            </div>
-        <% } %>
-
-        <% if (upcomingGames.length != 0){ %>
-            <h3>Upcoming Games</h3>
-            <div class="gamesLayout">
-                <% upcomingGames.forEach(game => { %>
-
-                    <div id="<%= game.id %>" class="gameContainer">
-                        <div class="awayTeamDiv">
-                            <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
-                            <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
-                        </div>
-
-                        <div class="gameTimeDiv">
-                            <% if (fullDate != data.day.date){ %>
-                                <p><%= game.competitions[0].status.type.shortDetail %></p>
-                            <% } else { %>
-                                <p>
-                                    <%= game.competitions[0].status.type.shortDetail.substring(
-                                    game.competitions[0].status.type.shortDetail.indexOf("-") + 2); %>
-                                </p>
-                            <% } 
-
-                            if (data.leagues[0].season.type.type == 3){ %>
-                                <p><%= game.competitions[0].series.summary %></p>
-                            <% } %>
-                            <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
-                                Game Stats
-                            </a>
-                        </div>
-
-                        <div class="homeTeamDiv">
-                            <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
-                            <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
-                        </div>
+                    <div class="gameTimeDiv">
+                        <p><%= game.competitions[0].status.type.detail %></p>
+                        <p><%= game.competitions[0].competitors[1].score %> - 
+                            <%= game.competitions[0].competitors[0].score %></p>
+                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                            Game Stats
+                        </a>
                     </div>
 
-                <% }) %>
-            </div>
-        <% } %>
+                    <div class="homeTeamDiv">
+                        <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
+                        <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
+                    </div>
+                </div>
 
-        <% if (completedGames.length != 0){ %>
-            <h3>Completed Games</h3>
-            <div class="gamesLayout">
-                
-                    <% completedGames.forEach(game => { %>
+            <% }) %>
+        </div>
+    <% } %>
 
-                    <div id="<%= game.id %>" class="gameContainer">
-                        <div class="awayTeamDiv">
-                            <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
-                            <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
-                        </div>
+    <% if (upcomingGames.length != 0){ %>
+        <h3>Upcoming Games</h3>
+        <div class="gamesLayout">
+            <% upcomingGames.forEach(game => { %>
 
-                        <div class="gameTimeDiv">
-                            <p><%= game.competitions[0].status.type.detail %></p>
-                            <p><%= game.competitions[0].competitors[1].score %> - 
-                                <%= game.competitions[0].competitors[0].score %></p>
-                            <% if (data.leagues[0].season.type.type == 3){ %>
-                                <p><%= game.competitions[0].series.summary %></p>
-                            <% } %>
-                            <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
-                                Game Stats
-                            </a>
-                        </div>
-
-                        <div class="homeTeamDiv">
-                            <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
-                            <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
-                        </div>
+                <div id="<%= game.id %>" class="gameContainer">
+                    <div class="awayTeamDiv">
+                        <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
+                        <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
                     </div>
 
-                <% }) %>
-            </div>
-        <% } %>
+                    <div class="gameTimeDiv">
+                        <% if (data.day !== undefined && fullDate != data.day.date){ %>
+                            <p><%= game.competitions[0].status.type.shortDetail %></p>
+                        <% } else { %>
+                            <p>
+                                <%= game.competitions[0].status.type.shortDetail.substring(
+                                game.competitions[0].status.type.shortDetail.indexOf("-") + 2); %>
+                            </p>
+                        <% } 
+
+                        if (data.leagues[0].season.type.type == 3){ %>
+                            <p><%= game.competitions[0].series.summary %></p>
+                        <% } %>
+                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                            Game Stats
+                        </a>
+                    </div>
+
+                    <div class="homeTeamDiv">
+                        <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
+                        <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
+                    </div>
+                </div>
+
+            <% }) %>
+        </div>
+    <% } %>
+
+    <% if (completedGames.length != 0){ %>
+        <h3>Completed Games</h3>
+        <div class="gamesLayout">
+            
+                <% completedGames.forEach(game => { %>
+
+                <div id="<%= game.id %>" class="gameContainer">
+                    <div class="awayTeamDiv">
+                        <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
+                        <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
+                    </div>
+
+                    <div class="gameTimeDiv">
+                        <p><%= game.competitions[0].status.type.detail %></p>
+                        <p><%= game.competitions[0].competitors[1].score %> - 
+                            <%= game.competitions[0].competitors[0].score %></p>
+                        <% if (game.competitions[0].series !== undefined){ %>
+                            <p><%= game.competitions[0].series.summary %></p>
+                        <% } %>
+                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                            Game Stats
+                        </a>
+                    </div>
+
+                    <div class="homeTeamDiv">
+                        <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
+                        <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
+                    </div>
+                </div>
+
+            <% }) %>
+        </div>
     <% } %>
 
     <script>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<htm>
+    <head>
+        <title></title>
+    </head>
+
+    <body>
+
+        <form method="GET">
+            <label for="season"></label>
+            <select name="season">
+                <% for (let i = new Date().getFullYear(); i >= 2000; i--){ %>
+                    <option value="<%= i %>"><%= i %></option>
+                <% } %>
+            </select>
+        </form>
+
+        <!--This will be used to get the right page-->
+        <% if (league.toUpperCase() == "NFL"){ %>
+
+            <%- include (team_stats/nfl_team_stats.ejs) %>
+
+        <% } else if (league.toUpperCase() == "MLB"){ %>
+
+            <%- include (team_stats/mlb_team_stats.ejs) %>
+
+        <% } else if (league.toUpperCase() == "NBA"){ %>
+
+            <%- include (team_stats/nba_team_stats.ejs) %>
+
+        <% } else { %>
+
+            <%- include (team_stats/nhl_team_stats.ejs) %>
+
+        <% } %>
+    </body>
+</htm>

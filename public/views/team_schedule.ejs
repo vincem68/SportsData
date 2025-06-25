@@ -11,55 +11,84 @@
         <div id="headlineDiv">
             <img id="teamLogo" src="<%= data.team.logo %>">
             <h4><%= data.team.displayName %></h4>
-            <h4><%= data.season.name %></h4>
-            <h4>Season Record: <%= data.team.recordSummary %></h4>
+            <h4>Team is currently in the <%= data.season.name %></h4>
         </div>
 
-        <div>
-            <!--Idea: have the home and road games be different colors-->
-            <table>
-                <tr>
-                    <th>Date</th>
-                    <th>-</th>
-                    <th>Opposing Team</th>
-                    <th>Status</th> <!--W/L, not played, in progress?-->
-                </tr>
-                <% data.events.forEach(game => {
-                    let opp = 1; %>
+        <form id="scheduleSelection" method="GET">
+            <label for="season">Select Season:</label>
+             <select name="season">
+                <% for (let i = new Date().getFullYear(); i >= 2000; i--){ %>
+                    <option value="<%= i %>"><%= i %></option>
+                <% } %>
+             </select>
+             <select name="seasonType">
+                <option value="2">Regular Season</option>
+                <option value="3">Post Season</option>
+             </select>
+             <button>Submit</button>
+        </form>
+
+        <% if (data.events.length == 0){ %>
+            <h2>Season Schedule Not Available. Check Back Later!</h2>
+        <% } else { %>
+            <div>
+                <% const team = (data.events[data.events.length - 1].competitions[0].competitors[0].team.abbreviation 
+                    == data.team.abbreviation) ? 0 : 1 %>
+
+                <h2>Schedule for <%= data.requestedSeason.displayName %> <%= data.requestedSeason.name %></h2>
+                <h3>
+                    Overall Record: <%= data.events[data.events.length - 1].competitions[0]
+                        .competitors[team].record[0].displayValue %>
+                </h3>
+                <!--Idea: have the home and road games be different colors-->
+                <table>
                     <tr>
-                        <td><%= game.date %></td>
-                        <td>
-                            <% if (game.competitions[0].competitors[0].team.abbreviation == team){ %>
-                                vs
-                            <% } else { 
-                                opp = 0; %>
-                                @
-                            <% } %>
-                        </td>
-                        <td>
-                            <div>
-                                <img class="scheduleLogo" src="<%= game.competitions[0].competitors[opp].team.logos.href %>">
-                                <h6><%= game.competitions[0].competitors[opp].team.displayName %></h6>
-                            </div>
-                        </td>
-                        <td>
-                            <% if (game.competitions[0].status.type.state == "post"){
-
-                                if (game.competitions[0].competitors[opp].winner){ %>
-                                    <h3>L</h3>
-                                <% } else { %>
-                                    <h3>W</h3>
-                                <% } %>
-
-                            <% } else if (game.competitions[0].status.type.state == "pre"){ %>
-                                ---
-                            <% } else { %>
-                                In Progress
-                            <% } %>
-                        </td>
+                        <th>Date</th>
+                        <th>vs. / @</th>
+                        <th>Opposing Team</th>
+                        <th>Status</th> <!--W/L, not played, in progress?-->
                     </tr>
-                <% }) %>
-            </table>
-        </div>
+                    <% 
+                    let opp = -1;
+                    data.events.forEach(game => { %>
+                        <tr>
+                            <td><%= game.date.substring(5, 10) %></td>
+                            <td>
+                                <% if (game.competitions[0].competitors[0].team.abbreviation == data.team.abbreviation){ 
+                                    opp = 1; %>
+                                    vs.
+                                <% } else { 
+                                    opp = 0; %>
+                                    @
+                                <% } %>
+                            </td>
+                            <td>
+                                <div>
+                                    <% if (game.competitions[0].competitors[opp].team.logos !== undefined){ %>
+                                        <img class="scheduleLogo" src="<%= game.competitions[0].competitors[opp].team.logos.href %>">
+                                    <% } %>
+                                    <h6><%= game.competitions[0].competitors[opp].team.abbreviation %></h6>
+                                </div>
+                            </td>
+                            <td>
+                                <% if (game.competitions[0].status.type.state == "post"){
+
+                                    if (game.competitions[0].competitors[opp].winner){ %>
+                                        <h3>L</h3>
+                                    <% } else { %>
+                                        <h3>W</h3>
+                                    <% } %>
+
+                                <% } else if (game.competitions[0].status.type.state == "pre"){ %>
+                                    ---
+                                <% } else { %>
+                                    In Progress
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }) %>
+                </table>
+            </div>
+        <% } %>
     </body>
 </html>
