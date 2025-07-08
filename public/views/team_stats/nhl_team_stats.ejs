@@ -1,0 +1,32 @@
+
+<% data.results.stats.categories.forEach(category => { %>
+
+    <div class="tableDivide">
+
+        <h4><%= category.displayName %></h4>
+        <table>
+            <tr>
+                <th>Type</th>
+                <% category.stats.forEach(stat => { %>
+                    <th><%= stat.abbreviation %></th>
+                <% }) %>
+            </tr>
+            <tr>
+                <th>Total</th>
+                <% category.stats.forEach(stat => { %>
+                    <td><%= stat.value %></td>
+                <% }) %>
+            </tr>
+            <tr>
+                <th>Per Game</th>
+                <% category.stats.forEach(stat => {
+                    if (stat.perGameValue !== undefined){ %>
+                        <td><%= stat.perGameValue %></td>
+                    <% } else { %>
+                        <td>N/A</td>
+                    <% }
+                }) %>
+            </tr>
+        </table>
+    </div>
+<% }) %>

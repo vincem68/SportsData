@@ -1,0 +1,55 @@
+#headerArea {
+    background-color: darkgreen;
+    display: flex;
+    justify-content: baseline;
+}
+
+.leagueDropDown {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.list {
+    display: none;
+}
+
+.list a {
+    display: block;
+}
+
+.leagueDropDown:hover .list {
+    background-color: white;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+#home {
+    height: 150px;
+    width: 150px;
+    margin-right: 100px;
+}
+
+#nfl {
+    height: 125px;
+    width: 100px;
+    margin-right: 70px;
+}
+
+#nba {
+    height: 170px;
+    width: 200px;
+    margin-right: 60px;
+}
+
+#mlb {
+    height: 85px;
+    width: 175px;
+    margin-right: 110px;
+}
+
+#nhl {
+    height: 100px;
+    width: 100px;
+}

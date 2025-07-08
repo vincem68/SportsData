@@ -1,0 +1,71 @@
+
+<% 
+    let splits = data.results.splits;
+    splits.unshift(data.results.stats);
+    let counter = 0;
+%>
+
+
+<select id="sortIndex">
+
+    <% splits.forEach(split => { %>
+        
+        <option value="<%= counter %>"><%= split.abbreviation %></option>
+        <% counter++;
+    });
+    counter = 0; %>
+</select>
+
+<% splits.forEach(split => { %>
+
+    <div id="<%= counter %>" class="filteredSection">
+
+        <h3>Stats for: <%= split.abbreviation %></h3>
+
+        <% split.categories.forEach(category => { %>
+            <div class="tableDivide">
+
+                <h4><%= category.displayName %></h4>
+                <table>
+                    <tr>
+                        <% category.stats.forEach(stat => { %>
+                            <th><%= stat.abbreviation %></th>
+                        <% }) %>
+                    </tr>
+                    <tr>
+                        <% category.stats.forEach(stat => { %>
+                            <td><%= stat.displayValue %></td>
+                        <% }) %>
+                    </tr>
+                </table>
+            </div>
+        <% }) %>
+    </div>
+<% counter++;
+    }) %>
+
+<script>
+
+    //all the div elements 
+    const divs = document.querySelectorAll('.filteredSection');
+    divs.forEach(div => div.style.display = 'none');
+
+    //the select element
+    const filter = document.getElementById('sortIndex');
+
+    //change visibility of tables when a new option is selected
+    function selectDiv(){
+
+        const selectedIndex = filter.value;
+
+        divs.forEach(div => div.style.display = 'none');
+
+        const selectedDiv = document.getElementById(selectedIndex);
+        selectedDiv.style.display = 'block';
+    }
+
+    selectDiv();
+
+    filter.addEventListener('change', selectDiv);
+
+</script>

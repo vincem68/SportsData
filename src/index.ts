@@ -98,12 +98,18 @@ app.get('/:sport/:league/teams/:team/stats', async function(req: Request, res: R
     const sport = req.params.sport;
     const league = req.params.league;
     const team = req.params.team;
+    let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/statistics`;
 
-    const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
-        `/teams/${team}/statistics`);
+    if (req.query.season !== undefined){
+        endpoint += `?season=${req.query.season}`;
+    }
 
-    const game = await response.json();
-    res.render('team_stats', {port: port, game: game});
+    //const sortIndex = (req.query.sortIndex !== undefined) ? parseInt(`${req.query.sortIndex}`) : 0;
+
+    const response = await fetch(endpoint);
+
+    const data = await response.json();
+    res.render('team_stats/overview', {port: port, league: league, data: data});
 })
 
 /**

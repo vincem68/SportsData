@@ -1,110 +1,35 @@
 
-<!--Table for the Centers-->
-<h3>Centers</h3>
-<table>
-    <tr>
-        <th>Picture</th>
-        <th>Name</th>
-        <th>Jersey No.</th>
-    </tr>
+<% data.athletes.forEach(positionGroup => { %>
 
-    <% data.athletes[0].items.forEach(center => { %>
-        <tr>
-            <% if (center.headshot !== undefined){ %>
-                <td><img class="headshot" src="<%= center.headshot.href %>"></td>
-            <% } else { %>
-                <td><img class="headshot" src="/images/default_headshot.png"></td>
-            <% } %>
-            <td><%= center.displayName %></td>
-            <td><%= center.jersey %></td>
-        </tr>
-    <% }) %>
-</table>
-
-<!--Table for the Left Wingers-->
-<h3>Left Wingers</h3>
-<table>
-    <tr>
-        <th>Picture</th>
-        <th>Name</th>
-        <th>Jersey No.</th>
-    </tr>
-
-    <% data.athletes[1].items.forEach(winger => { %>
-        <tr>
-            <% if (winger.headshot !== undefined){ %>
-                <td><img class="headshot" src="<%= winger.headshot.href %>"></td>
-            <% } else { %>
-                <td><img class="headshot" src="/images/default_headshot.png"></td>
-            <% } %>
-            <td><%= winger.displayName %></td>
-            <td><%= winger.jersey %></td>
-        </tr>
-    <% }) %>
-</table>
-
-<!--Table for the Right Wingers-->
-<h3>Right Wingers</h3>
-<table>
-    <tr>
-        <th>Picture</th>
-        <th>Name</th>
-        <th>Jersey No.</th>
-    </tr>
-
-    <% data.athletes[2].items.forEach(winger => { %>
-        <tr>
-            <% if (winger.headshot !== undefined){ %>
-                <td><img class="headshot" src="<%= winger.headshot.href %>"></td>
-            <% } else { %>
-                <td><img class="headshot" src="/images/default_headshot.png"></td>
-            <% } %>
-            <td><%= winger.displayName %></td>
-            <td><%= winger.jersey %></td>
-        </tr>
-    <% }) %>
-</table>
-
-<!--Table for the Defensemen-->
-<h3>Defensemen</h3>
-<table>
-    <tr>
-        <th>Picture</th>
-        <th>Name</th>
-        <th>Jersey No.</th>
-    </tr>
-
-    <% data.athletes[3].items.forEach(dman => { %>
-        <tr>
-            <% if (dman.headshot !== undefined){ %>
-                <td><img class="headshot" src="<%= dman.headshot.href %>"></td>
-            <% } else { %>
-                <td><img class="headshot" src="/images/default_headshot.png"></td>
-            <% } %>
-            <td><%= dman.displayName %></td>
-            <td><%= dman.jersey %></td>
-        </tr>
-    <% }) %>
-</table>
-
-<!--Table for the goalies-->
-<h3>Goalies</h3>
-<table>
-    <tr>
-        <th>Picture</th>
-        <th>Name</th>
-        <th>Jersey No.</th>
-    </tr>
-
-    <% data.athletes[4].items.forEach(goalie => { %>
-        <tr>
-            <% if (goalie.headshot !== undefined){ %>
-                <td><img class="headshot" src="<%= goalie.headshot.href %>"></td>
-            <% } else { %>
-                <td><img class="headshot" src="/images/default_headshot.png"></td>
-            <% } %>
-            <td><%= goalie.displayName %></td>
-            <td><%= goalie.jersey %></td>
-        </tr>
-    <% }) %>
-</table>
+    <div>
+        <h4><%= positionGroup.position %></h4>
+        <table>
+            <tr>
+                <th>Headshot</th>
+                <th>Name</th>
+                <th>Jersey No.</th>
+                <th>Shoots</th>
+                <th>Age</th>
+                <th>Weight</th>
+                <th>Height</th>
+                <th>YOE</th>
+            </tr>
+            <% positionGroup.items.forEach(player => { %>
+                <tr>
+                <% if (player.headshot !== undefined){ %>
+                    <td><img class="headshot" src="<%= player.headshot.href %>"></td>
+                <% } else { %>
+                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <% } %>
+                <td><%= player.displayName %></td>
+                <td><%= player.jersey %></td>
+                <td><%= player.hand.abbreviation %></td>
+                <td><%= player.age %></td>
+                <td><%= player.displayWeight %></td>
+                <td><%= player.displayHeight %></td>
+                <td><%= player.experience.years %></td>
+            </tr>
+            <% }) %>
+        </table>
+    </div>
+<% }) %>

@@ -2,37 +2,52 @@
 
 <htm>
     <head>
-        <title></title>
+        <title><%= data.team.displayName %> Stats</title>
     </head>
 
     <body>
 
+        <div id="teamTitleSection">
+            <img src="<%= data.team.logo %>">
+            <h1><%= data.team.displayName %></h1>
+        </div>
+
         <form method="GET">
-            <label for="season"></label>
+            <label for="season">Select a Season:</label>
             <select name="season">
                 <% for (let i = new Date().getFullYear(); i >= 2000; i--){ %>
                     <option value="<%= i %>"><%= i %></option>
                 <% } %>
             </select>
+            <button>Submit</button>
         </form>
 
-        <!--This will be used to get the right page-->
-        <% if (league.toUpperCase() == "NFL"){ %>
+        <div id="statsSection">
 
-            <%- include (team_stats/nfl_team_stats.ejs) %>
+            <h3>Showing Stats for the <%= data.team.seasonSummary %> Season</h3>
 
-        <% } else if (league.toUpperCase() == "MLB"){ %>
+            <h4>Season Record: <%= data.team.recordSummary %></h4>
+            <h4>Standings: <%= data.team.standingSummary %></h4>
 
-            <%- include (team_stats/mlb_team_stats.ejs) %>
+            <!--This will be used to get the right page-->
+            <% if (league.toUpperCase() == "NFL"){ %>
 
-        <% } else if (league.toUpperCase() == "NBA"){ %>
+                <%- include ('nfl_team_stats') %>
 
-            <%- include (team_stats/nba_team_stats.ejs) %>
+            <% } else if (league.toUpperCase() == "MLB"){ %>
 
-        <% } else { %>
+                <%- include ('mlb_team_stats') %>
 
-            <%- include (team_stats/nhl_team_stats.ejs) %>
+            <% } else if (league.toUpperCase() == "NBA"){ %>
 
-        <% } %>
+                <%- include ('nba_team_stats') %>
+
+            <% } else { %>
+
+                <%- include ('nhl_team_stats') %>
+
+            <% } %>
+
+        </div>
     </body>
 </htm>

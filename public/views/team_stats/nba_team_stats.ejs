@@ -1,13 +1,17 @@
-
 <% data.results.stats.categories.forEach(category => { %>
 
     <div class="tableDivide">
         <h4><%= category.displayName %></h4>
         <table>
             <tr>
-                <% category.stats.forEach(stat => { %>
-                    <th><%= stat.abbreviation %></th>
-                <% }) %>
+                <% category.stats.forEach(stat => {
+
+                    if (stat.name.substring(0, 3) == "avg"){ %>
+                        <th><%= stat.shortDisplayName %></th>
+                    <% } else { %>
+                        <th><%= stat.abbreviation %></th>
+                    <% }
+                }) %>
             </tr>
             <tr>
                 <% category.stats.forEach(stat => { %>
