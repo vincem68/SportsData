@@ -14,14 +14,14 @@
             <tr>
                 <th>Total</th>
                 <% category.stats.forEach(stat => { %>
-                    <td><%= stat.value %></td>
+                    <td><%= stat.displayValue %></td>
                 <% }) %>
             </tr>
             <tr>
                 <th>Per Game</th>
                 <% category.stats.forEach(stat => {
                     if (stat.perGameValue !== undefined){ %>
-                        <td><%= stat.perGameValue %></td>
+                        <td><%= stat.perGameDisplayValue %></td>
                     <% } else { %>
                         <td>N/A</td>
                     <% }

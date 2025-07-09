@@ -1,5 +1,16 @@
+<% if (overview.season.type == 1){ %>
 
-<% if (overview.status.type.state == "pre"){ %>
+    <table>
+        <tr>
+            <th>Team</th>
+            <td><%= boxscore.teams[0].team.shortDisplayName %></td>
+            <td><%= boxscore.teams[1].team.shortDisplayName %></td>
+        </tr>
+    </table>
+
+    <h3>Data Not Available in Offseason or Preseason</h3>
+
+<% } else if (overview.status.type.state == "pre"){ %>
 
 
     <div id="pregameStats">
@@ -12,33 +23,33 @@
             </tr>
             <tr>
                 <th>Avg Goals</th>
-                <td><%= bosxcore.teams[0].statistics[5].displayValue %></td>
-                <td><%= bosxcore.teams[1].statistics[5].displayValue %></td>
+                <td><%= boxscore.teams[0].statistics[5].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[5].displayValue %></td>
             </tr>
             <tr>
                 <th>Avg Goals Against</th>
-                <td><%= bosxcore.teams[0].statistics[0].displayValue %></td>
-                <td><%= bosxcore.teams[1].statistics[0].displayValue %></td>
+                <td><%= boxscore.teams[0].statistics[0].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[0].displayValue %></td>
             </tr>
             <tr>
                 <th>Avg Shots</th>
-                <td><%= bosxcore.teams[0].statistics[6].displayValue %></td>
-                <td><%= bosxcore.teams[1].statistics[6].displayValue %></td>
+                <td><%= boxscore.teams[0].statistics[6].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[6].displayValue %></td>
             </tr>
             <tr>
                 <th>Avg Shots Against</th>
-                <td><%= bosxcore.teams[0].statistics[1].displayValue %></td>
-                <td><%= bosxcore.teams[1].statistics[1].displayValue %></td>
+                <td><%= boxscore.teams[0].statistics[1].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[1].displayValue %></td>
             </tr>
             <tr>
                 <th>Power Play %</th>
-                <td><%= bosxcore.teams[0].statistics[2].displayValue %></td>
-                <td><%= bosxcore.teams[1].statistics[2].displayValue %></td>
+                <td><%= boxscore.teams[0].statistics[2].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[2].displayValue %></td>
             </tr>
             <tr>
                 <th>Penalty Kill %</th>
-                <td><%= bosxcore.teams[0].statistics[8].displayValue %></td>
-                <td><%= bosxcore.teams[1].statistics[8].displayValue %></td>
+                <td><%= boxscore.teams[0].statistics[8].displayValue %></td>
+                <td><%= boxscore.teams[1].statistics[8].displayValue %></td>
             </tr>
         </table>
     </div>
