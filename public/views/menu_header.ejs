@@ -1,14 +1,14 @@
-
+<link rel="stylesheet" href="/styles/menu_header.css">
 <div id="headerArea">
 
-    <div id="homeDiv">
+    <div class="leagueDropDown">
         <a href="/">
             <img id="home" src="/images/home_icon.png">
         </a>
     </div>
 
-    <div class="leagueDropDown">
-        <img id="nfl" src="/images/nfl_logo.png">
+    <div class="leagueDropDown" onclick="showDropDown(0)">
+        <h1>NFL</h1>
         <div class="list">
             <a href="http://localhost:<%= port %>/football/nfl/teams">NFL Teams</a>
             <a href="http://localhost:<%= port %>/football/nfl/stats">NFL Stats</a>
@@ -16,8 +16,8 @@
         </div>
     </div>
 
-    <div class="leagueDropDown">
-        <img id="nba" src="/images/nba_logo.png">
+    <div class="leagueDropDown" onclick="showDropDown(1)">
+        <h1>NBA</h1>
         <div class="list">
             <a href="http://localhost:<%= port %>/basketball/nba/teams">NBA Teams</a>
             <a href="http://localhost:<%= port %>/basketball/nba/stats">NBA Stats</a>
@@ -25,8 +25,8 @@
         </div>
     </div>
 
-    <div class="leagueDropDown">
-        <img id="mlb" src="/images/mlb_logo.png">
+    <div class="leagueDropDown" onclick="showDropDown(2)">
+        <h1>MLB</h1>
         <div class="list">
             <a href="http://localhost:<%= port %>/baseball/mlb/teams">MLB Teams</a>
             <a href="http://localhost:<%= port %>/baseball/mlb/stats">MLB Stats</a>
@@ -34,8 +34,8 @@
         </div>
     </div>
 
-    <div class="leagueDropDown">
-        <img id="nhl" src="/images/nhl_logo.png">
+    <div class="leagueDropDown" onclick="showDropDown(3)">
+        <h1>NHL</h1>
         <div class="list">
             <a href="http://localhost:<%= port %>/hockey/nhl/teams">NHL Teams</a>
             <a href="http://localhost:<%= port %>/hockey/nhl/stats">NHL Stats</a>
@@ -43,3 +43,18 @@
         </div>
     </div>
 </div>
+
+<script>
+
+    function showDropDown(index){
+        const subMenus = document.querySelectorAll(".list");
+        subMenus.forEach(subMenu => { subMenu.style.display = 'none'; });
+        subMenus[index].style.display = 'block';
+    }
+
+    window.addEventListener('click', function (e) {
+        if (!e.target.closest('.leagueDropDown')) {
+            document.querySelectorAll('.list').forEach(d => d.style.display = 'none');
+        }
+    });
+</script>
