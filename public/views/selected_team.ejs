@@ -33,7 +33,9 @@
                 articles.forEach(article => { %>
 
                     <div class="article">
-                        <img class="newsImage" src="<%= article.images[0].url %>">
+                        <% if (article.images !== undefined){ %>
+                            <img class="newsImage" src="<%= article.images[0].url %>">
+                        <% } %>
                         <h3><%= article.headline %></h3>
                         <p><%= article.description %></p>
                         <a href=" <%= article.links.web.href %>">Read More</a>

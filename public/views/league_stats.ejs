@@ -1,0 +1,145 @@
+<% 
+    const categoryNames = [];
+    const statSort = [];
+    let index = 0;
+
+    for (const cat of leagueStats[0].categories) {
+        categoryNames.push(cat.displayName);
+        statSort.push(cat.stats.map(stat => stat.displayName));
+    }
+%>
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title><%= league.toUpperCase() %> Stats</title>
+    </head>
+
+    <body>
+
+        <%- include ('menu_header') %>
+
+        <h1><%= league.toUpperCase() %> Stats</h1>
+
+        <!--Lets do it so you can pick a category on one select and pick the stat on another select-->
+        <div name="selectors">
+
+            <label for="categorySelect">Select Category:</label>
+            <select id="categorySelect" name="categorySelect"> <!--pick category-->
+                <% categoryNames.forEach(category => { %>
+                    <option value="<%= index %>"><%= category %></option>
+                <% index++; 
+                }) %>
+            </select>
+
+            <%
+            index = 0;
+            statSort.forEach(stats => { %>
+                <div class="statSortingDiv">
+                    <label for="statSelect">Select Stat:</label>
+                    <select name="statSelect" class="statSelect">
+                        <% stats.forEach(stat => { %>
+                            <option value="<%= index %>"><%= stat %></option>
+                            <% index++; 
+                        });
+                        index = 0; %>
+                    </select>
+                </div>
+            <% }) %>
+
+        </div>
+
+        <div id="statTables">
+            
+            <% for (let catIndex = 0; catIndex < categoryNames.length; catIndex++) { %>
+                <div class="tableDiv">
+                    <h3><%= categoryNames[catIndex] %></h3>
+                    <table>
+                        <tr>
+                            <th>Team</th>
+                            <% leagueStats[0].categories[catIndex].stats.forEach(stat => { %>
+                                <th><%= stat.abbreviation %></th>
+                            <% }) %>
+                        </tr>
+                        <% leagueStats.forEach(team => { %>
+                            <tr>
+                                <th><%= team.teamName %></th>
+                                <% team.categories[catIndex].stats.forEach(stat => { %>
+                                    <td><%= stat.displayValue %></td>
+                                <% }) %>
+                            </tr>
+                        <% }) %>
+                    </table>
+                </div>
+            <% } %>
+        </div>
+
+        <script type="text/javascript">
+
+            const leagueStats = <%- JSON.stringify(leagueStats) %>;
+            const categorySelector = document.getElementById('categorySelect'); //category select
+            const statSelectors = document.querySelectorAll('.statSelect'); //stat selects
+
+            const selectDivs = document.querySelectorAll('.statSortingDiv');
+            selectDivs.forEach(div => div.style.display = 'none');
+
+            const tableDivs = document.querySelectorAll('.tableDiv');
+            tableDivs.forEach(div => div.style.display = 'none');
+
+            //make stat selects appear
+            function toggleStatSelect(){
+                const index = categorySelector.value;
+                selectDivs.forEach(div => div.style.display = 'none');
+                selectDivs[index].style.display = 'inline';
+            }
+
+            //make tables appear
+            function toggleTable() {
+                const index = categorySelector.value;
+                tableDivs.forEach(table => table.style.display = 'none');
+                tableDivs[index].style.display = 'block';
+            }
+
+            //sort table
+            function sortTable(){
+                const catIndex = categorySelector.value; //value of selected category
+                const statIndex = parseInt(statSelectors[catIndex].value); //value of selected stat
+
+                leagueStats.sort((team1, team2) => team2.categories[catIndex].stats[statIndex].value - 
+                     team1.categories[catIndex].stats[statIndex].value);
+                
+                //replace each row
+                const table = document.querySelectorAll('table')[catIndex];
+                table.replaceChildren(table.rows[0]);
+
+                leagueStats.forEach(team => {
+                    const row = document.createElement('tr');
+                    const name = document.createElement('th');
+                    name.textContent = team.teamName; //add in team name cell
+                    row.append(name);
+                    team.categories[catIndex].stats.forEach(stat => { //go through each stat and make the cell
+                        const cell = document.createElement('td');
+                        cell.textContent = stat.displayValue;
+                        row.append(cell);
+                    });
+                    table.append(row);
+                });
+
+                Array.from(table.rows).forEach(row => {
+                    Array.from(row.cells).forEach(cell => cell.style.backgroundColor = 'white');
+                    row.children[statIndex + 1].style.backgroundColor = 'lightblue';
+                });
+            }
+
+            toggleStatSelect();
+            toggleTable();
+
+            categorySelector.addEventListener('change', toggleStatSelect);
+            categorySelector.addEventListener('change', toggleTable);
+            statSelectors.forEach(selector => {
+                selector.addEventListener('change', sortTable);
+            });
+        </script>
+    </body>
+</html>

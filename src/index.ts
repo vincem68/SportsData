@@ -11,17 +11,45 @@ app.use(express.static('public'));
 
 const port = 8000;
 
+const nflTeams = [
+    'ARI', 'ATL', 'BAL', 'BUF', 'CAR', 'CHI', 'CIN', 'CLE',
+    'DAL', 'DEN', 'DET', 'GB', 'HOU', 'IND', 'JAX', 'KC',
+    'LAC', 'LAR', 'LV', 'MIA', 'MIN', 'NE', 'NO', 'NYG',
+    'NYJ', 'PHI', 'PIT', 'SF', 'SEA', 'TB', 'TEN', 'WSH'
+];
+
+const nbaTeams = [
+    'ATL', 'BKN', 'BOS', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 
+    'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA',
+    'MIL', 'MIN', 'NO', 'NYK', 'OKC', 'ORL', 'PHI', 'PHX', 
+    'POR', 'SAC', 'SAS', 'TOR', 'UTAH', 'WAS'
+];
+
+const mlbTeams = [
+    'ARI', 'ATL', 'BAL', 'BOS', 'CHC', 'CHW', 'CIN', 'CLE', 
+    'COL', 'DET', 'MIA', 'HOU', 'KC', 'LAA', 'LAD', 'MIL', 
+    'MIN', 'NYM', 'NYY', 'ATH', 'PHI', 'PIT', 'SD', 'SF', 
+    'SEA', 'STL', 'TB', 'TEX', 'TOR', 'WSH'
+];
+
+const nhlTeams = [
+    'ANA', 'BOS', 'BUF', 'CAR', 'CBJ', 'CGY', 'CHI', 'COL',
+    'DAL', 'DET', 'EDM', 'FLA', 'LA', 'MIN', 'MTL', 'NJD', 
+    'NSH', 'NYI', 'NYR', 'OTT', 'PHI', 'PIT', 'SEA', 'SJ', 
+    'STL', 'TB', 'TOR', 'UTA', 'VAN', 'VGK', 'WPG', 'WSH'
+];
+
 app.get('/:sport/:league/games/:id', async function(req: Request, res: Response){
 
     const sport = req.params.sport;
     const league = req.params.league;
     const game_id = req.params.id;
 
-    const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard/${game_id}`);
-    const overview = await response.json();
+    const overview = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports` +
+        `/${sport}/${league}/scoreboard/${game_id}`)).json();
 
-    const response2 = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/summary?event=${game_id}`);
-    const summary = await response2.json();
+    const summary = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports` +
+        `/${sport}/${league}/summary?event=${game_id}`)).json();
 
     //maybe we need to see what kinds of data is available in the pre state
     //overview will be used for selected_game, boxscore will be used for the more specific subfile
@@ -143,6 +171,28 @@ app.get('/:sport/:league/teams', async function(req: Request, res: Response){
     const response = await fetch(`http://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams`);
     const data = await response.json();
     res.render('team_selection', {port: port, sport: sport, league: league, teams: data.sports[0].leagues[0].teams});
+})
+
+app.get('/:sport/:league/stats', async function(req: Request, res: Response){
+
+    const sport = req.params.sport;
+    const league = req.params.league;
+    const leagueStats: any[] = [];
+
+    const teamIDs = (league.toUpperCase() == "NFL") ? nflTeams : (league.toUpperCase() == "NBA") ? nbaTeams :
+        (league.toUpperCase() == "MLB") ? mlbTeams : nhlTeams;
+    
+    //loop through the teams array and make a call on each ID to get that teams data, and render the data
+    
+    for (const team of teamIDs){
+        const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/` +
+            `${sport}/${league}/teams/${team}/statistics`);
+        const teamData = await response.json();
+        leagueStats.push({teamName: team, categories: teamData.results.stats.categories});
+    }
+    
+    res.render('league_stats', {port: port, sport: sport, league: league, leagueStats: leagueStats});
+    
 })
 
 /**
