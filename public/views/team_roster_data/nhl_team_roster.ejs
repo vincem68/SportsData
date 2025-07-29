@@ -28,6 +28,11 @@
                 <td><%= player.displayWeight %></td>
                 <td><%= player.displayHeight %></td>
                 <td><%= player.experience.years %></td>
+                <td>
+                    <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/player/<%= player.id %>">
+                        Player Stats
+                    </a>
+                </td>
             </tr>
             <% }) %>
         </table>

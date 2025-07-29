@@ -29,6 +29,11 @@
             <td><%= athlete.displayHeight %></td>
             <td><%= athlete.position.abbreviation %></td>
             <td><%= athlete.experience.years %></td>
+            <td>
+                <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/player/<%= athlete.id %>">
+                    Player Stats
+                </a>
+            </td>
         </tr>
         
     <% }) %>

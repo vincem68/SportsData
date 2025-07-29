@@ -195,6 +195,27 @@ app.get('/:sport/:league/stats', async function(req: Request, res: Response){
     
 })
 
+app.get('/:sport/:league/player/:playerID', async function(req: Request, res: Response){
+
+    const sport = req.params.sport;
+    const league = req.params.league;
+    const playerID = req.params.playerID;
+
+    const endpoint = `https://site.web.api.espn.com/apis/common/v3/sports/${sport}/${league}/athletes/${playerID}`;
+
+    //get the basic info of player like name, position, team, etc
+    const basicPlayerInfo = await (await fetch(endpoint)).json();
+
+    //get the basic stats of player, like regular season stats, career, postseason
+    const mainPlayerStats = await (await fetch(endpoint + "/overview")).json();
+
+    //get advanced splits of a player
+    const advancedPlayerStats = await (await fetch(endpoint + "/splits")).json();
+
+    res.render('player_stats', {port: port, sport: sport, league: league, generalInfo: basicPlayerInfo, 
+        playerOverview: mainPlayerStats, playerSplits: advancedPlayerStats});
+})
+
 /**
  * For the home page, gets index.ejs
  */

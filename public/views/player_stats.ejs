@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title><%= generalInfo.athlete.displayName %> Stats</title>
+    </head>
+
+    <body>
+
+        <%- include ('menu_header') %>
+
+        <div id="playerInfoDiv">
+            <img src="<%= generalInfo.athlete.headshot.href %>"> <!--player pic-->
+            <h2><%= generalInfo.athlete.displayName %></h2> <!--player name-->
+            <img src="<%= generalInfo.athlete.team.logos[0].href %>"> <!--team logo-->
+            
+            <h3><%= generalInfo.athlete.team.displayName + " " + generalInfo.athlete.position.displayName %></h3>
+            <h3>No. <%= generalInfo.athlete.jersey %></h3>
+         
+        </div>
+
+        <div id="mainStats">
+            
+            <% playerOverview.statistics.splits.forEach(split => { %>
+
+                <div>
+                    <h3><%= split.displayName %></h3>
+                    <table>
+                        <tr>
+                            <% playerOverview.statistics.labels.forEach(label => { %>
+                                <th><%= label %></th>
+                            <% }) %>
+                        </tr>
+                        <tr>
+                            <% split.stats.forEach(stat => { %>
+                                <td><%= stat %></td>
+                            <% }) %>
+                        </tr>
+                    </table>
+                </div>
+            <% }) %>
+        </div>
+
+       <div id="advancedStatsSection">
+            <div id="advancedStatsFilter">
+                <label for="catSelect">Select a Category</label>
+                <select id="catSelect" name="catSelect">
+                    <% let index = 0;
+                    playerSplits.splitCategories.forEach(category => { %>
+
+                        <option value="<%= index %>"><%= category.displayName %></option>
+
+                    <% index++;
+                    }) %>
+                </select>
+
+                <label for="splitSelect">Select a Stat:</label>
+                <% playerSplits.splitCategories.forEach(category => { 
+                    index = 0; %>
+
+                    <select name="splitSelect" class="splitSelect">
+                        <option value="-1">--</option>
+                        <% category.splits.forEach(split => { %>
+                            <option value="<%= index %>"><%= split.displayName %></option>
+                        <% index++; }) %>
+                    </select>
+                <% }) %>
+            </div>
+
+            <div id="advancedStatsTables">
+                <h3>Showing Stats for <%= playerSplits.splitCategories[0].splits[0].displayName %></h3>
+                <table id="advancedSplitsTable">
+                    <tr>
+                        <% playerSplits.labels.forEach(label => { %>
+                            <td><%= label %></td>
+                        <% }) %>
+                    </tr>
+                    <tr>
+                        <% playerSplits.splitCategories[0].splits[0].stats.forEach(stat => { %>
+                            <td><%= stat %></td> 
+                        <% }) %>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <script>
+
+            const categorySelector = document.getElementById('catSelect');
+            const statSelectors = document.querySelectorAll('.splitSelect');
+            const advancedSplitsTable = document.getElementById('advancedSplitsTable');
+
+            statSelectors.forEach(selector => selector.style.display = 'none');
+            statSelectors[0].style.display = 'inline';
+
+            //make stat selects and tables appear
+            function toggleStatSelect(){
+                const index = categorySelector.value;
+                statSelectors.forEach(select => select.style.display = 'none');
+                statSelectors[index].style.display = 'inline';
+            }
+
+            function clearTable(){
+                const index = categorySelector.value;
+                advancedSplitsTable.replaceChildren(advancedSplitsTable.rows[0]);
+                //make stat selector default option
+                statSelectors[index].value = -1;
+            }
+
+            function getSplits(){
+                const catIndex = categorySelector.value;
+                const splitIndex = statSelectors[catIndex].value;
+                advancedSplitsTable.replaceChildren(advancedSplitsTable.rows[0]);
+                if (splitIndex != -1){
+                    const row = document.createElement('tr');
+                    const playerSplits = <%- JSON.stringify(playerSplits) %>;
+                    playerSplits.splitCategories[catIndex].splits[splitIndex].stats.forEach(stat => {
+                        const cell = document.createElement('td');
+                        cell.textContent = stat;
+                        row.append(cell);
+                    });
+                    advancedSplitsTable.append(row);
+                }
+            }
+
+            toggleStatSelect;
+
+            categorySelector.addEventListener('change', toggleStatSelect);
+            categorySelector.addEventListener('change', clearTable);
+            statSelectors.forEach(selector => {
+                selector.addEventListener('change', getSplits);
+            });
+
+        </script>
+    </body>
+</html>

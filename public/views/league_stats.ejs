@@ -14,6 +14,7 @@
 <html>
     <head>
         <title><%= league.toUpperCase() %> Stats</title>
+        <link rel="stylesheet" href="/styles/league_stats.css">
     </head>
 
     <body>
@@ -87,16 +88,11 @@
             const tableDivs = document.querySelectorAll('.tableDiv');
             tableDivs.forEach(div => div.style.display = 'none');
 
-            //make stat selects appear
-            function toggleStatSelect(){
+            //make stat selects and tables appear
+            function toggleStatSelectAndTable(){
                 const index = categorySelector.value;
                 selectDivs.forEach(div => div.style.display = 'none');
                 selectDivs[index].style.display = 'inline';
-            }
-
-            //make tables appear
-            function toggleTable() {
-                const index = categorySelector.value;
                 tableDivs.forEach(table => table.style.display = 'none');
                 tableDivs[index].style.display = 'block';
             }
@@ -135,8 +131,7 @@
             toggleStatSelect();
             toggleTable();
 
-            categorySelector.addEventListener('change', toggleStatSelect);
-            categorySelector.addEventListener('change', toggleTable);
+            categorySelector.addEventListener('change', toggleStatSelectAndTable);
             statSelectors.forEach(selector => {
                 selector.addEventListener('change', sortTable);
             });
