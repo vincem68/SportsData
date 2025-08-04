@@ -3,6 +3,7 @@
 <html>
     <head>
         <title><%= generalInfo.athlete.displayName %> Stats</title>
+        <link rel="stylesheet" href="/styles/player_stats.css">
     </head>
 
     <body>
@@ -10,12 +11,13 @@
         <%- include ('menu_header') %>
 
         <div id="playerInfoDiv">
-            <img src="<%= generalInfo.athlete.headshot.href %>"> <!--player pic-->
-            <h2><%= generalInfo.athlete.displayName %></h2> <!--player name-->
-            <img src="<%= generalInfo.athlete.team.logos[0].href %>"> <!--team logo-->
-            
-            <h3><%= generalInfo.athlete.team.displayName + " " + generalInfo.athlete.position.displayName %></h3>
-            <h3>No. <%= generalInfo.athlete.jersey %></h3>
+            <img id="headshot" src="<%= generalInfo.athlete.headshot.href %>"> <!--player pic-->
+            <h1><%= generalInfo.athlete.displayName %></h1> <!--player name-->
+            <div id="extraPlayerInfo">
+                <img id="teamLogo" src="<%= generalInfo.athlete.team.logos[0].href %>">
+                <h2><%= generalInfo.athlete.team.displayName + " " + generalInfo.athlete.position.displayName %></h2>
+                <h3>No. <%= generalInfo.athlete.jersey %></h3>
+            </div>
          
         </div>
 
@@ -72,7 +74,7 @@
                 <table id="advancedSplitsTable">
                     <tr>
                         <% playerSplits.labels.forEach(label => { %>
-                            <td><%= label %></td>
+                            <th><%= label %></th>
                         <% }) %>
                     </tr>
                     <tr>

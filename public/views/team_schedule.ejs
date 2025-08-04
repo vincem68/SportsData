@@ -3,7 +3,7 @@
 <html>
     <head>
         <title><%= data.team.displayName %> Schedule</title>
-        <link rel="stylesheet" href="/styles/schedules.css">
+        <link rel="stylesheet" href="/styles/team_schedule.css">
     </head>
 
     <body>
@@ -33,21 +33,31 @@
         <% if (data.events.length == 0){ %>
             <h2>Season Schedule Not Available. Check Back Later!</h2>
         <% } else { %>
-            <div>
+            <div id="dataSection">
                 <% const team = (data.events[data.events.length - 1].competitions[0].competitors[0].team.abbreviation 
                     == data.team.abbreviation) ? 0 : 1 %>
 
                 <h2>Schedule for <%= data.requestedSeason.displayName %> <%= data.requestedSeason.name %></h2>
-                <h3>
-                    Overall Record: <%= data.events[data.events.length - 1].competitions[0]
-                        .competitors[team].record[0].displayValue %>
-                </h3>
+                <%
+                    const mostRecentGame = data.events.findLast(game => 
+                        game.competitions[0].competitors[0].record !== undefined);
+                    
+                    if (mostRecentGame === undefined){ %>
+                        <h3>Overall Record: 0-0</h3>
+                    <% } else {
+
+                        const record = (data.team.abbreviation == 
+                            mostRecentGame.competitions[0].competitors[0].team.abbreviation) ? 0 : 1; %>
+                        <h3>
+                            Overall Record: <%= mostRecentGame.competitions[0].competitors[record].record.displayValue %>
+                        </h3>
+                    <% } %>
                 <!--Idea: have the home and road games be different colors-->
                 <table>
                     <tr>
                         <th>Date</th>
                         <th>vs. / @</th>
-                        <th>Opposing Team</th>
+                        <th>Opponent</th>
                         <th>Status</th> <!--W/L, not played, in progress?-->
                     </tr>
                     <% 
@@ -58,39 +68,50 @@
                             <td>
                                 <% if (game.competitions[0].competitors[0].team.abbreviation == data.team.abbreviation){ 
                                     opp = 1; %>
-                                    vs.
+                                    <strong>vs.</strong>
                                 <% } else { 
                                     opp = 0; %>
-                                    @
+                                    <strong>@</strong>
                                 <% } %>
                             </td>
                             <td>
-                                <div>
+                                <div class="opponentDiv">
                                     <% if (game.competitions[0].competitors[opp].team.logos !== undefined){ %>
-                                        <img class="scheduleLogo" src="<%= game.competitions[0].competitors[opp].team.logos.href %>">
+                                        <img class="opponentLogo" src="<%= game.competitions[0].competitors[opp].team.logos[0].href %>">
                                     <% } %>
-                                    <h6><%= game.competitions[0].competitors[opp].team.abbreviation %></h6>
+                                    <h3><%= game.competitions[0].competitors[opp].team.abbreviation %></h3>
                                 </div>
                             </td>
-                            <td>
+                            <td class="resultTD">
                                 <% if (game.competitions[0].status.type.state == "post"){
 
                                     if (game.competitions[0].competitors[opp].winner){ %>
-                                        <h3>L</h3>
+                                        <strong class="result">L</strong>
                                     <% } else { %>
-                                        <h3>W</h3>
+                                        <strong class="result">W</strong>
                                     <% } %>
 
                                 <% } else if (game.competitions[0].status.type.state == "pre"){ %>
-                                    ---
+                                    <strong>---</strong>
                                 <% } else { %>
-                                    In Progress
+                                    <strong>In Progress</strong>
                                 <% } %>
                             </td>
+                            <td><a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">Game Stats</a></td>
                         </tr>
                     <% }) %>
                 </table>
             </div>
         <% } %>
+
+        <script>
+            const resultCells = document.querySelectorAll('.resultTD');
+            resultCells.forEach(cell => {
+                if (cell.textContent.includes("W")) { cell.style.backgroundColor = 'lightgreen'; }
+                if (cell.textContent.includes("L")) { cell.style.backgroundColor = 'red'; }
+                if (cell.textContent.includes("In Progress")) { cell.style.backgroundColor = 'lightyellow'; }
+                if (cell.textContent.includes("---")) { cell.style.backgroundColor = 'lightgray'; }
+            });
+        </script>
     </body>
 </html>

@@ -1,0 +1,23 @@
+@import "table.css";
+
+div {
+    place-items: center;
+}
+
+#extraPlayerInfo {
+    display: inline-flex;
+}
+
+#teamLogo {
+    height: 60px;
+    width: 60px;
+}
+
+#teamLogo h3 {
+    display: block;
+}
+
+#headshot {
+    height: 30%;
+    width: 50%;
+}

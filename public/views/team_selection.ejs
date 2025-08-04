@@ -19,15 +19,15 @@
             <% } %>
 
             <h1><%= league.toUpperCase() %> Teams</h1>
-            <h3>Select a Team to Get Stats and Roster Info</h3>
+            <h3>Click on a Team to Visit their own Page</h3>
         </div>
 
         <div id="teamsContainer">
             <% teams.forEach(team => { %>
                 <div class = 'displayedTeam'>
-                    <img src = '<%= team.team.logos[0].href %>' class="teamLogo">
-                    <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/teams/<%= team.team.abbreviation %>">
-                        <%= team.team.displayName %>
+                    <a class="teamLink" href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/teams/<%= team.team.abbreviation %>">
+                        <img src = '<%= team.team.logos[0].href %>' class="teamLogo">
+                        <h4><%= team.team.displayName %></h4>
                     </a>
                 </div>
             <% }) %>

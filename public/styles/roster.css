@@ -10,8 +10,18 @@
 
 table {
     margin-top: 50px;
+    border-style: solid;
     border-color: black;
-    border-radius: 10%;
+    border-width: 10px;
+}
+
+tr {
+    border-style: solid;
+    border-color: black;
+}
+
+td {
+    margin-left: 5px; margin-right: 5px;
 }
 
 #teamTitleDisplayDiv {

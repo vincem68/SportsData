@@ -11,7 +11,12 @@
 #mainLogoContainer {
     display: flex;
     flex-flow: column wrap;
-    justify-content: baseline;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+    border-bottom-style: solid;
+    border-bottom-width: 50px;
+    border-bottom-color: black;
 }
 
 #teamsContainer {
@@ -21,12 +26,17 @@
 }
 
 .displayedTeam {
-    margin: 20px;
+    margin: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
 }
 
-body {
-    background-color: rgb(188, 188, 148);
+.teamLink {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    margin: 15px;
 }
