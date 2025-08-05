@@ -60,7 +60,15 @@
                         <tr>
                             <th>Team</th>
                             <% leagueStats[0].categories[catIndex].stats.forEach(stat => { %>
-                                <th><%= stat.abbreviation %></th>
+                                <th>
+                                    <div class="tooltip"><%= stat.abbreviation %>
+                                        <span class="tooltip-text">
+                                            <u><%= stat.displayName %></u>
+                                            <br>
+                                            <%= stat.description %>
+                                        </span>
+                                    </div>
+                                </th>
                             <% }) %>
                         </tr>
                         <% leagueStats.forEach(team => { %>
