@@ -1,3 +1,5 @@
+@import "general_styles.css";
+
 .imageRow {
     display: flex;
     flex-flow: row wrap;

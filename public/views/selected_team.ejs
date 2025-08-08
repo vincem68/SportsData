@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 
 <html>
+
     <head>
         <title><%= data.team.displayName %></title>
+        <link rel="stylesheet" href="/styles/team_page.css">
     </head>
+
     <body>
 
         <%- include ('menu_header') %>
@@ -11,18 +14,37 @@
         <div id="titleSection">
             <img id="teamLogo" src="<%= data.team.logos[0].href %>">
             <h1><%= data.team.displayName %></h1>
+            <h4>Current Record: <%= data.team.record.items[0].summary %></h4>
         </div>
 
-        <div id="gameSection">
-            <h2>Scheduled Games Today:</h2>
-            <!--Have a conditional here that checks to see if there's anything scheduled-->
+        <div id="linkSection">
+
+            <div class="link">
+                <img class="icon" src="/images/roster_icon.png">
+                <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/teams/<%= team %>/roster">
+                    Team Roster
+                </a>
+            </div>
+            <div class="link">
+                <img class="icon" src="/images/schedule_icon.png">
+                <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/teams/<%= team %>/schedule">
+                    Team Schedule
+                </a>
+            </div>
+            <div class="link">
+                <img class="icon" src="/images/stat_icon.png">
+                <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/teams/<%= team %>/stats">
+                    Team Stats
+                </a>
+            </div>
         </div>
 
         <div id="newsSection">
 
             <h2>Latest News</h2>
+            <h6>All Stories Written and Published by ESPN</h6>
 
-            <% const articles = news.articles.filter(article => article.type == "HeadlineNews");
+            <% const articles = news.articles;
 
             if (articles.length == 0){ %>
 
@@ -36,24 +58,14 @@
                         <% if (article.images !== undefined){ %>
                             <img class="newsImage" src="<%= article.images[0].url %>">
                         <% } %>
-                        <h3><%= article.headline %></h3>
-                        <p><%= article.description %></p>
+                        <h3><u><%= article.headline %></u></h3>
+                        <h4><%= article.description %></h4>
                         <a href=" <%= article.links.web.href %>">Read More</a>
                     </div>
                 <% })
             } %>
         </div>
 
-        <div id="linkSection">
-            <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/teams/<%= team %>/roster">
-                <%= data.team.displayName %> Roster
-            </a>
-            <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/teams/<%= team %>/schedule">
-                <%= data.team.displayName %> Schedule
-            </a>
-            <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/teams/<%= team %>/stats">
-                <%= data.team.displayName %> Stats
-            </a>
-        </div>
+        <%- include ('footer') %>
     </body>
 </html>

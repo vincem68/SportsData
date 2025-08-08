@@ -1,0 +1,76 @@
+@import "general_styles.css";
+@import "footer.css";
+
+#titleSection {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    text-shadow: 1px 1px 1px red;
+}
+
+#teamLogo {
+    height: 20%;
+    width: 20%;
+}
+
+#linkSection {
+    background-color: lightgreen;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.link {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    text-decoration-color: black;
+    text-decoration: solid;
+}
+
+#newsSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.article {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 10px;
+    border-top-style: solid;
+    border-top-width: 5px;
+}
+
+.newsImage {
+    margin-top: 15px;
+    height: 200px;
+    width: 350px;
+    border-color: black;
+    border-width: 5px;
+    border-style: solid;
+}
+
+.link a {
+    font-family: 'Lucida Sans';
+}
+
+.icon {
+    height: 60px;
+    width: 60px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.article h3 {
+    text-transform: uppercase;
+}
