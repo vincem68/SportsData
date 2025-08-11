@@ -23,8 +23,6 @@
 
     <%- include ('menu_header') %>
 
-    <h1>Showing Games for <%= month + "/" + day + "/" + year %></h1>
-
     <% if (league.toUpperCase() == "NFL"){ %>
 
         <!--This will be what we select for the week, will show all games for the week-->
@@ -170,6 +168,8 @@
             <% }) %>
         </div>
     <% } %>
+
+    <%- include ('footer') %>
 
     <script>
         const form = document.getElementById("dateSelection");

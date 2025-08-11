@@ -3,6 +3,7 @@
 
     <head>
         <title><%= overview.name %></title>
+        <link rel="stylesheet" href="/styles/selected_game.css">
     </head>
 
     <body>
@@ -12,15 +13,14 @@
         <div id="overview">
 
             <div class="teamOverview">
-                <img src="<%= overview.competitions[0].competitors[1].team.logo %>">
+                <img class="teamLogo" src="<%= overview.competitions[0].competitors[1].team.logo %>">
                 <h3><%= overview.competitions[0].competitors[1].team.displayName %></h3>
                 <% if (overview.status.type.state != "pre"){ %>
-                    <h4><%= overview.competitions[0].competitors[1].score %></h4> <!--score-->
+                    <h1><%= overview.competitions[0].competitors[1].score %></h1> <!--score-->
                 <% } %>
             </div>
 
             <div id="gameInfoOverview"> <!--Put status of game here-->
-                <h4>vs.</h4>
                 <% if (overview.status.type.state == "pre"){ %><!--Show scheduled time here-->
 
                     <h4><%= overview.competitions[0].status.type.shortDetail.substring(
@@ -32,26 +32,28 @@
                     <% if (league.toUpperCase() == "MLB"){ %>
 
                         <h4><%= overview.status.type.shortDetail %></h4>
-                        <h4>
+                        <h1>
                             <%= overview.competitions[0].situation.balls %> - 
-                            <%= overview.competitions[0].situation.strikes %> <%= 
-                                overview.competitions[0].situation.outs %>
-                        </h4>
+                            <%= overview.competitions[0].situation.strikes %> 
+                        </h1>
+                        <h1><%= overview.competitions[0].situation.outs %> Outs</h1>
+                    <% } else if (league.toUpperCase() == "NHL") { %>
+                        <h1><%= overview.status.period %> Period</h1>
+                        <h3><%= overview.status.displayClock %></h3>
                     <% } else { %>
-
-                        <h4><%= overview.status.period %></h4>
-                        <h4><%= overview.status.displayClock %></h4>
-                    <% } 
+                        <h1><%= overview.status.period %> Quarter</h1>
+                        <h3><%= overview.status.displayClock %></h3>
+                    <% }
                 } else { %>
-                    <h4>Final</h4>
+                    <h1 class="status">Final</h1>
                 <% } %>
             </div>
 
             <div class="teamOverview">
-                <img src="<%= overview.competitions[0].competitors[0].team.logo %>">
+                <img class="teamLogo" src="<%= overview.competitions[0].competitors[0].team.logo %>">
                 <h3><%= overview.competitions[0].competitors[0].team.displayName %></h3>
                 <% if (overview.status.type.state != "pre"){ %>
-                    <h4><%= overview.competitions[0].competitors[0].score %></h4> <!--score-->
+                    <h1><%= overview.competitions[0].competitors[0].score %></h1> <!--score-->
                 <% } %>
             </div>
         </div>
@@ -73,6 +75,8 @@
             <%- include('league_game_data/nhl_game') %>
 
         <% } %>
+
+        <%- include ('footer') %>
 
     </body>
 </html>

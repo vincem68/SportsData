@@ -53,7 +53,7 @@ app.get('/:sport/:league/games/:id', async function(req: Request, res: Response)
 
     //maybe we need to see what kinds of data is available in the pre state
     //overview will be used for selected_game, boxscore will be used for the more specific subfile
-    res.render('selected_game', {port: port, league: league, overview: overview, boxscore: summary.boxscore});
+    res.render('selected_game', {port: port, league: league, overview: overview, summary: summary});
 })
 
 /**

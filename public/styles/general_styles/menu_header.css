@@ -7,6 +7,23 @@
     margin-top: 0px;
 }
 
+.display {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#nbaLogo {
+    height: 90px;
+    width: 90px;
+    margin-right: 0px;
+}
+
+.leagueLogo {
+    height: 35px;
+    width: 35px;
+}
+
 .leagueDropDown {
     position: relative;
     cursor: pointer;

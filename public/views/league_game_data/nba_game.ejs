@@ -6,12 +6,12 @@
         <table>
             <tr>
                 <th>Teams</th>
-                <td><%= boxscore.teams[0].team.abbreviation %></td>
-                <td><%= boxscore.teams[1].team.abbreviation %></td>
+                <td><%= summary.boxscore.teams[0].team.abbreviation %></td>
+                <td><%= summary.boxscore.teams[1].team.abbreviation %></td>
             </tr>
             <tr>
                 <th>Avg PTs</th>
-                <td><%= boxscore.teams[0].statistics[2].displayValue %></td>
+                <td><%= summary.boxscore.teams[0].statistics[2].displayValue %></td>
                 <td><%= boxscore.teams[1].statistics[2].displayValue %></td>
             </tr>
             <tr>
@@ -53,152 +53,108 @@
     </div>
 
 <% } else { <!--Games in progress and completed show the ongoing/final stats here-->
-
-    const activeAwayPlayers = boxscore.players[0].statistics[0].athletes.filter(athlete => athlete.didNotPlay == false);
-    const activeHomePlayers = boxscore.players[1].statistics[0].athletes.filter(athlete => athlete.didNotPlay == false);
+    summary.boxscore.teams[0].statistics[18].abbreviation = "PCOT";
+    summary.boxscore.teams[1].statistics[18].abbreviation = "PCOT";
 %>
 
-    <div id="teamStats">
+    <div class="boxscoreDiv">
+
+        <h3>Box Score</h3>
         <table>
             <tr>
                 <th>Team</th>
-                <td><%= boxscore.teams[0].team.abbreviation %></td>
-                <td><%= boxscore.teams[1].team.abbreviation %></td>
+                <% summary.boxscore.teams[0].statistics.forEach(stat => {
+                    if (stat.abbreviation !== undefined){ %>
+                        <th><%= stat.abbreviation %></th>
+                    <% } else { %>
+                        <th><%= stat.label %></th>
+                    <% }
+                }) %>
             </tr>
             <tr>
-                <th>Field Goal %</th>
-                <td><%= boxscore.teams[0].statistics[1].displayValue %></td>
-                <td><%= boxscore.teams[1].statistics[1].displayValue %></td>
+                <th><%= summary.boxscore.teams[0].team.abbreviation %></th>
+                <% summary.boxscore.teams[0].statistics.forEach(stat => { %>
+                    <td><%= stat.displayValue %></td>
+                <% }) %>
             </tr>
             <tr>
-                <th>3 Point %</th>
-                <td><%= boxscore.teams[0].statistics[3].displayValue %></td>
-                <td><%= boxscore.teams[1].statistics[3].displayValue %></td>
-            </tr>
-            <tr>
-                <th>Free Throw %</th>
-                <td><%= boxscore.teams[0].statistics[5].displayValue %></td>
-                <td><%= boxscore.teams[1].statistics[5].displayValue %></td>
-            </tr>
-            <tr>
-                <th>Offensive Rebounds</th>
-                <td><%= boxscore.teams[0].statistics[7].displayValue %></td>
-                <td><%= boxscore.teams[1].statistics[7].displayValue %></td>
-            </tr>
-            <tr>
-                <th>Defensive Rebounds</th>
-                <td><%= boxscore.teams[0].statistics[8].displayValue %></td>
-                <td><%= boxscore.teams[1].statistics[8].displayValue %></td>
-            </tr>
-            <tr>
-                <th>Total Rebounds</th>
-                <td><%= boxscore.teams[0].statistics[6].displayValue %></td>
-                <td><%= boxscore.teams[1].statistics[6].displayValue %></td>
-            </tr>
-            <tr>
-                <th>Assists</th>
-                <td><%= boxscore.teams[0].statistics[9].displayValue %></td>
-                <td><%= boxscore.teams[1].statistics[9].displayValue %></td>
-            </tr>
-            <tr>
-                <th>Steals</th>
-                <td><%= boxscore.teams[0].statistics[10].displayValue %></td>
-                <td><%= boxscore.teams[1].statistics[10].displayValue %></td>
-            </tr>
-            <tr>
-                <th>Blocks</th>
-                <td><%= boxscore.teams[0].statistics[11].displayValue %></td>
-                <td><%= boxscore.teams[1].statistics[11].displayValue %></td>
-            </tr>
-            <tr>
-                <th>Turnovers</th>
-                <td><%= boxscore.teams[0].statistics[14].displayValue %></td>
-                <td><%= boxscore.teams[1].statistics[14].displayValue %></td>
-            </tr>
-            <tr>
-                <th>Turnover Points</th>
-                <td><%= boxscore.teams[0].statistics[18].displayValue %></td>
-                <td><%= boxscore.teams[1].statistics[18].displayValue %></td>
+                <th><%= summary.boxscore.teams[1].team.abbreviation %></th>
+                <% summary.boxscore.teams[1].statistics.forEach(stat => { %>
+                    <td><%= stat.displayValue %></td>
+                <% }) %>
             </tr>
         </table>
     </div>
 
-    <div id="teamPlayersDiv"> <!--We'll put the player stats here-->
-
-        <table id="awayTeamPlayerStats">
-
-            <tr>
-                <th>PIC</th>
-                <th>NAME</th>
-                <th>MIN</th>
-                <th>PTS</th>
-                <th>FG%</th>
-                <th>3PT%</th>
-                <th>FT%</th>
-                <th>OREB</th>
-                <th>DREB</th>
-                <th>REB</th>
-                <th>AST</th>
-                <th>STL</th>
-                <th>BLK</th>
-                <th>TO</th>
-                <th>PF</th>
-            </tr>
-
-            <% activeAwayPlayers.forEach(player => { %>
-
-                <tr>
-                    <td>
-                        <% if (player.athlete.headshot !== undefined){ %>
-                            <img src="<%= player.athlete.headshot.href %>">
-                        <% } else { %>
-                            <img src="/images/default_headshot.png">
-                        <% } %>
-                        <p><%= player.athlete.shortName %></p>
-                    </td>
-                    <td><%= player.stats[0] %></td>
-                    <td><%= player.stats[13] %></td>
-                    <td><%= player.stats[1] %></td>
-                    <td><%= player.stats[2] %></td>
-                    <td><%= player.stats[3] %></td>
-                    <td><%= player.stats[4] %></td>
-                    <td><%= player.stats[5] %></td>
-                    <td><%= player.stats[6] %></td>
-                    <td><%= player.stats[7] %></td>
-                    <td><%= player.stats[8] %></td>
-                    <td><%= player.stats[9] %></td>
-                    <td><%= player.stats[10] %></td>
-                    <td><%= player.stats[11] %></td>
-                </tr>
+    <div class="leaderSection">
+        
+        <h2><%= summary.leaders[0].team.abbreviation %> Leaders</h2>
+        <div class="awayTeamLeaders">
+            <% summary.leaders[0].leaders.forEach(leader => { %>
+                <div class="leaderDiv">
+                    <div class="leaderTitleDiv">
+                        <img class="headshot" src="<%= leader.leaders[0].athlete.headshot.href %>">
+                        <h5 class="leaderName"><%= leader.leaders[0].athlete.displayName %></h5>
+                    </div>
+                    <p class="leaderDesc"><%= leader.displayName %>: <%= leader.leaders[0].displayValue %></p>
+                </div>
             <% }) %>
-        </table>
+        </div>
 
-        <table id="homeTeamPlayerStats">
-            <% activeHomePlayers.forEach(player => { %>
-                <tr>
-                    <td>
-                        <% if (player.athlete.headshot !== undefined){ %>
-                            <img src="<%= player.athlete.headshot.href %>">
-                        <% } else { %>
-                            <img src="/images/default_headshot.png">
-                        <% } %>
-                        <p><%= player.athlete.shortName %></p>
-                    </td>
-                    <td><%= player.stats[0] %></td>
-                    <td><%= player.stats[13] %></td>
-                    <td><%= player.stats[1] %></td>
-                    <td><%= player.stats[2] %></td>
-                    <td><%= player.stats[3] %></td>
-                    <td><%= player.stats[4] %></td>
-                    <td><%= player.stats[5] %></td>
-                    <td><%= player.stats[6] %></td>
-                    <td><%= player.stats[7] %></td>
-                    <td><%= player.stats[8] %></td>
-                    <td><%= player.stats[9] %></td>
-                    <td><%= player.stats[10] %></td>
-                    <td><%= player.stats[11] %></td>
-                </tr>
+        <h2><%= summary.leaders[1].team.abbreviation %> Leaders</h2>
+        <div class="homeTeamLeaders">
+            <% summary.leaders[1].leaders.forEach(leader => { %>
+                <div class="leaderDiv">
+                    <div class="leaderTitleDiv">
+                        <img class="headshot" src="<%= leader.leaders[0].athlete.headshot.href %>">
+                        <h5 class="leaderName"><%= leader.leaders[0].athlete.displayName %></h5>
+                    </div>
+                    <p class="leaderDesc"><%= leader.displayName %>: <%= leader.leaders[0].displayValue %></p>
+                </div>
             <% }) %>
-        </table>
+        </div>
+    </div>
+
+    <div class="playerStats"> <!--We'll put the player stats here-->
+
+        <div class="awayTeamPlayerStats">
+            <h2><%= summary.boxscore.players[0].team.name %> Player Stats</h2>
+            <table>
+                <tr>
+                    <th class="nameCol">Player</th>
+                    <% summary.boxscore.players[0].statistics[0].names.forEach(label => { %>
+                        <th><%= label %></th>
+                    <% }) %>
+                </tr>
+                <% summary.boxscore.players[0].statistics[0].athletes.forEach(athlete => { %>
+                    <tr>
+                        <th class="nameCol"><%= athlete.athlete.shortName %></th>
+                        <% athlete.stats.forEach(stat => { %>
+                            <td><%= stat %></td>
+                        <% }) %>
+                    </tr>
+                <% }) %>
+            </table>
+        </div>
+        
+        <div class="homeTeamPlayerStats">
+            <h2><%= summary.boxscore.players[1].team.name %> Player Stats</h2>
+            <table>
+                <tr>
+                    <th class="nameCol">Player</th>
+                    <% summary.boxscore.players[1].statistics[0].names.forEach(label => { %>
+                        <th><%= label %></th>
+                    <% }) %>
+                </tr>
+                <% summary.boxscore.players[1].statistics[0].athletes.forEach(athlete => { %>
+                    <tr>
+                        <th class="nameCol"><%= athlete.athlete.shortName %></th>
+                        <% athlete.stats.forEach(stat => { %>
+                            <td><%= stat %></td>
+                        <% }) %>
+                    </tr>
+                <% }) %>
+            </table>
+        </div>
     </div>
 <% } %>

@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/styles/menu_header.css">
+<link rel="stylesheet" href="/styles/general_styles/menu_header.css">
 <div id="headerArea">
 
     <div class="leagueDropDown">
@@ -8,7 +8,10 @@
     </div>
 
     <div class="leagueDropDown" onclick="showDropDown(0)">
-        <h1>NFL</h1>
+        <div class="display">
+            <img class="leagueLogo" src="/images/nfl_logo.png">
+            <h1>NFL</h1>
+        </div>
         <div class="list">
             <a href="http://localhost:<%= port %>/football/nfl/teams">NFL Teams</a>
             <a href="http://localhost:<%= port %>/football/nfl/stats">NFL Stats</a>
@@ -17,7 +20,10 @@
     </div>
 
     <div class="leagueDropDown" onclick="showDropDown(1)">
-        <h1>NBA</h1>
+        <div class="display">
+            <img id="nbaLogo" src="/images/nba_logo.png">
+            <h1>NBA</h1>
+        </div>
         <div class="list">
             <a href="http://localhost:<%= port %>/basketball/nba/teams">NBA Teams</a>
             <a href="http://localhost:<%= port %>/basketball/nba/stats">NBA Stats</a>
@@ -26,7 +32,10 @@
     </div>
 
     <div class="leagueDropDown" onclick="showDropDown(2)">
-        <h1>MLB</h1>
+        <div class="display">
+            <img class="leagueLogo" src="/images/mlb_logo.png">
+            <h1>MLB</h1>
+        </div>
         <div class="list">
             <a href="http://localhost:<%= port %>/baseball/mlb/teams">MLB Teams</a>
             <a href="http://localhost:<%= port %>/baseball/mlb/stats">MLB Stats</a>
@@ -35,7 +44,10 @@
     </div>
 
     <div class="leagueDropDown" onclick="showDropDown(3)">
-        <h1>NHL</h1>
+        <div class="display">
+            <img class="leagueLogo" src="/images/nhl_logo.png">
+            <h1>NHL</h1>
+        </div>
         <div class="list">
             <a href="http://localhost:<%= port %>/hockey/nhl/teams">NHL Teams</a>
             <a href="http://localhost:<%= port %>/hockey/nhl/stats">NHL Stats</a>
