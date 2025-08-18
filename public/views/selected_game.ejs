@@ -1,3 +1,11 @@
+<%
+    if (league.toUpperCase() == "NBA" && overview.status.type.state != "pre"){
+        summary.boxscore.teams[0].statistics[18].abbreviation = "PCOT";
+        summary.boxscore.teams[1].statistics[18].abbreviation = "PCOT";
+    }
+%>
+
+
 <!DOCTYPE html>
 <html>
 
@@ -10,16 +18,20 @@
 
         <%- include ('menu_header') %>
 
+        <!--This section will be about the general info about the game. Score, team logos
+            and names, and the clock/inning info. Add season series stuff here-->
         <div id="overview">
 
+            <!--This section is for the away team-->
             <div class="teamOverview">
                 <img class="teamLogo" src="<%= overview.competitions[0].competitors[1].team.logo %>">
-                <h3><%= overview.competitions[0].competitors[1].team.displayName %></h3>
+                <h1><%= overview.competitions[0].competitors[1].team.displayName %></h1>
                 <% if (overview.status.type.state != "pre"){ %>
                     <h1><%= overview.competitions[0].competitors[1].score %></h1> <!--score-->
                 <% } %>
             </div>
 
+            <!--This is the middle section for clock/inning info-->
             <div id="gameInfoOverview"> <!--Put status of game here-->
                 <% if (overview.status.type.state == "pre"){ %><!--Show scheduled time here-->
 
@@ -29,7 +41,7 @@
 
                 <% } else if (overview.status.type.state == "in"){ %> <!--Show game time here-->
 
-                    <% if (league.toUpperCase() == "MLB"){ %>
+                    <% if (league.toUpperCase() == "MLB"){ %> <!--Balls, strikes, inning and outs for baseball-->
 
                         <h4><%= overview.status.type.shortDetail %></h4>
                         <h1>
@@ -37,46 +49,202 @@
                             <%= overview.competitions[0].situation.strikes %> 
                         </h1>
                         <h1><%= overview.competitions[0].situation.outs %> Outs</h1>
-                    <% } else if (league.toUpperCase() == "NHL") { %>
+
+                    <% } else if (league.toUpperCase() == "NHL") { %> <!--period for hockey-->
                         <h1><%= overview.status.period %> Period</h1>
                         <h3><%= overview.status.displayClock %></h3>
+
                     <% } else { %>
-                        <h1><%= overview.status.period %> Quarter</h1>
+                        <h1><%= overview.status.period %> Quarter</h1> <!--Quarter for football/basketabll-->
                         <h3><%= overview.status.displayClock %></h3>
                     <% }
                 } else { %>
-                    <h1 class="status">Final</h1>
+                    <h1 class="status">Final</h1> <!--final if game is done-->
                 <% } %>
             </div>
 
+            <!--home team overview-->
             <div class="teamOverview">
                 <img class="teamLogo" src="<%= overview.competitions[0].competitors[0].team.logo %>">
-                <h3><%= overview.competitions[0].competitors[0].team.displayName %></h3>
+                <h1><%= overview.competitions[0].competitors[0].team.displayName %></h1>
                 <% if (overview.status.type.state != "pre"){ %>
                     <h1><%= overview.competitions[0].competitors[0].score %></h1> <!--score-->
                 <% } %>
             </div>
         </div>
 
-        <% if (league.toUpperCase() == "NFL"){ %>
+        <!--This will be the overall boxscore. Will show sport specific stats for both teams for game-->
+        <% if (overview.status.type.state != "pre") { %>
 
-            <%- include('league_game_data/nfl_game') %>
+            <div class="boxscoreDiv">
 
-        <% } else if (league.toUpperCase() == "MLB"){ %>
+                <h3>Box Score</h3>
+                <% if (league.toUpperCase() != "MLB") { %>
+                    <table>
+                        <tr>
+                            <th>Team</th>
+                            <% summary.boxscore.teams[0].statistics.forEach(stat => {
+                                if (stat.abbreviation !== undefined){ %>
+                                    <th><%= stat.abbreviation %></th>
+                                <% } else { %>
+                                    <th><%= stat.label %></th>
+                                <% }
+                            }) %>
+                        </tr>
+                        <tr>
+                            <th><%= summary.boxscore.teams[0].team.abbreviation %></th>
+                            <% summary.boxscore.teams[0].statistics.forEach(stat => { %>
+                                <td><%= stat.displayValue %></td>
+                            <% }) %>
+                        </tr>
+                        <tr>
+                            <th><%= summary.boxscore.teams[1].team.abbreviation %></th>
+                            <% summary.boxscore.teams[1].statistics.forEach(stat => { %>
+                                <td><%= stat.displayValue %></td>
+                            <% }) %>
+                        </tr>
+                    </table>
+                <% } else { %>
+                    <table>
+                        <tr>
+                            <th>Team</th>
+                            <th>1</th>
+                            <th>2</th>
+                            <th>3</th>
+                            <th>4</th>
+                            <th>5</th>
+                            <th>6</th>
+                            <th>7</th>
+                            <th>8</th>
+                            <th>9</th>
+                            <th>R</th>
+                            <th>H</th>
+                            <th>E</th>
+                        </tr>
+                        <tr>
+                            <th><%= overview.competitions[0].competitors[1].team.abbreviation %></th>
+                            <% overview.competitions[0].competitors[1].linescores.forEach(stat => { %>
+                                <td><%= stat.displayValue %></td>
+                            <% }) %>
+                            <td><%= overview.competitions[0].competitors[1].statistics[1].displayValue %></td>
+                            <td><%= overview.competitions[0].competitors[1].statistics[0].displayValue %></td>
+                            <td><%= overview.competitions[0].competitors[1].statistics[7].displayValue %></td>
+                        </tr>
+                        <tr>
+                            <th><%= overview.competitions[0].competitors[0].team.abbreviation %></th>
+                            <% overview.competitions[0].competitors[0].linescores.forEach(stat => { %>
+                                <td><%= stat.displayValue %></td>
+                            <% }) %>
+                            <% if (overview.competitions[0].competitors[0].linescores.length == 8){ %>
+                                <td class="nonstarter"></td>
+                            <% } %>
+                            <td><%= overview.competitions[0].competitors[0].statistics[1].displayValue %></td>
+                            <td><%= overview.competitions[0].competitors[0].statistics[0].displayValue %></td>
+                            <td><%= overview.competitions[0].competitors[0].statistics[7].displayValue %></td>
+                        </tr>
+                    </table>
+                <% } %>
+            </div>
+        <% } %>
 
-            <%- include('league_game_data/mlb_game') %>
+        <% if (overview.status.type.state == "post" && league.toUpperCase() != "MLB") { %> <!--Only have leader section after game is done-->
 
-        <% } else if (league.toUpperCase() == "NBA"){ %>
+            <div class="leaderSection">
+            
+                <h2><%= summary.leaders[0].team.abbreviation %> Leaders</h2>
+                <div class="awayTeamLeaders">
+                    <% summary.leaders[0].leaders.forEach(leader => {
+                        if (leader.leaders !== undefined){ %>
+                            <div class="leaderDiv">
+                                <div class="leaderTitleDiv">
+                                    <% if (leader.leaders[0].athlete.headshot !== undefined){ %>
+                                        <img class="headshot" src="<%= leader.leaders[0].athlete.headshot.href %>">
+                                    <% } else { %>
+                                        <img class="headshot" src="/images/default_headshot.png">
+                                    <% } %>
+                                    <h5 class="leaderName"><%= leader.leaders[0].athlete.displayName %></h5> 
+                                </div>
+                                <p class="leaderDesc"><%= leader.displayName %>: <%= leader.leaders[0].displayValue %></p>
+                            </div>
+                        <% }
+                    }) %>
+                </div>
 
-            <%- include('league_game_data/nba_game') %>
+                <h2><%= summary.leaders[1].team.abbreviation %> Leaders</h2>
+                <div class="homeTeamLeaders">
+                    <% summary.leaders[1].leaders.forEach(leader => { %>
+                        <div class="leaderDiv">
+                            <div class="leaderTitleDiv">
+                                <% if (leader.leaders[0].athlete.headshot !== undefined){ %>
+                                    <img class="headshot" src="<%= leader.leaders[0].athlete.headshot.href %>">
+                                <% } else { %>
+                                    <img class="headshot" src="/images/default_headshot.png">
+                                <% } %>
+                                <h5 class="leaderName"><%= leader.leaders[0].athlete.displayName %></h5>
+                            </div>
+                            <p class="leaderDesc"><%= leader.displayName %>: <%= leader.leaders[0].displayValue %></p>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        <% } %>
 
-        <% } else { %>
+        <% if (overview.status.type.state != "pre") { %>
 
-            <%- include('league_game_data/nhl_game') %>
+            <div id="buttonSection">
+                <div id="awayTeamButton"><%= overview.competitions[0].competitors[1].team.displayName %></div>
+                <div id="homeTeamButton"><%= overview.competitions[0].competitors[0].team.displayName %></div>
+            </div>
 
+            <div id="playerStats">
+
+                <% if (league.toUpperCase() == "NFL"){ %>
+
+                    <%- include('league_game_data/nfl_game') %>
+
+                <% } else if (league.toUpperCase() == "MLB"){ %>
+
+                    <%- include('league_game_data/mlb_game') %>
+
+                <% } else if (league.toUpperCase() == "NBA"){ %>
+
+                    <%- include('league_game_data/nba_game') %>
+
+                <% } else { %>
+
+                    <%- include('league_game_data/nhl_game') %>
+
+                <% } %>
+            </div>
         <% } %>
 
         <%- include ('footer') %>
+
+        <script>
+            const statsDiv = document.getElementById('playerStats');
+            const homeStats = document.getElementById('homeTeamPlayerStats');
+            const awayStats = document.getElementById('awayTeamPlayerStats');
+
+            const homeButton = document.getElementById("homeTeamButton");
+            const awayButton = document.getElementById("awayTeamButton");
+
+            homeStats.style.display = "none";
+
+            function toggleHomeStats(){
+                awayStats.style.display = "none";
+                homeStats.style.display = "flex";
+                statsDiv.style.backgroundColor = 'lightgreen';
+            }
+
+            function toggleAwayStats(){
+                homeStats.style.display = "none";
+                awayStats.style.display = "flex";
+                statsDiv.style.backgroundColor = 'lightsalmon';
+            }
+
+            homeButton.addEventListener('click', toggleHomeStats);
+            awayButton.addEventListener('click', toggleAwayStats);
+        </script>
 
     </body>
 </html>

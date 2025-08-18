@@ -1,0 +1,63 @@
+
+<div id="awayTeamPlayerStats">
+
+    <% summary.boxscore.players[0].statistics.forEach(cat => { %>
+        <% const name = cat.name.split(/(?=[A-Z])/).map(word => word.toUpperCase()); %>
+        <h2><%= name.join(" ") %></h2>
+        <table>
+            <tr>
+                <th>Player</th>
+                <% for (let i = 0; i < cat.labels.length; i++){ %>
+                    <th>
+                        <div class="tooltip">
+                            <%= cat.labels[i] %>
+                            <span class="tooltip-text">
+                                <%= cat.descriptions[i] %>
+                            </span>
+                        </div>
+                    </th>
+                <% } %>
+            </tr>
+            <% cat.athletes.forEach(athlete => { %>
+                <tr>
+                    <th><%= athlete.athlete.firstName.substring(0, 1) + ". " + 
+                        athlete.athlete.lastName %></th>
+                    <% athlete.stats.forEach(stat => { %>
+                        <td><%= stat %></td>
+                    <% }) %>
+                </tr>
+            <% }) %>
+        </table>
+    <% }) %>
+</div>
+
+<div id="homeTeamPlayerStats">
+    <% summary.boxscore.players[1].statistics.forEach(cat => { %>
+        <% const name = cat.name.split(/(?=[A-Z])/).map(word => word.toUpperCase()); %>
+        <h2><%= name.join(" ") %></h2>
+        <table>
+            <tr>
+                <th>Player</th>
+                <% for (let i = 0; i < cat.labels.length; i++){ %>
+                    <th>
+                        <div class="tooltip">
+                            <%= cat.labels[i] %>
+                            <span class="tooltip-text">
+                                <%= cat.descriptions[i] %>
+                            </span>
+                        </div>
+                    </th>
+                <% } %>
+            </tr>
+            <% cat.athletes.forEach(athlete => { %>
+                <tr>
+                    <th><%= athlete.athlete.firstName.substring(0, 1) + ". " + 
+                        athlete.athlete.lastName %></th>
+                    <% athlete.stats.forEach(stat => { %>
+                        <td><%= stat %></td>
+                    <% }) %>
+                </tr>
+            <% }) %>
+        </table>
+    <% }) %>
+</div>

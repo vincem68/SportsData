@@ -16,13 +16,18 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    width: 33.333333%;
 }
 
-.boxscoreDiv, .awayTeamPlayerStats, .homeTeamPlayerStats, .leadersDiv {
+.boxscoreDiv, #awayTeamPlayerStats, #homeTeamPlayerStats, .leadersDiv {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+.boxscoreDiv {
+    overflow-x: auto;
 }
 
 .teamLogo {
@@ -42,10 +47,7 @@
 .awayTeamLeaders, .homeTeamLeaders {
     display: flex;
     flex-direction: row;
-}
-
-.leaderSection {
-    
+    justify-content: center;
 }
 
 .leaderDiv {
@@ -58,7 +60,7 @@
 
 .headshot {
     height: 100px;
-    width: 150px;
+    width: 135px;
 }
 
 .leaderTitleDiv {
@@ -68,6 +70,46 @@
     font-size: 20px;
 }
 
+h2 {
+    text-align: center;
+}
+
 .leaderDesc {
     font-size: 30px;
+}
+
+#buttonSection {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    font-size: 50px;
+}
+
+#homeTeamButton, #awayTeamButton {
+    border-top-color: black;
+    border-top-style: solid;
+    border-top-width: 3px;
+    border-right-color: black;
+    border-right-style: solid;
+    border-right-width: 3px;
+    border-left-color: black;
+    border-left-style: solid;
+    border-left-width: 3px;
+    padding: 10px;
+}
+
+#playerStats {
+    background-color: lightsalmon;
+}
+
+#homeTeamButton {
+    background-color: lightgreen;
+}
+
+#awayTeamButton {
+    background-color: lightsalmon;
+}
+
+.nonstarter {
+    background-color: lightgray;
 }

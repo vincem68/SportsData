@@ -14,7 +14,9 @@
         <div id="titleSection">
             <img id="teamLogo" src="<%= data.team.logos[0].href %>">
             <h1><%= data.team.displayName %></h1>
-            <h4>Current Record: <%= data.team.record.items[0].summary %></h4>
+            <% if (data.team.record.items !== undefined) { %>
+                <h4>Current Record: <%= data.team.record.items[0].summary %></h4>
+            <% } %>
         </div>
 
         <div id="linkSection">
