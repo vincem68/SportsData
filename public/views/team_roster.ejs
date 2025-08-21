@@ -9,7 +9,7 @@
 
         <%- include ('menu_header') %>
 
-        <div id = 'teamTitleDispayDiv'>
+        <div id = 'teamTitleDispayDiv'> <!--Shows the general info of the team-->
 
             <img id="teamLogo" src="<%= data.team.logo %>" alt="Logo of <%= data.team.displayName %>">
 
@@ -19,26 +19,29 @@
             <h4>Head Coach: <%= data.coach[0].firstName + ' ' + data.coach[0].lastName %></h4>
         </div>
 
-        <h2>Roster:</h2>
+        <div id="rosterDiv">
 
-        <% if (league.toUpperCase() == "NHL"){ %>
+            <h2>Roster:</h2>
 
-            <%- include('team_roster_data/nhl_team_roster') %>
+            <% if (league.toUpperCase() == "NHL"){ %>
 
-        <% } else if (league.toUpperCase() == "NBA"){ %>
+                <%- include('team_roster_data/nhl_team_roster') %>
 
-            <%- include('team_roster_data/nba_team_roster') %>
+            <% } else if (league.toUpperCase() == "NBA"){ %>
 
-        <% } else if (league.toUpperCase() == "NFL") { %>
+                <%- include('team_roster_data/nba_team_roster') %>
 
-            <%- include('team_roster_data/nfl_team_roster') %>
+            <% } else if (league.toUpperCase() == "NFL") { %>
 
-        <% } else { %>
+                <%- include('team_roster_data/nfl_team_roster') %>
 
-            <%- include('team_roster_data/mlb_team_roster') %>
+            <% } else { %>
 
-        <% } %>
+                <%- include('team_roster_data/mlb_team_roster') %>
 
-        <%- include ('footer') %>
+            <% } %>
+
+            <%- include ('footer') %>
+        </div>
     </body>
 </html>

@@ -1,4 +1,4 @@
-@import "general_styles.css";
+@import "general_styles/general_styles.css";
 @import "footer.css";
 
 #titleSection {
@@ -54,7 +54,7 @@ h1 {
 .newsImage {
     margin-top: 15px;
     height: 200px;
-    width: 350px;
+    width: 400px;
     border-color: black;
     border-width: 5px;
     border-style: solid;

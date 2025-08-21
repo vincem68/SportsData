@@ -122,7 +122,7 @@
                             <th>E</th>
                         </tr>
                         <tr>
-                            <th><%= overview.competitions[0].competitors[1].team.abbreviation %></th>
+                            <th class="name"><%= overview.competitions[0].competitors[1].team.abbreviation %></th>
                             <% overview.competitions[0].competitors[1].linescores.forEach(stat => { %>
                                 <td><%= stat.displayValue %></td>
                             <% }) %>
@@ -131,7 +131,7 @@
                             <td><%= overview.competitions[0].competitors[1].statistics[7].displayValue %></td>
                         </tr>
                         <tr>
-                            <th><%= overview.competitions[0].competitors[0].team.abbreviation %></th>
+                            <th class="name"><%= overview.competitions[0].competitors[0].team.abbreviation %></th>
                             <% overview.competitions[0].competitors[0].linescores.forEach(stat => { %>
                                 <td><%= stat.displayValue %></td>
                             <% }) %>

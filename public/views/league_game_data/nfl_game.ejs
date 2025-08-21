@@ -20,7 +20,7 @@
             </tr>
             <% cat.athletes.forEach(athlete => { %>
                 <tr>
-                    <th><%= athlete.athlete.firstName.substring(0, 1) + ". " + 
+                    <th class="name"><%= athlete.athlete.firstName.substring(0, 1) + ". " + 
                         athlete.athlete.lastName %></th>
                     <% athlete.stats.forEach(stat => { %>
                         <td><%= stat %></td>
@@ -51,7 +51,7 @@
             </tr>
             <% cat.athletes.forEach(athlete => { %>
                 <tr>
-                    <th><%= athlete.athlete.firstName.substring(0, 1) + ". " + 
+                    <th class="name"><%= athlete.athlete.firstName.substring(0, 1) + ". " + 
                         athlete.athlete.lastName %></th>
                     <% athlete.stats.forEach(stat => { %>
                         <td><%= stat %></td>

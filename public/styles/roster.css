@@ -1,33 +1,19 @@
-@import "general_styles.css";
+@import "general_styles/general_styles.css";
+@import "general_styles/table_styles.css";
 
 #teamLogo {
-    height: 100px;
-    width: 100px;
+    height: 200px;
+    width: 200px;
 }
 
 .headshot {
-    width: 75%;
+    width: 145px;
     height: 100px;
 }
 
-table {
-    margin-top: 50px;
-    border-style: solid;
-    border-color: black;
-    border-width: 10px;
-}
+#rosterDiv {
+    display:flex;
+    flex-direction: column;
+    align-items: center;
 
-tr {
-    border-style: solid;
-    border-color: black;
-}
-
-td {
-    margin-left: 5px; margin-right: 5px;
-}
-
-#teamTitleDisplayDiv {
-    display: flex;
-    flex-flow: column;
-    justify-content: center;
 }

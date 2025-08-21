@@ -27,6 +27,7 @@
 }
 
 .boxscoreDiv {
+    margin-left: 0%;
     overflow-x: auto;
 }
 

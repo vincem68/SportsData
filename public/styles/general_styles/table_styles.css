@@ -1,6 +1,8 @@
 table {
     border-collapse: collapse;
-    margin: 30px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+    table-layout: auto;
 }
 
 th, td {
@@ -8,8 +10,7 @@ th, td {
     text-align: center;
     border-style: solid;
     border-color: black;
-    height: 50px;
-    width: 50px;
+    padding: 10px;
 }
 
 th {
@@ -46,4 +47,8 @@ td {
 .tooltip:hover .tooltip-text {
     visibility: visible;
     opacity: 1;
+}
+
+.name {
+    background-color: lightseagreen;
 }

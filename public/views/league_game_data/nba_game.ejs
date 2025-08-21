@@ -17,7 +17,7 @@
         </tr>
         <% summary.boxscore.players[0].statistics[0].athletes.forEach(athlete => { %>
             <tr>
-                <th class="nameCol"><%= athlete.athlete.shortName %></th>
+                <th class="name"><%= athlete.athlete.shortName %></th>
                 <% athlete.stats.forEach(stat => { %>
                     <td><%= stat %></td>
                 <% }) %>
@@ -43,7 +43,7 @@
         </tr>
         <% summary.boxscore.players[1].statistics[0].athletes.forEach(athlete => { %>
             <tr>
-                <th class="nameCol"><%= athlete.athlete.shortName %></th>
+                <th class="name"><%= athlete.athlete.shortName %></th>
                 <% athlete.stats.forEach(stat => { %>
                     <td><%= stat %></td>
                 <% }) %>

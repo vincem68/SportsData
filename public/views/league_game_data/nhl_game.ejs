@@ -20,7 +20,7 @@
             </tr>
             <% cat.athletes.forEach(athlete => { %>
                 <tr>
-                    <th><%= athlete.athlete.shortName %></th>
+                    <th class="name"><%= athlete.athlete.shortName %></th>
                     <% athlete.stats.forEach(stat => { %>
                         <td><%= stat %></td>
                     <% }) %>
@@ -51,7 +51,7 @@
             </tr>
             <% cat.athletes.forEach(athlete => { %>
                 <tr>
-                    <th><%= athlete.athlete.shortName %></th>
+                    <th class="name"><%= athlete.athlete.shortName %></th>
                     <% athlete.stats.forEach(stat => { %>
                         <td><%= stat %></td>
                     <% }) %>

@@ -21,7 +21,7 @@
             <% cat.athletes.forEach(athlete => { %>
                 <tr>
                     <% if (athlete.starter == true){ %> <!--Highlight those who were pinch hit/run-->
-                        <th><%= athlete.athlete.shortName %></th>
+                        <th class="name"><%= athlete.athlete.shortName %></th>
                     <% } else { %>
                         <th class="nonstarter"><%= athlete.athlete.shortName %></th>
                     <% } %>
@@ -56,7 +56,7 @@
             <% cat.athletes.forEach(athlete => { %>
                 <tr>
                     <% if (athlete.starter == true){ %> <!--Highlight those who were pinch hit/run-->
-                        <th><%= athlete.athlete.shortName %></th>
+                        <th class="name"><%= athlete.athlete.shortName %></th>
                     <% } else { %>
                         <th class="nonstarter"><%= athlete.athlete.shortName %></th>       
                     <% } %>
