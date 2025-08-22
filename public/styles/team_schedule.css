@@ -1,4 +1,6 @@
-@import "general_styles.css";
+@import "general_styles/general_styles.css";
+@import "general_styles/table_styles.css";
+
 
 #headlineDiv {
     display: flex;
@@ -22,19 +24,6 @@
 .opponentLogo {
     height: 75px;
     width: 75px;
-}
-
-table {
-    border-style: double;
-    border-color: cadetblue;
-    border-width: 10px;
-}
-
-th, td {
-    text-align: center;
-    padding: 10px;
-    border-color: black;
-    border-style: solid;
 }
 
 strong {
