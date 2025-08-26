@@ -1,0 +1,160 @@
+<%
+
+const months = (league.toUpperCase() == "MLB") ?
+[
+    {key: "03", totalDays: 31, name: "March"},
+    {key: "04", totalDays: 30, name: "April"},
+    {key: "05", totalDays: 31, name: "May"},
+    {key: "06", totalDays: 30, name: "June"},
+    {key: "07", totalDays: 31, name: "July"},
+    {key: "08", totalDays: 31, name: "August"},
+    {key: "09", totalDays: 30, name: "September"},
+    {key: "10", totalDays: 31, name: "October"}
+] :
+[
+    {key: "10", totalDays: 31, name: "October"},
+    {key: "11", totalDays: 30, name: "November"},
+    {key: "12", totalDays: 31, name: "December"},
+    {key: "01", totalDays: 31, name: "January"},
+    {key: "02", totalDays: (data.requestedSeason.year % 4 == 0) ? 29 : 28, name: "February"},
+    {key: "03", totalDays: 31, name: "March"},
+    {key: "04", totalDays: 30, name: "April"}
+];
+
+data.events.forEach(game => {
+
+    //change the dates of the games to local time dates
+    const localDate = new Date(game.date);
+    const year = localDate.getFullYear();
+    const month = String(localDate.getMonth() + 1).padStart(2, '0');
+    const day = String(localDate.getDate()).padStart(2, '0');
+    const hours = String(localDate.getHours()).padStart(2, '0');
+    const minutes = String(localDate.getMinutes()).padStart(2, '0');
+    game.date = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+    //get opponents to first index in competitions array for each game
+    if (data.team.abbreviation == game.competitions[0].competitors[1].team.abbreviation){
+        const temp = game.competitions[0].competitors[0];
+        game.competitions[0].competitors[0] = game.competitions[0].competitors[1];
+        game.competitions[0].competitors[1] = temp;
+    }
+});
+
+<!--cycle through the months of the season calendar and populate the games-->
+months.forEach(month => {
+
+    //all games in month
+    const monthlyGames = data.events.filter(game => game.date.substring(5, 7) == month.key);
+
+    if (monthlyGames){ //if we have games this month
+
+        let weekday = 0; //index of a weekday (0 for Sun, 1 for Mon, etc)
+        let dayNum = 1; //numbered day of the month
+
+        //get the weekday of the first day of the month
+        const firstDayOfMonth = new Date(monthlyGames[0].date.substring(0, 8) + "01" +
+            monthlyGames[0].date.substring(10, 16)).getDay();
+
+        monthlyGames.reverse();
+
+        %>
+
+        <h3><%= month.name %></h3>
+        <div class="monthDiv">
+
+        
+            <div class="weekDiv"> <!--Focus on the first week first-->
+
+                <% while (weekday < firstDayOfMonth){ %>
+                    <div class="deadDay"></div>
+                    <% weekday++;
+                }
+
+                while (weekday < 7) {
+
+                    const game = monthlyGames.pop();
+
+                    if (parseInt(game.date.substring(8, 10)) == dayNum){ %>
+
+                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                            <div class="gameDay">
+                                <h4 class="dayNum"><%= dayNum %></h4>
+                                <% if (game.competitions[0].competitors[1].team.logos !== undefined){ %>
+                                     <img class="opponentLogo" src="<%= game.competitions[0].competitors[1].team.logos[0].href %>">
+                                <% } else { %>
+                                     <img class="opponentLogo" src="/images/coyotes_logo.png">
+                                <% } %>
+                                <h4><%= game.competitions[0].competitors[1].team.abbreviation %></h4> 
+                            </div>
+                        </a>
+                    <% } else { %>
+
+                        <div class="emptyDay">
+                            <h4 class="dayNum"><%= dayNum %></h4>
+                        </div>
+                        <% monthlyGames.push(game); //push game back onto stack
+                    }
+                    weekday++;
+                    dayNum++;
+                } %>
+            </div>
+
+            <% while (dayNum <= month.totalDays){ %>
+
+                <div class="weekDiv">
+
+                    <% weekday = 0;
+                    
+                    while (weekday < 7){
+
+                        if (monthlyGames.length == 0){
+
+                            while (weekday < 7){
+
+                                if (dayNum <= month.totalDays){ %>
+                                    <div class="emptyDay">
+                                        <h4 class="dayNum"><%= dayNum %></h4>
+                                    </div>
+                                    <% dayNum++;
+                                } else { %>
+                                    <div class="deadDay"></div>
+                                <% }
+                                weekday++;
+                            }
+
+                            break;
+                        }
+
+                        const game = monthlyGames.pop();
+
+                        //if the next game's date matches the numbered day
+                        if (parseInt(game.date.substring(8, 10)) == dayNum){ %>
+
+                            <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                                <div class="gameDay">
+                                    <h4 class="dayNum"><%= dayNum %></h4>
+                                    <% if (game.competitions[0].competitors[1].team.logos !== undefined){ %>
+                                        <img class="opponentLogo" src="<%= game.competitions[0].competitors[1].team.logos[0].href %>">
+                                    <% } else { %>
+                                        <img class="opponentLogo" src="/images/coyotes_logo.png">
+                                    <% } %>
+                                    <h6><%= game.competitions[0].competitors[1].team.abbreviation %></h6> 
+                                </div>
+                            </a>
+
+                        <% } else { %>
+
+                            <div class="emptyDay">
+                                <h4 class="dayNum"><%= dayNum %></h4>
+                            </div>
+
+                            <% monthlyGames.push(game); //push game back onto stack
+                        }
+                        weekday++;
+                        dayNum++;
+                    } %>
+                </div>
+            <% } %>
+        </div>
+    <% }
+}) %>

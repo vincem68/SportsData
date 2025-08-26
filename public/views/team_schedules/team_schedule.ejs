@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title><%= data.team.displayName %> Schedule</title>
+        <link rel="stylesheet" href="/styles/team_schedule.css">
+    </head>
+
+    <body>
+
+        <%- include ('../menu_header') %>
+
+        <div id="headlineDiv">
+            <img id="teamLogo" src="<%= data.team.logo %>">
+            <h4><%= data.team.displayName %></h4>
+            <h4>Team is currently in the <%= data.season.name %></h4>
+        </div>
+
+        <form id="scheduleSelection" method="GET">
+            <label for="season">Select Season:</label>
+             <select name="season">
+                <% for (let i = new Date().getFullYear(); i >= 2000; i--){ %>
+                    <option value="<%= i %>"><%= i %></option>
+                <% } %>
+             </select>
+             <select name="seasonType">
+                <option value="2">Regular Season</option>
+                <option value="3">Post Season</option>
+             </select>
+             <button>Submit</button>
+        </form>
+
+        <% if (data.events.length == 0 || data.requestedSeason.type == 1){ %>
+
+            <h2>Season Schedule Not Available. Check Back Later!</h2>
+
+        <% } else { %>
+
+            <div class="scheduleDiv">
+
+                <% if (league.toUpperCase() == "NFL"){ %> <!--NFL will have different schedule format-->
+
+                    <%- include ('weeks') %>
+
+                <% } else { %> <!--for NBA, NHL and MLB schedules-->
+
+                    <%- include ('calendar') %>
+
+                <% } %>
+
+            </div>
+            
+        <% } %>
+
+        <%- include ('../footer') %>
+    </body>
+</html>

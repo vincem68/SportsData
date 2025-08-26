@@ -116,7 +116,7 @@ app.get('/:sport/:league/teams/:team/schedule', async function(req: Request, res
     const response = await fetch(endpoint);
     const data = await response.json();
 
-    res.render('team_schedule', {port: port, team: team, league: league, sport: sport, data: data});
+    res.render('team_schedules/team_schedule', {port: port, team: team, league: league, sport: sport, data: data});
 })
 
 /**

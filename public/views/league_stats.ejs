@@ -126,10 +126,11 @@
                     table.append(row);
                 });
                 const statCells = document.querySelectorAll('.stat');
-                statCells.forEach(cell => cell.style.backgroundColor = 'white');
                 statCells.forEach(cell => {
                     if (Number(cell.getAttribute("name")) == colIndex){
-                        cell.style.backgroundColor = 'yellow';
+                        cell.classList.add("stat");
+                    } else {
+                        cell.classList.remove("stat");
                     }
                 });
             }

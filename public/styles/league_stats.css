@@ -1,2 +1,7 @@
 @import "general_styles/general_styles.css";
 @import "general_styles/table_styles.css";
+
+
+.stat {
+    background-color: yellow;
+}
