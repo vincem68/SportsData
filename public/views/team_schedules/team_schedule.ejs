@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 
 <html>
@@ -19,7 +20,7 @@
         <form id="scheduleSelection" method="GET">
             <label for="season">Select Season:</label>
              <select name="season">
-                <% for (let i = new Date().getFullYear(); i >= 2000; i--){ %>
+                <% for (let i = data.season.year; i >= 2000; i--){ %>
                     <option value="<%= i %>"><%= i %></option>
                 <% } %>
              </select>

@@ -9,27 +9,21 @@
     align-items: center;
 }
 
-#dataSection {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
 #teamLogo {
     height: 200px;
     width: 200px;;
 }
 
-
-
 .opponentLogo {
     height: 50px;
     width: 50px;
+    margin-left: 23px;
 }
 
-strong {
-    font-size: 20px;
+.gameSymbol {
+    height: 40px;
+    width: 40px;
+    margin-right: 50px;
 }
 
 #scheduleDiv {
@@ -53,12 +47,19 @@ strong {
 }
 
 .gameDay, .deadDay, .emptyDay {
-    height: 150px;
+    height: 125px;
     width: 100px;
     border-style: solid;
-    border-width: 5px;
+    border-width: 2px;
     border-color: black;
     margin: 0px;
+    align-items: center;
+    justify-content: center;
+}
+
+.gameDay :not(.dayNum) {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
@@ -66,4 +67,89 @@ strong {
 .dayNum {
     margin-left: 5px;
     margin-top: 5px;
+    margin-bottom: 2px;
+}
+
+.deadDay {
+    background-color: darkgray;
+}
+
+.emptyDay {
+    background-color: aliceblue;
+}
+
+.roadGame {
+    background-color: lightcoral;
+}
+
+.homeGame {
+    background-color: aqua;
+}
+
+.gameDay > h6 {
+    margin-top: 0px;
+    margin-bottom: 2px;
+}
+
+.gameDay > p {
+    margin-bottom: auto;
+}
+
+.footballWeekDiv, .byeWeekDiv {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-width: 2px;
+    border-style: solid;
+    border-color: black;
+    margin-left: 25%;
+    margin-right: 25%;
+}
+
+.footballTitleDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 60px;
+}
+
+.footballTitleDiv > p {
+    font-size: medium;
+    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+}
+
+.currentDay {
+    background-color: gold;
+}
+
+.byeWeekDiv {
+    background-color: azure;
+}
+
+.byeWeekDiv > h1 {
+    margin-left: 70px;
+}
+
+.footballOpponentLogo {
+    width: 75px;
+    height: 75px;
+}
+
+.weekNum {
+    font-size: medium;
+    font-family:Verdana, Geneva, Tahoma, sans-serif ;
+    margin-left: 20px;
+    margin-right: 70px;
+}
+
+.gameDetails {
+    font-size: x-large;
+}
+
+.winner {
+    text-decoration-color: chartreuse;
+}
+
+.loser {
+    text-decoration-color: darkred;
 }

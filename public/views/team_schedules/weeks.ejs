@@ -1,0 +1,54 @@
+
+<% 
+
+//go through each game
+data.events.forEach(game => { 
+
+    let homeTeam = true; //set to either road or home game class
+
+    //if our team is the road team, set gameClass to roadGame and swap the array elements
+    if (data.team.abbreviation == game.competitions[0].competitors[1].team.abbreviation){
+        const temp = game.competitions[0].competitors[0];
+        game.competitions[0].competitors[0] = game.competitions[0].competitors[1];
+        game.competitions[0].competitors[1] = temp;
+        homeTeam = false;
+    }
+
+    %>
+
+    <!--Each week has div, set class to home or away depending on if team plays home or away-->
+    <div class="footballWeekDiv <% if (homeTeam){ %> homeGame <% } else { %> roadGame <% } %>">
+        <!--Display Week number-->
+        <p class="weekNum"><%= game.week.text %></p>
+        <!--Either @ or vs symbol depending on home/road game-->
+        <img class="gameSymbol" src="<% if (homeTeam) { %> /images/versus_sign.png <% } else { %> /images/at_symbol.png <% } %>">
+        <!--Div for opponent logo and name-->
+        <div class="footballTitleDiv">
+            <img class="footballOpponentLogo" src="<%= game.competitions[0].competitors[1].team.logos[0].href %>">
+            <p><%= game.competitions[0].competitors[1].team.displayName %></p>
+        </div>
+        <!--Short game details, display date if game has yet to happen, score and result if over, in progress else-->
+        <p class="gameDetails">
+            <% if (game.competitions[0].status.type.state == "pre"){ %>
+                <%= game.competitions[0].status.type.shortDetail.split('-')[1] %>
+
+            <% } else if (game.competitions[0].status.type.state == "post"){
+                if (game.competitions[0].competitors[0].winner) { %> W <% } else { %> L <% } %>
+
+                <%= game.competitions[0].competitors[0].score.displayValue + "-" + 
+                    game.competitions[0].competitors[1].score.displayValue %>
+
+            <% } else { %>
+                In Progress
+            <% } %>
+        </p>
+    </div>
+
+    <!--After making div, check to see if next week is equal to bye week and just create this div-->
+    <% if (game.week.number + 1 == data.byeWeek) { %>
+        <div class="byeWeekDiv">
+            <p class="weekNum">Week <%= data.byeWeek %></p>
+            <h1>Bye Week</h1>
+        </div>
+    <% }
+}); %>
