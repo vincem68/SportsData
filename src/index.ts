@@ -9,8 +9,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static('public'));
 
-const port = 8000;
+const port = 8000; //the port we will listen on, change this for whatever port you will use
 
+/**
+ * These arrays contain every team abbreviation for the 4 major sports leagues. We use these when sending 
+ * requests to the ESPN enpoints
+ */
 const nflTeams = [
     'ARI', 'ATL', 'BAL', 'BUF', 'CAR', 'CHI', 'CIN', 'CLE',
     'DAL', 'DEN', 'DET', 'GB', 'HOU', 'IND', 'JAX', 'KC',
@@ -39,6 +43,11 @@ const nhlTeams = [
     'STL', 'TB', 'TOR', 'UTA', 'VAN', 'VGK', 'WPG', 'WSH'
 ];
 
+/**
+ * This route will be for getting specific game data. Using the game's ID, we can get both the general overview
+ * of the game which includes the team logos, scores, game time/status and records, and also get the overall
+ * stats for the game's boxscore.
+ */
 app.get('/:sport/:league/games/:id', async function(req: Request, res: Response){
 
     const sport = req.params.sport;
@@ -57,7 +66,8 @@ app.get('/:sport/:league/games/:id', async function(req: Request, res: Response)
 })
 
 /**
- * For the games page, will get the league and sport names and get the games in each league
+ * This route will be for displaying any upcomig games for the day by default. Can also go back and display 
+ * games at whatever date you want to put in.
  */
 app.get('/:sport/:league/games', async function(req: Request, res: Response) {
 
@@ -120,7 +130,7 @@ app.get('/:sport/:league/teams/:team/schedule', async function(req: Request, res
 })
 
 /**
- * This will be for stats
+ * This route will be for the stats of a team.
  */
 app.get('/:sport/:league/teams/:team/stats', async function(req: Request, res: Response){
     const sport = req.params.sport;
@@ -173,25 +183,58 @@ app.get('/:sport/:league/teams', async function(req: Request, res: Response){
     res.render('team_selection', {port: port, sport: sport, league: league, teams: data.sports[0].leagues[0].teams});
 })
 
+/**
+ * this route is for gathering the overall stats from the entire league. By default, grabs the current stats
+ * of the regular season. We use the team abbreviations arrays above to make requests to the endpoint for 
+ * each team's stats and send it all to the page. 
+ */
 app.get('/:sport/:league/stats', async function(req: Request, res: Response){
 
     const sport = req.params.sport;
     const league = req.params.league;
     const leagueStats: any[] = [];
-
+    const queries = (req.query.season !== undefined && req.query.seasonType !== undefined) ? 
+        `?season=${req.query.season}&seasontype=${req.query.seasonType}` : "";
+    
+    let requestedSeason = 0;
+    let requestedType = "";
+    if (req.query.seasonType !== undefined){
+        requestedType = (req.query.seasonType == "2") ? "Regular Season" : "Postseason";
+    } else {
+        requestedType = "Regular Season";
+    }
+    let currentSeason = 0;
+    
+    //set the team array to whichever league we're using
     const teamIDs = (league.toUpperCase() == "NFL") ? nflTeams : (league.toUpperCase() == "NBA") ? nbaTeams :
         (league.toUpperCase() == "MLB") ? mlbTeams : nhlTeams;
     
     //loop through the teams array and make a call on each ID to get that teams data, and render the data
-    
     for (const team of teamIDs){
-        const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/` +
-            `${sport}/${league}/teams/${team}/statistics`);
+
+        let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
+        `/teams/${team}/statistics${queries}`;
+
+        const response = await fetch(endpoint);
+        
         const teamData = await response.json();
-        leagueStats.push({teamName: team, categories: teamData.results.stats.categories});
+
+        if (currentSeason == 0){
+            currentSeason = teamData.season.year;
+            requestedSeason = teamData.requestedSeason.displayName;
+        }
+
+        if (req.query.seasonType == "3"){
+            if (teamData.requestedSeason.qualifiedPostSeason){
+                leagueStats.push({teamName: team, categories: teamData.results.stats.categories});
+            }
+        } else {
+            leagueStats.push({teamName: team, categories: teamData.results.stats.categories});
+        }
     }
     
-    res.render('league_stats', {port: port, sport: sport, league: league, leagueStats: leagueStats});
+    res.render('league_stats', {port: port, sport: sport, league: league, requestedType: requestedType,
+        currentSeason: currentSeason, requestedSeason: requestedSeason, leagueStats: leagueStats});
     
 })
 

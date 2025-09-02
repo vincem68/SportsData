@@ -14,11 +14,27 @@
 
         <%- include ('menu_header') %>
 
-        <h1><%= league.toUpperCase() %> Stats</h1>
+        <h1><%= league.toUpperCase() %> Stats for the <%= requestedSeason + " " + requestedType %></h1>
+
+        <div id="seasonAndTypeFormDiv">
+            <form method="GET">
+                <label for="season">Select Year</label>
+                <select name="season">
+                    <% for (let i = currentSeason; i >= 2000; i--){ %>
+                        <option value="<%= i %>"><%= i %></option>
+                    <% } %>
+                </select>
+                <label for="seasonType">Select Season Type</label>
+                <select name="seasonType">
+                    <option value="2">Regular Season</option>
+                    <option value="3">Postseason</option>
+                </select>
+                <button>Submit</button>
+            </form>
+        </div>
 
         <!--Lets do it so you can pick a category-->
         <div name="selectors">
-
             <label for="categorySelect">Select Category:</label>
             <select id="categorySelect" name="categorySelect"> <!--pick category-->
                 <% leagueStats[0].categories.forEach(category => { %>
@@ -26,7 +42,6 @@
                 <% index++; 
                 })%>
             </select>
-
         </div>
 
         <div id="statTables">
