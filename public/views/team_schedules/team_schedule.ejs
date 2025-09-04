@@ -43,11 +43,15 @@
 
                     <%- include ('weeks') %>
 
-                <% } else { %> <!--for NBA, NHL and MLB schedules-->
+                <% } else {  <!--for NBA, NHL and MLB schedules-->
 
-                    <%- include ('calendar') %>
+                    if (data.requestedSeason.type == 3){ %>
+                        <%- include('postseason_series') %>
+                    <% } else { %>
+                        <%- include ('calendar') %>
+                    <% }
 
-                <% } %>
+                } %>
 
             </div>
             

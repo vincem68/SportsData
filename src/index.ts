@@ -110,7 +110,7 @@ app.get('/:sport/:league/teams/:team/schedule', async function(req: Request, res
     let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/schedule`;
 
     if (req.query.season !== undefined && req.query.seasonType !== undefined){
-        endpoint += `?season=${req.query.season}&seasonType=${req.query.seasonType}`;
+        endpoint += `?season=${req.query.season}&seasontype=${req.query.seasonType}`;
     }
 
     const response = await fetch(endpoint);
