@@ -108,11 +108,12 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
     border-width: 2px;
     border-style: solid;
     border-color: black;
-    margin-left: 25%;
-    margin-right: 25%;
+    margin-left: 20%;
+    margin-right: 20%;
 }
 
 .gameSymbol {
@@ -128,11 +129,6 @@
     margin-right: 60px;
 }
 
-.footballTitleDiv > p {
-    font-size: medium;
-    font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-}
-
 .byeWeekDiv {
     background-color: azure;
 }
@@ -142,19 +138,28 @@
 }
 
 .footballOpponentLogo {
-    width: 75px;
-    height: 75px;
+    width: 125px;
+    height: 125px;
 }
 
-.weekNum {
-    font-size: medium;
-    font-family:Verdana, Geneva, Tahoma, sans-serif ;
-    margin-left: 20px;
-    margin-right: 70px;
+.footballTeamName {
+    font-size: 30px;
+}
+
+.week {
+    background-color: lightgoldenrodyellow;
+    border-top-style: solid; border-bottom-style: solid;
+    border-top-color: lightgreen; border-bottom-color: lightgreen;
+    border-top-width: 10px; border-bottom-width: 10px;
+    text-align: center;
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-bottom: 0%;
+    margin-top: 0%;
 }
 
 .gameDetails {
-    font-size: x-large;
+    font-size: 30px;
 }
 
 /* for the postseason_series file */
