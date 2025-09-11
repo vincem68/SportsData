@@ -2,6 +2,10 @@
 @import "general_styles/table_styles.css";
 
 
-.stat {
-    background-color: yellow;
+.leastSorted {
+    background-color: lightcoral;
+}
+
+.greatestSorted {
+    background-color: lightgreen;
 }

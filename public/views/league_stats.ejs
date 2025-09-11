@@ -39,6 +39,7 @@
                     <h3><%= leagueStats[0].categories[i].displayName %></h3> <!--category name-->
                     <table>
                         <tr>
+                            <th>Rank</th>
                             <th>Team</th> <!--Team column-->
                             <!--populate first row with the names of stats in current category-->
                             <% leagueStats[0].categories[i].stats.forEach(stat => { %>
@@ -57,8 +58,10 @@
                         <!--go through each team in leagueStats and display their stats-->
                         <% 
                         index = 0;
+                        let rowCol = 0;
                         leagueStats.forEach(team => { %>
                             <tr>
+                                <th><%= ++rowCol %></th>
                                 <th class="name"><%= team.teamName %></th>
                                 <% team.categories[i].stats.forEach(stat => { %>
                                     <td><%= stat.displayValue %></td>
@@ -92,10 +95,14 @@
 
             //sort table
             function sortTable(colIndex){ //give column index of table for leagueStats lookup
+
                 const catIndex = categorySelector.value; //value of selected category
 
                 //sort the leagueStats array, every other click sorts it from least to greatest
                 evenClick = !evenClick;
+                //color of sorted column
+                const sortedColumnClass = (evenClick) ? "greatestSorted" : "leastSorted";
+
                 if (evenClick){ //if true, sort from greatest, if false, sort from least
                     leagueStats.sort((team1, team2) => team2.categories[catIndex].stats[colIndex].value - 
                      team1.categories[catIndex].stats[colIndex].value);
@@ -108,11 +115,16 @@
                 const table = document.querySelectorAll('table')[catIndex];
                 table.replaceChildren(table.rows[0]);
 
+                let rankedRow = 1;
+
                 leagueStats.forEach(team => {
                     const row = document.createElement('tr');
                     const name = document.createElement('th');
+                    const rowNum = document.createElement('th');
                     name.textContent = team.teamName; //add in team name cell
                     name.classList.add("name"); //add name class to team name elements
+                    rowNum.textContent = rankedRow;
+                    row.append(rowNum);
                     row.append(name);
                     let index = 0;
                     team.categories[catIndex].stats.forEach(stat => { //go through each stat and make the cell
@@ -124,13 +136,14 @@
                         row.append(cell);
                     });
                     table.append(row);
+                    rankedRow++;
                 });
                 const statCells = document.querySelectorAll('.stat');
                 statCells.forEach(cell => {
                     if (Number(cell.getAttribute("name")) == colIndex){
-                        cell.classList.add("stat");
+                        cell.classList.add(sortedColumnClass);
                     } else {
-                        cell.classList.remove("stat");
+                        cell.classList.remove("leastSorted", "greatestSorted");
                     }
                 });
             }
