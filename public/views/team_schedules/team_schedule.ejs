@@ -20,7 +20,8 @@
         <form id="scheduleSelection" method="GET">
             <label for="season">Select Season:</label>
              <select name="season">
-                <% for (let i = data.season.year; i >= 2000; i--){ %>
+                <% const startYear = (data.requestedSeason !== undefined) ? data.requestedSeason.year : data.season.year; %>
+                <% for (let i = startYear; i >= 2000; i--){ %>
                     <option value="<%= i %>"><%= i %></option>
                 <% } %>
              </select>
@@ -31,7 +32,18 @@
              <button>Submit</button>
         </form>
 
-        <% if (data.events.length == 0 || data.requestedSeason.type == 1){ %>
+        <% const checkYear = (data.requestedSeason !== undefined) ? data.requestedSeason.year : requestedSeason; %>
+        <!--Check if we're requesting postseason schedule for a postseason that hasn't happened yet-->
+        <% if (requestedType == 3 && (checkYear > data.season.year || data.season.type < 3)){ %>
+
+            <h2>Postseason has not Occurred Yet. Check Back at a Later Date.</h2>
+
+        <!--Check to see -->
+        <% } else if (requestedType == 3 && data.events.length == 0) { %>
+
+            <h2>This Team Did Not Qualify for the Postseason this Year.</h2>
+
+        <% } else if (data.events.length == 0){ %>
 
             <h2>Season Schedule Not Available. Check Back Later!</h2>
 
