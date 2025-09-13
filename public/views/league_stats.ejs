@@ -14,7 +14,8 @@
 
         <%- include ('menu_header') %>
 
-        <h1><%= league.toUpperCase() %> Stats for the <%= requestedSeason + " " + requestedType %></h1>
+        <h1><%= league.toUpperCase() %> Stats for the <%= requestedSeason %> 
+            <% if (leagueStats.length > 16) { %> Regular Season <% } else { %> Postseason <% } %></h1>
 
         <div id="seasonAndTypeFormDiv">
             <form method="GET">
@@ -34,58 +35,66 @@
         </div>
 
         <!--Lets do it so you can pick a category-->
-        <div name="selectors">
-            <label for="categorySelect">Select Category:</label>
-            <select id="categorySelect" name="categorySelect"> <!--pick category-->
-                <% leagueStats[0].categories.forEach(category => { %>
-                    <option value="<%= index %>"><%= category.displayName %></option>
-                <% index++; 
-                })%>
-            </select>
-        </div>
+        <% if (leagueStats.length != 0){ %>
+            <div name="selectors">
+                <label for="categorySelect">Select Category:</label>
+                <select id="categorySelect" name="categorySelect"> <!--pick category-->
+                    <% leagueStats[0].categories.forEach(category => { %>
+                        <option value="<%= index %>"><%= category.displayName %></option>
+                    <% index++; 
+                    })%>
+                </select>
+            </div>
+        <% } %>
 
-        <div id="statTables">
+        <% if (leagueStats.length == 0){ %>
+            <h1>Data is Not Available</h1>
+
+        <% } else { %>
+
+            <div id="statTables">
             
-            <% for (let i = 0; i < leagueStats[0].categories.length; i++) { <!--loop through the category names and make table for each-->
-                
-                index = 0; %>
-                <div class="tableDiv">
+                <% for (let i = 0; i < leagueStats[0].categories.length; i++) { <!--loop through the category names and make table for each-->
+                    
+                    index = 0; %>
+                    <div class="tableDiv">
 
-                    <h3><%= leagueStats[0].categories[i].displayName %></h3> <!--category name-->
-                    <table>
-                        <tr>
-                            <th>Team</th> <!--Team column-->
-                            <!--populate first row with the names of stats in current category-->
-                            <% leagueStats[0].categories[i].stats.forEach(stat => { %>
-                                <th class="statName" onclick="sortTable(<%= index %>)"> <!--give each column header an index name-->
-                                    <div class="tooltip"><%= stat.abbreviation %>
-                                        <span class="tooltip-text">
-                                            <u><%= stat.displayName %></u>
-                                            <br>
-                                            <%= stat.description %>
-                                        </span>
-                                    </div>
-                                </th>
-                                <% index++;
-                            }); %>
-                        </tr>
-                        <!--go through each team in leagueStats and display their stats-->
-                        <% 
-                        index = 0;
-                        leagueStats.forEach(team => { %>
+                        <h3><%= leagueStats[0].categories[i].displayName %></h3> <!--category name-->
+                        <table>
                             <tr>
-                                <th class="name"><%= team.teamName %></th>
-                                <% team.categories[i].stats.forEach(stat => { %>
-                                    <td><%= stat.displayValue %></td>
+                                <th>Team</th> <!--Team column-->
+                                <!--populate first row with the names of stats in current category-->
+                                <% leagueStats[0].categories[i].stats.forEach(stat => { %>
+                                    <th class="statName" onclick="sortTable(<%= index %>)"> <!--give each column header an index name-->
+                                        <div class="tooltip"><%= stat.abbreviation %>
+                                            <span class="tooltip-text">
+                                                <u><%= stat.displayName %></u>
+                                                <br>
+                                                <%= stat.description %>
+                                            </span>
+                                        </div>
+                                    </th>
                                     <% index++;
                                 }); %>
                             </tr>
-                        <% index = 0; 
-                        }); %>
-                    </table>
-                </div>
-            <% } %>
-        </div>
+                            <!--go through each team in leagueStats and display their stats-->
+                            <% 
+                            index = 0;
+                            leagueStats.forEach(team => { %>
+                                <tr>
+                                    <th class="name"><%= team.teamName %></th>
+                                    <% team.categories[i].stats.forEach(stat => { %>
+                                        <td><%= stat.displayValue %></td>
+                                        <% index++;
+                                    }); %>
+                                </tr>
+                            <% index = 0; 
+                            }); %>
+                        </table>
+                    </div>
+                <% } %>
+            </div>
+        <% } %>
 
         <%- include ('footer') %>
 

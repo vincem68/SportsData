@@ -197,44 +197,50 @@ app.get('/:sport/:league/stats', async function(req: Request, res: Response){
         `?season=${req.query.season}&seasontype=${req.query.seasonType}` : "";
     
     let requestedSeason = 0;
-    let requestedType = "";
-    if (req.query.seasonType !== undefined){
-        requestedType = (req.query.seasonType == "2") ? "Regular Season" : "Postseason";
-    } else {
-        requestedType = "Regular Season";
-    }
-    let currentSeason = 0;
+    let currentType = 0;
     
     //set the team array to whichever league we're using
     const teamIDs = (league.toUpperCase() == "NFL") ? nflTeams : (league.toUpperCase() == "NBA") ? nbaTeams :
         (league.toUpperCase() == "MLB") ? mlbTeams : nhlTeams;
-    
-    //loop through the teams array and make a call on each ID to get that teams data, and render the data
-    for (const team of teamIDs){
 
-        let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
-        `/teams/${team}/statistics${queries}`;
+    //get the current season of the league
+    const currentYearResponse = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
+        `/teams/${teamIDs[0]}/statistics?season=2024`)).json();
 
-        const response = await fetch(endpoint);
-        
-        const teamData = await response.json();
+    let currentSeason = currentYearResponse.season.year;
 
-        if (currentSeason == 0){
-            currentSeason = teamData.season.year;
-            requestedSeason = teamData.requestedSeason.displayName;
-        }
+    //test request to see if available data
+    const checkValidResponse = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
+        `/teams/${teamIDs[0]}/statistics${queries}`)).json();
 
-        if (req.query.seasonType == "3"){
-            if (teamData.requestedSeason.qualifiedPostSeason){
+    //check if code 404 exists
+    if (checkValidResponse.code === undefined) {
+        //loop through the teams array and make a call on each ID to get that teams data, and render the data
+        for (const team of teamIDs){
+
+            let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
+            `/teams/${team}/statistics${queries}`;
+
+            const teamData = await (await fetch(endpoint)).json();
+
+            if (requestedSeason == 0){
+                requestedSeason = teamData.requestedSeason.year;
+                currentType = teamData.season.type;
+                currentSeason = teamData.season.year;
+            }
+
+            if (req.query.seasonType == "3"){
+                if (teamData.requestedSeason.qualifiedPostSeason){
+                    leagueStats.push({teamName: team, categories: teamData.results.stats.categories});
+                }
+            } else {
                 leagueStats.push({teamName: team, categories: teamData.results.stats.categories});
             }
-        } else {
-            leagueStats.push({teamName: team, categories: teamData.results.stats.categories});
         }
     }
     
-    res.render('league_stats', {port: port, sport: sport, league: league, requestedType: requestedType,
-        currentSeason: currentSeason, requestedSeason: requestedSeason, leagueStats: leagueStats});
+    res.render('league_stats', {port: port, sport: sport, league: league, requestedSeason: requestedSeason, 
+        currentSeason: currentSeason, currentType: currentType, leagueStats: leagueStats});
     
 })
 
