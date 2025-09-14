@@ -96,42 +96,6 @@
                     </table>
                 </div>
             <% } %>
-        </div>
-                        <h3><%= leagueStats[0].categories[i].displayName %></h3> <!--category name-->
-                        <table>
-                            <tr>
-                                <th>Team</th> <!--Team column-->
-                                <!--populate first row with the names of stats in current category-->
-                                <% leagueStats[0].categories[i].stats.forEach(stat => { %>
-                                    <th class="statName" onclick="sortTable(<%= index %>)"> <!--give each column header an index name-->
-                                        <div class="tooltip"><%= stat.abbreviation %>
-                                            <span class="tooltip-text">
-                                                <u><%= stat.displayName %></u>
-                                                <br>
-                                                <%= stat.description %>
-                                            </span>
-                                        </div>
-                                    </th>
-                                    <% index++;
-                                }); %>
-                            </tr>
-                            <!--go through each team in leagueStats and display their stats-->
-                            <% 
-                            index = 0;
-                            leagueStats.forEach(team => { %>
-                                <tr>
-                                    <th class="name"><%= team.teamName %></th>
-                                    <% team.categories[i].stats.forEach(stat => { %>
-                                        <td><%= stat.displayValue %></td>
-                                        <% index++;
-                                    }); %>
-                                </tr>
-                            <% index = 0; 
-                            }); %>
-                        </table>
-                    </div>
-                <% } %>
-            </div>
         <% } %>
 
         <%- include ('footer') %>
