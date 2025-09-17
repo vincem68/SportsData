@@ -81,10 +81,11 @@ app.get('/:sport/:league/games', async function(req: Request, res: Response) {
         endpoint += `?dates=${date.replace(/-/g, "")}`;
     }
 
-    if (req.query.season !== undefined && req.query.week !== undefined){
+    if (req.query.season !== undefined && req.query.week !== undefined && req.query.seasonType !== undefined){
         const season = req.query.season;
         const week = req.query.week;
-        endpoint += `?dates=${season}&week=${week}`;
+        const type = req.query.seasonType;
+        endpoint += `?dates=${season}&week=${week}&seasontype=${type}`;
         console.log(endpoint);
     }
 

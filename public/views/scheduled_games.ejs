@@ -1,4 +1,5 @@
 <%
+    //filter the games depending on if finished, active or upcoming to divide them into sections on page
     const upcomingGames = data.events.filter(game => game.status.type.state == "pre");
     const activeGames = data.events.filter(game => game.status.type.state == "in");
     const completedGames = data.events.filter(game => game.status.type.state == "post");
@@ -9,6 +10,12 @@
     const day = today.getDate().toString();
     const year = today.getFullYear().toString();
     const fullDate = year + "-" + month + "-" + day;
+
+    const seasonTypeGames = (data.events.length != 0) ? data.events[0].season.slug.charAt(0).toUpperCase()
+        + data.events[0].season.slug.slice(1) : "";
+
+    const postseasonGames = [{key: 1, value: "Wild Card"}, {key: 2, value: "Divisional"},
+        {key: 3, value: "Conference"}, {key: 5, value: "Super Bowl"}];
 %> 
 
 <!DOCTYPE html>
@@ -27,18 +34,23 @@
 
         <!--This will be what we select for the week, will show all games for the week-->
         <form method="GET">
+
             <label for="season">Select Season:</label>
             <select name="season">
                 <% for (let i = year; i >= 2000; i--){ %>
                     <option value="<%= i %>"><%= i %></option>
                 <% } %>
             </select>
-            <label for="week">Select Week:</label>
-            <select name="week">
-                <% for (let i = 1; i <= 18; i++){ %>
-                    <option value="<%= i %>"><%= i %></option>
-                <% } %>
+
+            <label for="seasonType">Select Season Type:</label>
+            <select id="typeSelector" name="seasonType">
+                <option value="2">Regular Season</option>
+                <option value="3">Postseason</option>
             </select>
+
+            <label for="week">Select Week:</label>
+            <select id="weekSelector" name="week"></select>
+
             <button>Submit</button>
         </form>
 
@@ -54,12 +66,18 @@
     <% } %>
 
     <% if (league.toUpperCase() == "NFL") { %> 
-        <h2>Week <%= data.week.number %></h2> 
+        <h2>
+            <% if (data.season.type == 3){ %>
+                <%= postseasonGames.find(round => round.key == data.week.number).value %>
+            <% } else { %>
+                <%= "Week " + data.week.number %>
+            <% } %>
+        </h2> 
     <% } %>
 
     <% if (activeGames.length != 0){ %>
 
-        <h3>Active Games</h3>
+        <h3>Active <%= seasonTypeGames %> Games</h3>
         <div class="gamesLayout">
             <% activeGames.forEach(game => { %>
 
@@ -90,7 +108,7 @@
 
     <% if (upcomingGames.length != 0){ %>
         
-        <h3>Upcoming Games</h3>
+        <h3>Upcoming <%= seasonTypeGames %> Games</h3>
         <div class="gamesLayout">
             <% upcomingGames.forEach(game => { %>
 
@@ -130,7 +148,7 @@
 
     <% if (completedGames.length != 0){ %>
         
-        <h3>Completed Games</h3>
+        <h3>Completed <%= seasonTypeGames %> Games</h3>
         <div class="gamesLayout">
             
             <% completedGames.forEach(game => { %>
@@ -168,6 +186,41 @@
     <script>
         const form = document.getElementById("dateSelection");
         const dateInput = document.getElementById('date');
+
+        //get the selectors
+        const typeSelector = document.getElementById('typeSelector');
+        const weekSelector = document.getElementById('weekSelector');
+
+        function getOptions(){
+
+            const type = typeSelector.value;
+            weekSelector.innerHTML = '';
+
+            if (type == "2"){
+                
+                for (let i = 1; i < 19; i++){
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = "Week " + i.toString();
+                    weekSelector.appendChild(option);
+                }
+
+            } else {
+
+                const postseasonGames = [{key: 1, value: "Wild Card"}, {key: 2, value: "Divisional"},
+                    {key: 3, value: "Conference"}, {key: 5, value: "Super Bowl"}];
+                
+                postseasonGames.forEach(round => {
+                    const option = document.createElement('option');
+                    option.value = round.key;
+                    option.textContent = round.value;
+                    weekSelector.appendChild(option);
+                });
+            }
+        }
+
+        typeSelector.addEventListener('change', getOptions);
+        getOptions();
 
         form.addEventListener("submit", function() {
             const dateValue = date.value;

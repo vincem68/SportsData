@@ -6,8 +6,8 @@
 }
 
 #mainLogo {
-    height: 25%;
-    width: 25%;
+    height: 10%;
+    width: 10%;
 }
 
 #mainLogoContainer {
@@ -15,10 +15,7 @@
     flex-flow: column wrap;
     justify-content: center;
     align-items: center;
-    padding: 30px;
-    border-bottom-style: solid;
-    border-bottom-width: 50px;
-    border-bottom-color: black;
+    padding: 10px;
 }
 
 #teamsContainer {
@@ -41,4 +38,12 @@
     align-items: center;
     text-align: center;
     margin: 15px;
+}
+
+h3 {
+    background-color: lightgoldenrodyellow;
+    border-top-style: solid; border-bottom-style: solid;
+    border-top-color: lightgreen; border-bottom-color: lightgreen;
+    border-top-width: 10px; border-bottom-width: 10px;
+    text-align: center;
 }

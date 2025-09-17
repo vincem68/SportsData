@@ -47,55 +47,60 @@
             </div>
         <% } %>
 
+        <!--If no stats are given-->
         <% if (leagueStats.length == 0){ %>
+
             <h1>Data is Not Available</h1>
 
-        <% } else { %>
+        <% } else { %> <!--else make the table-->
 
             <div id="statTables">
+
+                <h4>Click on Column Names to Sort by a Stat. Green is Sorted by Most, Red by Least.</h4>
             
                 <% for (let i = 0; i < leagueStats[0].categories.length; i++) { <!--loop through the category names and make table for each-->
                     
                     index = 0; %>
                     <div class="tableDiv">
 
-                    <h3><%= leagueStats[0].categories[i].displayName %></h3> <!--category name-->
-                    <table>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Team</th> <!--Team column-->
-                            <!--populate first row with the names of stats in current category-->
-                            <% leagueStats[0].categories[i].stats.forEach(stat => { %>
-                                <th class="statName" onclick="sortTable(<%= index %>)"> <!--give each column header an index name-->
-                                    <div class="tooltip"><%= stat.abbreviation %>
-                                        <span class="tooltip-text">
-                                            <u><%= stat.displayName %></u>
-                                            <br>
-                                            <%= stat.description %>
-                                        </span>
-                                    </div>
-                                </th>
-                                <% index++;
-                            }); %>
-                        </tr>
-                        <!--go through each team in leagueStats and display their stats-->
-                        <% 
-                        index = 0;
-                        let rowCol = 0;
-                        leagueStats.forEach(team => { %>
+                        <h3><%= leagueStats[0].categories[i].displayName %></h3> <!--category name-->
+                        <table>
                             <tr>
-                                <th><%= ++rowCol %></th>
-                                <th class="name"><%= team.teamName %></th>
-                                <% team.categories[i].stats.forEach(stat => { %>
-                                    <td><%= stat.displayValue %></td>
+                                <th>Rank</th>
+                                <th>Team</th> <!--Team column-->
+                                <!--populate first row with the names of stats in current category-->
+                                <% leagueStats[0].categories[i].stats.forEach(stat => { %>
+                                    <th class="statName" onclick="sortTable(<%= index %>)"> <!--give each column header an index name-->
+                                        <div class="tooltip"><%= stat.abbreviation %>
+                                            <span class="tooltip-text">
+                                                <u><%= stat.displayName %></u>
+                                                <br>
+                                                <%= stat.description %>
+                                            </span>
+                                        </div>
+                                    </th>
                                     <% index++;
                                 }); %>
                             </tr>
-                        <% index = 0; 
-                        }); %>
-                    </table>
-                </div>
-            <% } %>
+                            <!--go through each team in leagueStats and display their stats-->
+                            <% 
+                            index = 0;
+                            let rowCol = 0;
+                            leagueStats.forEach(team => { %>
+                                <tr>
+                                    <th><%= ++rowCol %></th>
+                                    <th class="name"><%= team.teamName %></th>
+                                    <% team.categories[i].stats.forEach(stat => { %>
+                                        <td><%= stat.displayValue %></td>
+                                        <% index++;
+                                    }); %>
+                                </tr>
+                            <% index = 0; 
+                            }); %>
+                        </table>
+                    </div>
+                <% } %>
+            </div>
         <% } %>
 
         <%- include ('footer') %>
