@@ -7,9 +7,25 @@
                 <% category.stats.forEach(stat => {
 
                     if (stat.name.substring(0, 3) == "avg"){ %>
-                        <th><%= stat.shortDisplayName %></th>
+                        <th>
+                            <div class="tooltip"><%= stat.shortDisplayName %>
+                                <span class="tooltip-text">
+                                    <u><%= stat.displayName %></u>
+                                    <br>
+                                    <%= stat.description %>
+                                </span>
+                            </div>
+                        </th>
                     <% } else { %>
-                        <th><%= stat.abbreviation %></th>
+                        <th>
+                            <div class="tooltip"><%= stat.abbreviation %>
+                                <span class="tooltip-text">
+                                    <u><%= stat.displayName %></u>
+                                    <br>
+                                    <%= stat.description %>
+                                </span>
+                            </div>
+                        </th>
                     <% }
                 }) %>
             </tr>

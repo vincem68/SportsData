@@ -142,17 +142,23 @@ app.get('/:sport/:league/teams/:team/stats', async function(req: Request, res: R
     const league = req.params.league;
     const team = req.params.team;
     let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/statistics`;
+    const requestedType = (req.query.seasonType !== undefined) ? req.query.seasonType : 2;
 
-    if (req.query.season !== undefined){
-        endpoint += `?season=${req.query.season}`;
+    if (req.query.season !== undefined && req.query.seasonType !== undefined){
+        endpoint += `?season=${req.query.season}&seasontype=${req.query.seasonType}`;
     }
 
-    //const sortIndex = (req.query.sortIndex !== undefined) ? parseInt(`${req.query.sortIndex}`) : 0;
+    //check to get team name and season if requested endpoint has code 404, get required data
+    const checkData = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/` +
+        `${league}/teams/${team}/statistics`)).json();
+    const year = (checkData.season.type != 1) ? checkData.season.year : checkData.season.year - 1;
+    const teamName = checkData.team.displayName;
+    const logo = checkData.team.logo;
 
-    const response = await fetch(endpoint);
+    const data = await (await fetch(endpoint)).json();
 
-    const data = await response.json();
-    res.render('team_stats/overview', {port: port, league: league, data: data});
+    res.render('team_stats/overview', {port: port, league: league, year: year, teamName: teamName, logo: logo, 
+        requestedType: requestedType, data: data});
 })
 
 /**

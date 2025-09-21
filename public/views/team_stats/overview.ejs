@@ -2,7 +2,8 @@
 
 <html>
     <head>
-        <title><%= data.team.displayName %> Stats</title>
+        <title><%= teamName %> Stats</title>
+        <link rel="stylesheet" href="/styles/team_stats.css">
     </head>
 
     <body>
@@ -10,46 +11,64 @@
         <%- include ('../menu_header') %>
 
         <div id="teamTitleSection">
-            <img src="<%= data.team.logo %>">
-            <h1><%= data.team.displayName %></h1>
+            <img src="<%= logo %>">
+            <h1><%= teamName %></h1>
         </div>
 
         <form method="GET">
+
             <label for="season">Select a Season:</label>
             <select name="season">
-                <% for (let i = data.season.year; i >= 2000; i--){ %>
+                <% for (let i = year; i >= 2000; i--){ %>
                     <option value="<%= i %>"><%= i %></option>
                 <% } %>
+            </select>
+
+            <label for="seasonType">Select Season Type:</label>
+            <select name="seasonType">
+                <option value="2">Regular Season</option>
+                <option value="3">Postseason</option>
             </select>
             <button>Submit</button>
         </form>
 
-        <div id="statsSection">
+        <% if (data.code !== undefined){ %>
 
-            <h3>Showing Stats for the <%= data.team.seasonSummary %> Season</h3>
+            <h1>This Data is Not Available Yet.</h1>
+        
+        <% } else if (data.requestedSeason.qualifiedPostSeason == false && requestedType == 3) { %>
 
-            <h4>Season Record: <%= data.team.recordSummary %></h4>
-            <h4>Standings: <%= data.team.standingSummary %></h4>
+            <h1>Team Did Not Make the Postseason for the Requested Season.</h1>
 
-            <!--This will be used to get the right page-->
-            <% if (league.toUpperCase() == "NFL"){ %>
+        <% } else { %>
 
-                <%- include ('nfl_team_stats') %>
+            <div id="statsSection">
 
-            <% } else if (league.toUpperCase() == "MLB"){ %>
+                <h3>Showing Stats for the <%= data.requestedSeason.year %> <%= data.requestedSeason.name %></h3>
 
-                <%- include ('mlb_team_stats') %>
+                <h4>Season Record: <%= data.team.recordSummary %></h4>
+                <h4>Standings: <%= data.team.standingSummary %></h4>
 
-            <% } else if (league.toUpperCase() == "NBA"){ %>
+                <!--This will be used to get the right page-->
+                <% if (league.toUpperCase() == "NFL"){ %>
 
-                <%- include ('nba_team_stats') %>
+                    <%- include ('nfl_team_stats') %>
 
-            <% } else { %>
+                <% } else if (league.toUpperCase() == "MLB"){ %>
 
-                <%- include ('nhl_team_stats') %>
+                    <%- include ('mlb_team_stats') %>
 
-            <% } %>
-        </div>
+                <% } else if (league.toUpperCase() == "NBA"){ %>
+
+                    <%- include ('nba_team_stats') %>
+
+                <% } else { %>
+
+                    <%- include ('nhl_team_stats') %>
+
+                <% } %>
+            </div>
+        <% } %>
 
         <%- include ('../footer') %>
     </body>
