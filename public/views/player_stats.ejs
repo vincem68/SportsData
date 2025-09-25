@@ -21,26 +21,35 @@
          
         </div>
 
-        <div id="mainStats">
-            
-            <% playerOverview.statistics.splits.forEach(split => { %>
+        <h2>Player Stats for <%= playerOverview.statistics.displayName.split(' ')[0] %> Season</h2>
 
-                <div>
-                    <h3><%= split.displayName %></h3>
-                    <table>
-                        <tr>
-                            <% playerOverview.statistics.labels.forEach(label => { %>
-                                <th><%= label %></th>
-                            <% }) %>
-                        </tr>
-                        <tr>
-                            <% split.stats.forEach(stat => { %>
-                                <td><%= stat %></td>
-                            <% }) %>
-                        </tr>
-                    </table>
-                </div>
-            <% }) %>
+        <div id="mainStats">
+
+            <table>
+                <!--get col names and descriptions-->
+                <tr>
+                    <th>Category</th>
+                    <% for (let i = 0; i < playerOverview.statistics.labels.length; i++){ %>
+                        <th>
+                            <div class="tooltip"><%= playerOverview.statistics.labels[i] %>
+                                <span class="tooltip-text">
+                                    <%= playerOverview.statistics.displayNames[i] %>
+                                </span>
+                            </div>
+                        </th>
+                    <% } %>
+                </tr>
+
+                <!--Now do rows for reg season, postseason, and career-->
+                <% playerOverview.statistics.splits.forEach(split => { %>
+                    <tr>
+                        <th><%= split.displayName %></th>
+                        <% split.stats.forEach(stat => { %>
+                            <td><%= stat %></td>
+                        <% }) %>
+                    </tr>
+                <% }) %>
+            </table>
         </div>
 
        <div id="advancedStatsSection">
@@ -70,12 +79,20 @@
             </div>
 
             <div id="advancedStatsTables">
+
                 <h3>Showing Stats for <%= playerSplits.splitCategories[0].splits[0].displayName %></h3>
+
                 <table id="advancedSplitsTable">
                     <tr>
-                        <% playerSplits.labels.forEach(label => { %>
-                            <th><%= label %></th>
-                        <% }) %>
+                        <% for (let i = 0; i < playerSplits.labels.length; i++) { %>
+                            <th>
+                                <div class="tooltip"><%= playerSplits.labels[i] %>
+                                    <span class="tooltip-text">
+                                        <%= playerSplits.displayNames[i] %>
+                                    </span>
+                                </div>
+                            </th>
+                        <% } %>
                     </tr>
                     <tr>
                         <% playerSplits.splitCategories[0].splits[0].stats.forEach(stat => { %>
