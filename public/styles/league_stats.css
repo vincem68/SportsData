@@ -9,3 +9,7 @@
 .greatestSorted {
     background-color: lightgreen;
 }
+
+.tableDiv {
+    overflow-x: auto;
+}

@@ -10,98 +10,102 @@
 
         <%- include ('menu_header') %>
 
-        <div id="playerInfoDiv">
-            <img id="headshot" src="<%= generalInfo.athlete.headshot.href %>"> <!--player pic-->
-            <h1><%= generalInfo.athlete.displayName %></h1> <!--player name-->
-            <div id="extraPlayerInfo">
-                <img id="teamLogo" src="<%= generalInfo.athlete.team.logos[0].href %>">
-                <h2><%= generalInfo.athlete.team.displayName + " " + generalInfo.athlete.position.displayName %></h2>
-                <h3>No. <%= generalInfo.athlete.jersey %></h3>
-            </div>
-         
-        </div>
+        <% if (playerOverview.statistics.labels === undefined){ %>
+            <h1>Data is Not Available</h1>
+        <% } else { %>
 
-        <h2>Player Stats for <%= playerOverview.statistics.displayName.split(' ')[0] %> Season</h2>
-
-        <div id="mainStats">
-
-            <table>
-                <!--get col names and descriptions-->
-                <tr>
-                    <th>Category</th>
-                    <% for (let i = 0; i < playerOverview.statistics.labels.length; i++){ %>
-                        <th>
-                            <div class="tooltip"><%= playerOverview.statistics.labels[i] %>
-                                <span class="tooltip-text">
-                                    <%= playerOverview.statistics.displayNames[i] %>
-                                </span>
-                            </div>
-                        </th>
-                    <% } %>
-                </tr>
-
-                <!--Now do rows for reg season, postseason, and career-->
-                <% playerOverview.statistics.splits.forEach(split => { %>
-                    <tr>
-                        <th><%= split.displayName %></th>
-                        <% split.stats.forEach(stat => { %>
-                            <td><%= stat %></td>
-                        <% }) %>
-                    </tr>
-                <% }) %>
-            </table>
-        </div>
-
-       <div id="advancedStatsSection">
-            <div id="advancedStatsFilter">
-                <label for="catSelect">Select a Category</label>
-                <select id="catSelect" name="catSelect">
-                    <% let index = 0;
-                    playerSplits.splitCategories.forEach(category => { %>
-
-                        <option value="<%= index %>"><%= category.displayName %></option>
-
-                    <% index++;
-                    }) %>
-                </select>
-
-                <label for="splitSelect">Select a Stat:</label>
-                <% playerSplits.splitCategories.forEach(category => { 
-                    index = 0; %>
-
-                    <select name="splitSelect" class="splitSelect">
-                        <option value="-1">--</option>
-                        <% category.splits.forEach(split => { %>
-                            <option value="<%= index %>"><%= split.displayName %></option>
-                        <% index++; }) %>
-                    </select>
-                <% }) %>
+            <div id="playerInfoDiv">
+                
+                <img id="headshot" src="<%= generalInfo.athlete.headshot.href %>"> <!--player pic-->
+                <h1><%= generalInfo.athlete.displayName %></h1> <!--player name-->
+                <div id="extraPlayerInfo">
+                    <img id="teamLogo" src="<%= generalInfo.athlete.team.logos[0].href %>">
+                    <h2><%= generalInfo.athlete.team.displayName + " " + generalInfo.athlete.position.displayName %></h2>
+                    <h3>No. <%= generalInfo.athlete.jersey %></h3>
+                </div>
+            
             </div>
 
-            <div id="advancedStatsTables">
+            <div id="mainStats">
 
-                <h3>Showing Stats for <%= playerSplits.splitCategories[0].splits[0].displayName %></h3>
-
-                <table id="advancedSplitsTable">
+                <table>
+                    <!--get col names and descriptions-->
                     <tr>
-                        <% for (let i = 0; i < playerSplits.labels.length; i++) { %>
+                        <th>Category</th>
+                        <% for (let i = 0; i < playerOverview.statistics.labels.length; i++){ %>
                             <th>
-                                <div class="tooltip"><%= playerSplits.labels[i] %>
+                                <div class="tooltip"><%= playerOverview.statistics.labels[i] %>
                                     <span class="tooltip-text">
-                                        <%= playerSplits.displayNames[i] %>
+                                        <%= playerOverview.statistics.displayNames[i] %>
                                     </span>
                                 </div>
                             </th>
                         <% } %>
                     </tr>
-                    <tr>
-                        <% playerSplits.splitCategories[0].splits[0].stats.forEach(stat => { %>
-                            <td><%= stat %></td> 
-                        <% }) %>
-                    </tr>
+
+                    <!--Now do rows for reg season, postseason, and career-->
+                    <% playerOverview.statistics.splits.forEach(split => { %>
+                        <tr>
+                            <th><%= split.displayName %></th>
+                            <% split.stats.forEach(stat => { %>
+                                <td><%= stat %></td>
+                            <% }) %>
+                        </tr>
+                    <% }) %>
                 </table>
             </div>
-        </div>
+
+        <div id="advancedStatsSection">
+                <div id="advancedStatsFilter">
+                    <label for="catSelect">Select a Category</label>
+                    <select id="catSelect" name="catSelect">
+                        <% let index = 0;
+                        playerSplits.splitCategories.forEach(category => { %>
+
+                            <option value="<%= index %>"><%= category.displayName %></option>
+
+                        <% index++;
+                        }) %>
+                    </select>
+
+                    <label for="splitSelect">Select a Stat:</label>
+                    <% playerSplits.splitCategories.forEach(category => { 
+                        index = 0; %>
+
+                        <select name="splitSelect" class="splitSelect">
+                            <option value="-1">--</option>
+                            <% category.splits.forEach(split => { %>
+                                <option value="<%= index %>"><%= split.displayName %></option>
+                            <% index++; }) %>
+                        </select>
+                    <% }) %>
+                </div>
+
+                <div id="advancedStatsTables">
+
+                    <h3>Showing Stats for <%= playerSplits.splitCategories[0].splits[0].displayName %></h3>
+
+                    <table id="advancedSplitsTable">
+                        <tr>
+                            <% for (let i = 0; i < playerSplits.labels.length; i++) { %>
+                                <th>
+                                    <div class="tooltip"><%= playerSplits.labels[i] %>
+                                        <span class="tooltip-text">
+                                            <%= playerSplits.displayNames[i] %>
+                                        </span>
+                                    </div>
+                                </th>
+                            <% } %>
+                        </tr>
+                        <tr>
+                            <% playerSplits.splitCategories[0].splits[0].stats.forEach(stat => { %>
+                                <td><%= stat %></td> 
+                            <% }) %>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        <% } %>
 
         <%- include ('footer') %>
 

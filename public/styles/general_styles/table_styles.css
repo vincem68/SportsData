@@ -29,7 +29,7 @@ td {
 .tooltip .tooltip-text {
     visibility: hidden;
     width: 180px;
-    background-color: lightslategray;
+    background-color: white;
     color: black;
     text-align: center;
     border-radius: 5px;
