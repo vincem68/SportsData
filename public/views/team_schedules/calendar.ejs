@@ -33,7 +33,9 @@ data.events.forEach(game => {
     game.date = `${year}-${month}-${day}T${hours}:${minutes}`;
 
 });
+%>
 
+<%
 //for each month, filter out the events that take place in said month
 months.forEach(month => {
 
@@ -53,7 +55,7 @@ months.forEach(month => {
 
         %>
 
-        <h3><%= month.name %></h3>
+        <h3 class="monthTitle"><%= month.name %></h3>
         <div class="monthDiv">
 
         
@@ -241,3 +243,5 @@ months.forEach(month => {
         </div>
     <% }
 }) %>
+
+<link rel="stylesheet" href="/styles/team_schedule_styles/calendar_styles.css">
