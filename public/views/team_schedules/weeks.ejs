@@ -26,42 +26,42 @@ data.events.forEach(game => {
             <h2>Bye Week</h2>
         </div>
 
-    <% } else { %>
+    <% } %>
 
-        <h1 class="week"><%= game.week.text %></h1>
+    <h1 class="week"><%= game.week.text %></h1>
 
-        <!--Each week has div, set class to home or away depending on if team plays home or away-->
-        <div class="footballWeekDiv <% if (homeTeam){ %> homeGame <% } else { %> roadGame <% } %>">
-            <!--Either @ or vs symbol depending on home/road game-->
-            <img class="gameSymbol" src="<% if (homeTeam) { %> /images/versus_sign.png <% } else { %> /images/at_symbol.png <% } %>">
-            <!--Div for opponent logo and name-->
-            <div class="footballTitleDiv">
-                <img class="footballOpponentLogo" src="<%= game.competitions[0].competitors[1].team.logos[0].href %>">
-                <p class="footballTeamName"><%= game.competitions[0].competitors[1].team.displayName %></p>
-            </div>
-            <!--Short game details, display date if game has yet to happen, score and result if over, in progress else-->
-            <p class="gameDetails">
-                <% if (game.competitions[0].status.type.state == "pre"){
-                    if (game.competitions[0].status.type.shortDetail == "TBD"){ %>
-                        <%= game.competitions[0].status.type.shortDetail %>
-                    <% } else { %>
-                        <%= game.competitions[0].status.type.detail.split(',')[0] + " " + 
-                            game.competitions[0].status.type.shortDetail.split('-')[1] %>
-                    <% }
-
-                } else if (game.competitions[0].status.type.state == "post"){
-                    if (game.competitions[0].competitors[0].winner) { %> <strong>W</strong><% } else { %> 
-                        <strong>L</strong> <% } %>
-
-                    <%= game.competitions[0].competitors[0].score.displayValue + "-" + 
-                        game.competitions[0].competitors[1].score.displayValue %>
-
-                <% } else { %>
-                    In Progress
-                <% } %>
-            </p>
+    <!--Each week has div, set class to home or away depending on if team plays home or away-->
+    <div class="footballWeekDiv <% if (homeTeam){ %> homeGame <% } else { %> roadGame <% } %>">
+        <!--Either @ or vs symbol depending on home/road game-->
+        <img class="gameSymbol" src="<% if (homeTeam) { %> /images/versus_sign.png <% } else { %> /images/at_symbol.png <% } %>">
+        <!--Div for opponent logo and name-->
+        <div class="footballTitleDiv">
+            <img class="footballOpponentLogo" src="<%= game.competitions[0].competitors[1].team.logos[0].href %>">
+            <p class="footballTeamName"><%= game.competitions[0].competitors[1].team.displayName %></p>
         </div>
-    <% }
+        <!--Short game details, display date if game has yet to happen, score and result if over, in progress else-->
+        <p class="gameDetails">
+            <% if (game.competitions[0].status.type.state == "pre"){
+                if (game.competitions[0].status.type.shortDetail == "TBD"){ %>
+                    <%= game.competitions[0].status.type.shortDetail %>
+                <% } else { %>
+                    <%= game.competitions[0].status.type.detail.split(',')[0] + " " + 
+                        game.competitions[0].status.type.shortDetail.split('-')[1] %>
+                <% }
+
+            } else if (game.competitions[0].status.type.state == "post"){
+                if (game.competitions[0].competitors[0].winner) { %> <strong>W</strong><% } else { %> 
+                    <strong>L</strong> <% } %>
+
+                <%= game.competitions[0].competitors[0].score.displayValue + "-" + 
+                    game.competitions[0].competitors[1].score.displayValue %>
+
+            <% } else { %>
+                In Progress
+            <% } %>
+        </p>
+    </div>
+    <% 
 
     bye++;
 
