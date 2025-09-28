@@ -57,7 +57,7 @@
                 articles.forEach(article => { %>
 
                     <div class="article">
-                        <% if (article.images !== undefined){ %>
+                        <% if (article.images.length != 0){ %>
                             <img class="newsImage" src="<%= article.images[0].url %>">
                         <% } %>
                         <h3><u><%= article.headline %></u></h3>
