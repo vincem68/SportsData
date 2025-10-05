@@ -86,12 +86,10 @@ app.get('/:sport/:league/games', async function(req: Request, res: Response) {
         const week = req.query.week;
         const type = req.query.seasonType;
         endpoint += `?dates=${season}&week=${week}&seasontype=${type}`;
-        console.log(endpoint);
     }
 
-    const response = await fetch(endpoint);
-    const data = await response.json();
-    res.render('scheduled_games', { port: port, sport: sport, league: league, data: data });
+    const data = await (await fetch(endpoint)).json();
+    res.render('scheduled_games', { port: port, sport: sport, league: league, data: data, endpoint: endpoint});
 })
 
 /**
