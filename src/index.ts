@@ -54,15 +54,20 @@ app.get('/:sport/:league/games/:id', async function(req: Request, res: Response)
     const league = req.params.league;
     const game_id = req.params.id;
 
-    const overview = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports` +
-        `/${sport}/${league}/scoreboard/${game_id}`)).json();
+    const overviewEndpoint = `https://site.api.espn.com/apis/site/v2/sports` +
+        `/${sport}/${league}/scoreboard/${game_id}`;
 
-    const summary = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports` +
-        `/${sport}/${league}/summary?event=${game_id}`)).json();
+    const summaryEndpoint = `https://site.api.espn.com/apis/site/v2/sports` +
+        `/${sport}/${league}/summary?event=${game_id}`;
+
+    const overview = await (await fetch(overviewEndpoint)).json();
+
+    const summary = await (await fetch(summaryEndpoint)).json();
 
     //maybe we need to see what kinds of data is available in the pre state
     //overview will be used for selected_game, boxscore will be used for the more specific subfile
-    res.render('selected_game', {port: port, league: league, overview: overview, summary: summary});
+    res.render('selected_game', {port: port, league: league, overview: overview, summary: summary, 
+        overviewEndpoint: overviewEndpoint, summaryEndpoint: summaryEndpoint});
 })
 
 /**

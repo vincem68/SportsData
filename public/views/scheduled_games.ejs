@@ -116,7 +116,7 @@
         <% }) %>
     </div>
         
-    <h3 class="sectionHeadline">Upcoming <%= seasonTypeGames %> Games</h3>
+    <h3 id="upcomingHeadline" class="sectionHeadline">Upcoming <%= seasonTypeGames %> Games</h3>
     <div id="upcomingGames" class="gamesLayout">
 
         <% upcomingGames.forEach(game => { %>
@@ -210,14 +210,18 @@
         const activeGames = document.getElementById('activeGames');
         const completedGames = document.getElementById('completedGames');
         const headlines = document.querySelectorAll('.sectionHeadline');
+        const upcoming = document.getElementById('upcomingHeadline');
 
-        if (activeGames.childNodes.length == 0){ 
+        if (!activeGames.hasChildNodes()){ 
+            console.log("yes1");
             headlines[0].style.display = 'none';
         }
-        if (upcomingGames.childNodes.length == 0){ 
-            headlines[1].style.display = 'none';
+        if (!upcomingGames.hasChildNodes()){ 
+            console.log("yes2");
+            upcoming.style.display = 'none';
         }
-        if (completedGames.childNodes.length == 0){ 
+        if (!completedGames.hasChildNodes()){ 
+            console.log("yes3");
             headlines[2].style.display = 'none';
         }
 
@@ -291,6 +295,7 @@
                                 game.competitions[0].situation.outs + " outs";
                     } else {
                         gameDiv.querySelector('.status').textContent = game.status.type.detail;
+                        gameDiv.querySelector('.mlbCount').textContent = "";
                     }
                     //get score of game
                     gameDiv.querySelector('.score').textContent = game.competitions[0].competitors[1].score + " - "

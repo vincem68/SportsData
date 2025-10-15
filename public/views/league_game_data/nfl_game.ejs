@@ -4,7 +4,7 @@
     <% summary.boxscore.players[0].statistics.forEach(cat => { %>
         <% const name = cat.name.split(/(?=[A-Z])/).map(word => word.toUpperCase()); %>
         <h2><%= name.join(" ") %></h2>
-        <table>
+        <table id="<%= cat.name %>"> <!--Every table will have ID matching category name-->
             <tr>
                 <th>Player</th>
                 <% for (let i = 0; i < cat.labels.length; i++){ %>
@@ -19,7 +19,7 @@
                 <% } %>
             </tr>
             <% cat.athletes.forEach(athlete => { %>
-                <tr>
+                <tr id="<%= athlete.athlete.id %>" class="playerRow">
                     <th class="name"><%= athlete.athlete.firstName.substring(0, 1) + ". " + 
                         athlete.athlete.lastName %></th>
                     <% athlete.stats.forEach(stat => { %>
@@ -50,7 +50,7 @@
                 <% } %>
             </tr>
             <% cat.athletes.forEach(athlete => { %>
-                <tr>
+                <tr id="<%= athlete.athlete.id %>" class="playerRow">
                     <th class="name"><%= athlete.athlete.firstName.substring(0, 1) + ". " + 
                         athlete.athlete.lastName %></th>
                     <% athlete.stats.forEach(stat => { %>
@@ -61,3 +61,34 @@
         </table>
     <% }) %>
 </div>
+
+<script>
+    const summaryEndpoint = <%- JSON.stringify() %>;
+
+    async function updateGameStats(){
+        //get updated data
+        const update = await (await fetch(summaryEndpoint)).json();
+        update.boxscore.players.forEach(team => { //for every team
+            team.statistics.forEach(cat => { // for each category
+                cat.athletes.forEach(athlete => { //for every athlete in category
+                    //get athlete row
+                    const playerStatCells = document.getElementById(athlete.athlete.id).querySelectorAll('td');
+                    for (let i = 0; i < athlete.stats.length; i++){ //change stat cells in the row
+                        playerStatCells[i].textContent = athlete.stats[i];
+                    }
+                });
+            });
+        });
+
+        if (update.meta.gameState == "post"){
+            clearInterval(request);
+        }
+    }
+
+    let request = setInterval(updateGameStats, 10000); //set the interval to send requests
+    if (summary.meta.gameState == "post"){
+        clearInterval(request);
+    }
+
+
+</script>

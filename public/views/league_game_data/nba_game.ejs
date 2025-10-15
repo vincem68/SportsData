@@ -16,7 +16,7 @@
             <% } %>
         </tr>
         <% summary.boxscore.players[0].statistics[0].athletes.forEach(athlete => { %>
-            <tr>
+            <tr id="<%= athlete.athlete.id %>">
                 <th class="name"><%= athlete.athlete.shortName %></th>
                 <% athlete.stats.forEach(stat => { %>
                     <td><%= stat %></td>
@@ -42,7 +42,7 @@
             <% } %>
         </tr>
         <% summary.boxscore.players[1].statistics[0].athletes.forEach(athlete => { %>
-            <tr>
+            <tr id="<%= athlete.athlete.id %>">
                 <th class="name"><%= athlete.athlete.shortName %></th>
                 <% athlete.stats.forEach(stat => { %>
                     <td><%= stat %></td>
@@ -51,3 +51,32 @@
         <% }) %>
     </table>
 </div>
+
+<script>
+    const summaryEndpoint = <%- JSON.stringify() %>;
+
+    async function updateGameStats(){
+        //get updated data
+        const update = await (await fetch(summaryEndpoint)).json();
+        update.boxscore.players.forEach(team => { //for every team
+            team.statistics[0].athletes.forEach(athlete => { // for each player
+                //get athlete row
+                const playerStatCells = document.getElementById(athlete.athlete.id).querySelectorAll('td');
+                for (let i = 0; i < athlete.stats.length; i++){ //change stat cells in the row
+                    playerStatCells[i].textContent = athlete.stats[i];
+                }
+            });
+        });
+
+        if (update.meta.gameState == "post"){
+            clearInterval(request);
+        }
+    }
+
+    let request = setInterval(updateGameStats, 10000); //set the interval to send requests
+    if (summary.meta.gameState == "post"){
+        clearInterval(request);
+    }
+
+
+</script>
