@@ -3,6 +3,25 @@
         summary.boxscore.teams[0].statistics[18].abbreviation = "PCOT";
         summary.boxscore.teams[1].statistics[18].abbreviation = "PCOT";
     }
+
+    //get the length of a sports game linescore
+    const intervals = [1,2,3,4,5,6,7,8,9].filter(interval => 
+        interval <= overview.competitions[0].format.regulation.periods);
+
+    //add in OT or extra innings of game has gone farther than regulation
+    if (overview.status.type.state != "pre"){
+        for (let i = intervals[intervals.length - 1] + 1; i <= overview.competitions[0].competitors[1].linescores.length; i++){
+            //if its an NHL game, a reg season game, and went to shootout
+            if (league.toUpperCase() == "NHL" && overview.season.type == 2 && i == 5){
+                intervals.push("SO");
+
+            } else if (league.toUpperCase() != "MLB"){
+                intervals.push(((i - intervals[intervals.length - 1]) + "OT").replace("1O", "O"));
+            } else {
+                intervals.push(i);
+            }
+        }
+    }
 %>
 
 
@@ -26,23 +45,29 @@
             <div class="teamOverview">
                 <img class="teamLogo" src="<%= overview.competitions[0].competitors[1].team.logo %>">
                 <h1><%= overview.competitions[0].competitors[1].team.displayName %></h1>
+                <h3><%= overview.competitions[0].competitors[1].records[0].summary %></h3>
             </div>
 
             <!--This is the middle section for clock/inning info-->
             <div id="gameInfoOverview"> <!--Put status of game here-->
                 <p id="status"><%= overview.competitions[0].status.type.detail %></p>
-                <p id="count">
-                    <% if (league.toUpperCase() == "MLB"){ %>
+                <p id="count"><!--Keeps track of balls and strikes for at bat in baseball-->
+                    <% if (league.toUpperCase() == "MLB" && overview.competitions[0].situation !== undefined){ %>
                         <%= overview.competitions[0].situation.balls %> - 
                         <%= overview.competitions[0].situation.strikes %>
                     <% } %>
                 </p>
-                <p id="outs">
-                    <% if (league.toUpperCase() == "MLB"){ %>
+                <p id="outs"><!--Keeps track of outs in baseball game-->
+                    <% if (league.toUpperCase() == "MLB" && overview.competitions[0].situation !== undefined){ %>
                         <%= overview.competitions[0].situation.outs %> outs
                     <% } %>
                 </p>
-                <p id="score">
+                <p id="footballMarker"><!--shows what down and yard marker football game is at-->
+                    <% if (league.toUpperCase() == "NFL" && overview.competitions[0].situation !== undefined){ %>
+                        <%= overview.competitions[0].situation.downDistanceText %>
+                    <% } %>
+                </p>
+                <p id="score"><!--game score-->
                     <% if (overview.status.type.state != "pre"){ %>
                         <%= overview.competitions[0].competitors[1].score %> - 
                         <%= overview.competitions[0].competitors[0].score %>
@@ -54,9 +79,60 @@
             <div class="teamOverview">
                 <img class="teamLogo" src="<%= overview.competitions[0].competitors[0].team.logo %>">
                 <h1><%= overview.competitions[0].competitors[0].team.displayName %></h1>
+                <h3><%= overview.competitions[0].competitors[0].records[0].summary %></h3>
             </div>
         </div>
 
+
+        <!--Linescore (this shows the points for both teams in every interval)-->
+        <div id="linescoreDiv">
+            <h2>Linescores</h2>
+            <table id="linescores">
+                <tr>
+                    <th>Team</th>
+                    <% intervals.forEach(interval => { %>
+                        <th class="linescoreInterval"><%= interval %></th>
+                    <% }) %>
+                    <% if (league.toUpperCase() == "MLB"){ %>
+                        <th>R</th><th>H</th><th>E</th>
+                    <% } %>
+                </tr>
+                <tr id="awayTeamLinescoreRow">
+                    <th class="name"><%= overview.competitions[0].competitors[1].team.abbreviation %></th>
+                    <% for (let i = 0; i < intervals.length; i++){ %>
+                        <td>
+                            <% if (overview.status.type.state != "pre"){
+                                if (i < overview.competitions[0].competitors[1].linescores.length){ %>
+                                    <%= overview.competitions[0].competitors[1].linescores[i].displayValue %>
+                                <% }
+                            } %>
+                        </td>
+                    <% }
+                    if (league.toUpperCase() == "MLB"){ %>
+                        <td class="mlbLinescores"><%= overview.competitions[0].competitors[1].statistics[1].displayValue %></td>
+                        <td class="mlbLinescores"><%= overview.competitions[0].competitors[1].statistics[0].displayValue %></td>
+                        <td class="mlbLinescores"><%= overview.competitions[0].competitors[1].statistics[7].displayValue %></td>
+                    <% } %>
+                </tr>
+                <tr id="homeTeamLinescoreRow">
+                    <th class="name"><%= overview.competitions[0].competitors[0].team.abbreviation %></th>
+                    <% for (let i = 0; i < intervals.length; i++){ %>
+                        <td>
+                            <% if (overview.status.type.state != "pre"){
+                                if (i < overview.competitions[0].competitors[0].linescores.length){ %>
+                                    <%= overview.competitions[0].competitors[0].linescores[i].displayValue %>
+                                <% }
+                            } %>
+                        </td>
+                    <% }
+                    if (league.toUpperCase() == "MLB"){ %>
+                        <td class="mlbLinescores"><%= overview.competitions[0].competitors[0].statistics[1].displayValue %></td>
+                        <td class="mlbLinescores"><%= overview.competitions[0].competitors[0].statistics[0].displayValue %></td>
+                        <td class="mlbLinescores"><%= overview.competitions[0].competitors[0].statistics[7].displayValue %></td>
+                    <% } %>
+                </tr>
+            </table>
+        </div>
 
         <!--This will display the overall team stats info-->
         <div id="boxscore">
@@ -112,7 +188,7 @@
                             <% } %>
                         </h2>
                         <% const tableID = (cat.name !== undefined) ? cat.name : "overall"; %>
-                        <table id="tableID"> <!--Every table will have ID matching category name-->
+                        <table id="<%= tableID %>"> <!--Every table will have ID matching category name-->
                             <tr>
                                 <th>Player</th>
                                 <% const cols = (cat.labels !== undefined) ? cat.labels : cat.names; %>
@@ -127,7 +203,7 @@
                                     </th>
                                 <% } %>
                             </tr>
-                            <% cat.athletes.forEach(athlete => { %>
+                            <% cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { %>
                                 <tr id="<%= athlete.athlete.id %>">
                                     <th class="name">
                                         <% if (athlete.athlete.shortName !== undefined){ %>
@@ -156,7 +232,8 @@
                                 <%= cat.name.split(/(?=[A-Z])/).map(word => word.toUpperCase()).join(" ") %>
                             <% } %>
                         </h2>
-                        <table> <!--Every table will have ID matching category name-->
+                        <% const tableID = (cat.name !== undefined) ? cat.name : "overall"; %>
+                        <table id="<%= tableID %>"> <!--Every table will have ID matching category name-->
                             <tr>
                                 <th>Player</th>
                                 <% const cols = (cat.labels !== undefined) ? cat.labels : cat.names; %>
@@ -171,7 +248,7 @@
                                     </th>
                                 <% } %>
                             </tr>
-                            <% cat.athletes.forEach(athlete => { %>
+                            <% cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { %>
                                 <tr id="<%= athlete.athlete.id %>">
                                     <th class="name">
                                         <% if (athlete.athlete.shortName !== undefined){ %>
@@ -191,141 +268,188 @@
                 <% } %>
             </div>
 
-
         </div>
 
         <%- include ('footer') %>
 
         <script>
+            //get the divs throughout the page
             const statsDiv = document.getElementById('playerStats');
             const homePlayerStats = document.getElementById('homeTeamPlayerStats');
             const awayPlayerStats = document.getElementById('awayTeamPlayerStats');
+            const linescoreDiv = document.getElementById('linescoreDiv');
 
+            //the divs for the buttons of player scoresheets
             const homeButton = document.getElementById("homeTeamButton");
             const awayButton = document.getElementById("awayTeamButton");
+            const buttonSection = document.getElementById('buttonSection');
 
+            //use the JSON data from the rendered data of initial page load
             const summaryEndpoint = <%- JSON.stringify(summaryEndpoint) %>;
             const overviewEndpoint = <%- JSON.stringify(overviewEndpoint) %>;
             const gameState = <%- JSON.stringify(summary.meta.gameState) %>;
             const league = <%- JSON.stringify(league) %>;
 
+            //on default, hide the home team player section
             homePlayerStats.style.display = "none";
 
+            //hide any stat divs if the game has not started yet
+            if (gameState == "pre"){
+                buttonSection.style.display = 'none';
+                linescoreDiv.style.display = 'none';
+            }
+
+            //when home team buttin div is clicked, hide away player stats and show home player ones
             function toggleHomeStats(){
                 awayPlayerStats.style.display = "none";
                 homePlayerStats.style.display = "flex";
                 statsDiv.style.backgroundColor = 'lightgreen';
             }
 
+            //same as the previous function but in reverse
             function toggleAwayStats(){
                 homePlayerStats.style.display = "none";
                 awayPlayerStats.style.display = "flex";
                 statsDiv.style.backgroundColor = 'lightsalmon';
             }
 
+            //set event listeners for the buttons
             homeButton.addEventListener('click', toggleHomeStats);
             awayButton.addEventListener('click', toggleAwayStats);
 
             //Use this to initialize the stats if the page is opened pregame but game starts while open
+            //this will set up the game score, game status, boxscore, linescore, and player stats
             async function initializeStats() {
 
+                //send the requests 
                 const updateSummary = await (await fetch(summaryEndpoint)).json();
                 const updateOverview = await (await fetch(overviewEndpoint)).json();
-                
 
-                if (updateSummary.meta.gameState == "in"){ //when game starts
+                if (updateSummary.meta.gameState == "in"){ //when game starts, start setting everything up
 
+                    //make things visible
+                    buttonSection.style.display = 'flex';
+
+                    //set up the details in the gameInfoDiv. This includes the score, timer/status, and setting up
+                    //the baseball count and football markers 
                     document.getElementById('status').textContent = updateOverview.competitions[0].status.type.detail;
                     document.getElementById('score').textContent = updateOverview.competitions[0].competitors[1].score
                         + " - " + updateOverview.competitions[0].competitors[0].score;
-                    if (league.toUpperCase() == "MLB"){
+                    if (league.toUpperCase() == "MLB"){ //get balls, strikes and outs
                         document.getElementById('count').textContent = updateOverview.competitions[0].situation.balls 
                             + " - " + updateOverview.competitions[0].situation.strikes;
                         document.getElementById('outs').textContent = updateOverview.competitions[0].
                             situation.outs + " outs";
                     }
+                    if (league.toUpperCase() == "NFL"){ //get yard marker and down
+                        document.getElementById('footballMarker').textContent = updateOverview.competitions[0].
+                            situation.downDistanceText;
+                    }
+                    
+                    //set up the boxscore
+                    if (league.toUpperCase() != "MLB"){
+                        document.getElementById('awayTeamBoxscore').querySelectorAll('td').forEach(cell => cell.textContent = '0');
+                        document.getElementById('homeTeamBoxscore').querySelectorAll('td').forEach(cell => cell.textContent = '0');
+                    }
 
+                    //set up the linescore
+                    linescoreDiv.style.display = 'flex'; //make div appear
+                    //set first interval of linescore to 0
+                    document.getElementById('awayTeamLinescoreRow').querySelectorAll('td')[0].textContent = '0';
+                    document.getElementById('homeTeamLinescoreRow').querySelectorAll('td')[0].textContent = '0';
+                    if (league.toUpperCase() == "MLB"){
+                        document.querySelectorAll('.mlbLinescore').forEach(cell => cell.textContent = '0');
+                    }
+
+                    //this will set up the player stats section. This part will be for the road players
                     updateSummary.boxscore.players[0].statistics.forEach(cat => {
-                        //create headline if category name exists
+                        //create a headline for the category name if it exists in JSON
                         awayPlayerStats.appendChild(document.createElement('h2').textContent = (cat.name !== undefined) ?
                             cat.name.split(/(?=[A-Z])/).map(word => word.toUpperCase()).join(" ") : "");
-                        
+                        //create the table for the player category (like rushing, passing, forwards, etc)
                         const table = document.createElement('table');
-
-                        //create first row
+                        //create first row that contains the names of the stats in category
                         const titleRow = document.createElement('tr');
                         titleRow.appendChild(document.createElement('th').textContent = "Player");
                         const cols = (cat.labels !== undefined) ? cat.labels : cat.names;
+                        //create the column names and give them the stat descriptions when hovered over
                         for (let i = 0; i < cols.length; i++){
-                            //create the first row headers
                             const head = document.createElement('th');
                             const div = document.createElement('div').textContent = cols[i];
                             const span = document.createElement('span').textContent = cat.descriptions[i];
                             span.classList.add('tooltip-text'); div.classList.add('tooltip');
                             div.appendChild(span); head.appendChild(div); titleRow.appendChild(head);
                         }
-                        table.appendChild(titleRow);
+                        table.appendChild(titleRow); //add row to table
 
                         //now make rows for each player
-                        cat.athletes.forEach(athlete => {
-                            const playerRow = document.createElement('tr').id = athlete.athlete.id;
-                            const playerName = document.createElement('th');
-                            if (athlete.starter !== undefined){
+                        cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => {
+                            //give each player row their API ID as the HTML ID for easier lookup
+                            const playerRow = document.createElement('tr');
+                            playerRow.id = athlete.athlete.id;
+                            const playerName = document.createElement('th'); //put player name in front of row
+                            if (athlete.starter !== undefined){ //differentiate between starters and bench
                                 playerName.classList.add((athlete.starter == true) ? "name" : "nonstarter");
                             } else { playerName.classList.add("name"); }
+                            //with diff JSON fields, get first initial and last name
                             playerName.textContent = (athlete.athlete.shortName !== undefined) ? 
                                 athlete.athlete.shortName : athlete.athlete.firstName.substring(0, 1) + ". " 
                                     + athlete.athlete.lastName;
-                            playerRow.appendChild(playerName);
-                            athlete.stats.forEach(stat => {
+                            playerRow.appendChild(playerName); //add name to row
+                            athlete.stats.forEach(stat => { //add stat value to corresponding row cells
                                 playerRow.appendChild(document.createElement('td').textContent = stat);
                             });
-                            table.appendChild(playerRow);
+                            table.appendChild(playerRow); //add the row to the table
                         });
-                        awayPlayerStats.appendChild(table);
+                        awayPlayerStats.appendChild(table); //add the table to the div
                     });
 
+                    //now do the same for the home players
                     updateSummary.boxscore.players[1].statistics.forEach(cat => {
-                        //create headline if category name exists
-                        homePlayerStats.appendChild(document.createElement('h2').textContent = (cat.name !== undefined) ?
-                            cat.name.split(/(?=[A-Z])/).map(word => word.toUpperCase()).join(" ") : "");
-                        
-                        const table = document.createElement('table');
 
-                        //create first row
+                        //create a headline for the category name if it exists in JSON
+                        awayPlayerStats.appendChild(document.createElement('h2').textContent = (cat.name !== undefined) ?
+                            cat.name.split(/(?=[A-Z])/).map(word => word.toUpperCase()).join(" ") : "");
+                        //create the table for the player category (like rushing, passing, forwards, etc)
+                        const table = document.createElement('table');
+                        //create first row that contains the names of the stats in category
                         const titleRow = document.createElement('tr');
                         titleRow.appendChild(document.createElement('th').textContent = "Player");
                         const cols = (cat.labels !== undefined) ? cat.labels : cat.names;
+                        //create the column names and give them the stat descriptions when hovered over
                         for (let i = 0; i < cols.length; i++){
-                            //create the first row headers
                             const head = document.createElement('th');
                             const div = document.createElement('div').textContent = cols[i];
                             const span = document.createElement('span').textContent = cat.descriptions[i];
                             span.classList.add('tooltip-text'); div.classList.add('tooltip');
                             div.appendChild(span); head.appendChild(div); titleRow.appendChild(head);
                         }
-                        table.appendChild(titleRow);
+                        table.appendChild(titleRow); //add row to table
 
                         //now make rows for each player
-                        cat.athletes.forEach(athlete => {
-                            const playerRow = document.createElement('tr').id = athlete.athlete.id;
-                            const playerName = document.createElement('th');
-                            if (athlete.starter !== undefined){
+                        cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => {
+                            
+                            //give each player row their API ID as the HTML ID for easier lookup
+                            const playerRow = document.createElement('tr');
+                            playerRow.id = athlete.athlete.id;
+                            const playerName = document.createElement('th'); //put player name in front of row
+                            if (athlete.starter !== undefined){ //differentiate between starters and bench
                                 playerName.classList.add((athlete.starter == true) ? "name" : "nonstarter");
                             } else { playerName.classList.add("name"); }
+                            //with diff JSON fields, get first initial and last name
                             playerName.textContent = (athlete.athlete.shortName !== undefined) ? 
                                 athlete.athlete.shortName : athlete.athlete.firstName.substring(0, 1) + ". " 
                                     + athlete.athlete.lastName;
-                            playerRow.appendChild(playerName);
-                            athlete.stats.forEach(stat => {
+                            playerRow.appendChild(playerName); //add name to row
+                            athlete.stats.forEach(stat => { //add stat value to corresponding row cells
                                 playerRow.appendChild(document.createElement('td').textContent = stat);
                             });
-                            table.appendChild(playerRow);
+                            table.appendChild(playerRow); //add the row to the table
                         });
-                        homePlayerStats.appendChild(table);
+                        homePlayerStats.appendChild(table); //add the table to the div
                     });
 
-                    //switch setInterval function to update now instead
+                    //after we finish initialization, switch function to now get updates instead
                     clearInterval(request);
                     request = setInterval(updateGameStats, 10000);
 
@@ -335,21 +459,61 @@
 
             //this will be used when the game is currently active, and stop when finished
             async function updateGameStats(){
+
+                //basically use this as to know the requests are going
                 console.log("Hello");
+
                 //send requests for updated data
                 const updateSummary = await (await fetch(summaryEndpoint)).json();
                 const updateOverview = await (await fetch(overviewEndpoint)).json();
     
-                //update the score, status and time
+                //update the score and status/time
                 document.getElementById('status').textContent = updateOverview.competitions[0].status.type.detail;
                 document.getElementById('score').textContent = updateOverview.competitions[0].competitors[1].score 
                     + " - " + updateOverview.competitions[0].competitors[0].score;
                 
                 //if its a baseball game, update the strike and out count
-                if (league.toUpperCase() == "MLB"){
+                if (league.toUpperCase() == "MLB" && updateSummary.meta.gameStatus == "in"){
                     document.getElementById('count').textContent = updateOverview.competitions[0].situation.balls 
                         + " - " + updateOverview.competitions[0].situation.strikes;
                     document.getElementById('outs').textContent = updateOverview.competitions[0].situation.outs + " outs";
+                }
+                //update football marker if football game
+                if (league.toUpperCase() == "NFL" && updateSummary.meta.gameStatus == "in"){
+                    document.getElementById('footballMarker').textContent = updateOverview.competitions[0].
+                        situation.downDistanceText;
+                }
+                //clear out baseball count/football marker if game is over. Score and Status need final update
+                if (updateSummary.meta.gameStatus == "post"){
+                    document.getElementById('count').textContent = "";
+                    document.getElementById('outs').textContent = "";
+                    document.getElementById('footballMarker').textContent = "";
+                }
+
+                //update the linescores
+                const currentInterval = updateOverview.competitions[0].competitors[1].linescores.length - 1;
+                // do something here to add linescore columns if we get new intervals
+                document.getElementById('awayTeamLinescoreRow').querySelectorAll('td')[currentInterval].textContent = 
+                     updateOverview.competitions[0].competitors[1].linescores[currentInterval].displayValue;
+                //for baseball games, home team may not have linescore ready if away team is batting
+                if (league.toUpperCase() == "MLB"){
+                    if (updateOverview.competitions[0].competitors[0].linescores.length == currentInterval + 1){
+                        document.getElementById('homeTeamLinescoreRow').querySelectorAll('td')[currentInterval].textContent = 
+                        updateOverview.competitions[0].competitors[0].linescores[currentInterval].displayValue;
+                    }
+                } else { //otherwise update home team linescore regularly
+                    document.getElementById('homeTeamLinescoreRow').querySelectorAll('td')[currentInterval].textContent = 
+                        updateOverview.competitions[0].competitors[0].linescores[currentInterval].displayValue;
+                }
+                //for baseball games, update the Runs, Hits and Errors counters
+                if (league.toUpperCase() == "MLB"){
+                    const mlbLinescores = document.querySelectorAll('.mlbLinescores');
+                    mlbLinescores[0].textContent = updateOverview.competitions[0].competitors[1].statistics[1].displayValue;
+                    mlbLinescores[1].textContent = updateOverview.competitions[0].competitors[1].statistics[0].displayValue;
+                    mlbLinescores[2].textContent = updateOverview.competitions[0].competitors[1].statistics[7].displayValue;
+                    mlbLinescores[3].textContent = updateOverview.competitions[0].competitors[0].statistics[1].displayValue;
+                    mlbLinescores[4].textContent = updateOverview.competitions[0].competitors[0].statistics[0].displayValue;
+                    mlbLinescores[5].textContent = updateOverview.competitions[0].competitors[0].statistics[7].displayValue;
                 }
 
                 //update the overall boxscores if we have an NFL, NBA or NHL game
@@ -363,33 +527,45 @@
                 }
 
                 //update player stats
+                let nextPlayerRow = null; //this will be a dummy node, use to help insert a new player row
                 updateSummary.boxscore.players.forEach(team => { //for every team
                     team.statistics.forEach(cat => { // for each category
-                        cat.athletes.forEach(athlete => { //for every athlete in category
+                        cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { //for every athlete in category
                             //get athlete row
                             const playerRow = document.getElementById(athlete.athlete.id);
-                            //if we have new athlete (bench player or new player) add him to table
+                            //if we have new athlete in JSON (bench player or new player) add him to table
                             if (playerRow == null){
-                                const newRow = document.createElement('tr').id = athlete.athlete.id; //set ID
-                                const playerName = document.createElement('th'); 
+                                const newRow = document.createElement('tr'); //create row
+                                newRow.id = athlete.athlete.id; //set ID
+                                const playerName = document.createElement('th'); //create th for name
                                 if (athlete.starter !== undefined){ //give bench/nonstarters visual difference
                                     playerName.classList.add((athlete.starter == true) ? "name" : "nonstarter");
                                 } else { playerName.classList.add("name"); }
+                                //get player name
                                 playerName.textContent = (athlete.athlete.shortName !== undefined) ? 
                                     athlete.athlete.shortName : athlete.athlete.firstName.substring(0, 1) + ". " 
                                         + athlete.athlete.lastName;
-                                newRow.appendChild(playerName);
-                                athlete.stats.forEach(stat => {
-                                    newRow.appendChild(document.createElement('td').textContent = stat);
+                                newRow.appendChild(playerName); //add name to row
+                                athlete.stats.forEach(stat => { //add new stat cells to row
+                                    const statTD = document.createElement('td'); 
+                                    statTD.textContent = stat;
+                                    newRow.appendChild(statTD);
                                 });
-                                //attach row to table
-                                document.getElementById((league.toUpperCase() == "NBA") ? "overall" : cat.name)
-                                    .appendChild(newRow);
-                            } else {
+                                //if adding batter to baseball game, add that batter in order of lineup.
+                                if (cat.name == "hitting" && nextPlayerRow != null){
+                                    document.getElementById('hitting').insertBefore(nextPlayerRow, newRow);                                   
+                                } else { //for other sports/cateogries just add player to end
+                                    document.getElementById((league.toUpperCase() == "NBA") ? "overall" 
+                                        : cat.name).appendChild(newRow);
+                                }
+                                nextPlayerRow = newRow.nextSibling; //set nextPlayerRow to the next row
+                                newRow.classList.add('nonstarter'); //give non starter class
+                            } else { //update the player's stats
                                 const playerStatCells = playerRow.querySelectorAll('td');
                                 for (let i = 0; i < athlete.stats.length; i++){ //change stat cells in the row
                                     playerStatCells[i].textContent = athlete.stats[i];
                                 }
+                                nextPlayerRow = playerRow.nextSibling;
                             }
                         });
                     });
@@ -397,9 +573,12 @@
 
                 //if game is final, stop sending requests
                 if (updateSummary.meta.gameState == "post"){
+
                     clearInterval(request);
                 }
             }
+
+
 
             //if game hasn't started yet, set setInterval to initalizeStats to check for game start
             //otherwise, set to updateGameStats if game is active/final
@@ -408,6 +587,11 @@
 
             //if game is already over when page is loaded, no need to send requests
             if (gameState == "post"){
+                //update the overall records of the teams when game ends
+                document.querySelectorAll('.teamOverview')[0].querySelector('h3').textContent = 
+                    updateOverview.competitions[0].competitors[1].records[0].summary;
+                document.querySelectorAll('.teamOverview')[1].querySelector('h3').textContent = 
+                    updateOverview.competitions[0].competitors[0].records[0].summary;
                 clearInterval(request);
             }
 
