@@ -51,6 +51,11 @@
             <!--This is the middle section for clock/inning info-->
             <div id="gameInfoOverview"> <!--Put status of game here-->
                 <p id="status"><%= overview.competitions[0].status.type.detail %></p>
+                <p id="seriesStatus">
+                    <% if (overview.season.type == 3){ %>
+                        <%= overview.competitions[0].series.summary %>
+                    <% } %>
+                </p>
                 <p id="count"><!--Keeps track of balls and strikes for at bat in baseball-->
                     <% if (league.toUpperCase() == "MLB" && overview.competitions[0].situation !== undefined){ %>
                         <%= overview.competitions[0].situation.balls %> - 
@@ -187,7 +192,7 @@
                                 <%= cat.name.split(/(?=[A-Z])/).map(word => word.toUpperCase()).join(" ") %>
                             <% } %>
                         </h2>
-                        <% const tableID = (cat.name !== undefined) ? cat.name : "overall"; %>
+                        <% const tableID = (cat.name !== undefined) ? cat.name : ((cat.type !== undefined) ? cat.type : "overall"); %>
                         <table id="<%= tableID %>"> <!--Every table will have ID matching category name-->
                             <tr>
                                 <th>Player</th>
@@ -232,7 +237,7 @@
                                 <%= cat.name.split(/(?=[A-Z])/).map(word => word.toUpperCase()).join(" ") %>
                             <% } %>
                         </h2>
-                        <% const tableID = (cat.name !== undefined) ? cat.name : "overall"; %>
+                        <% const tableID = (cat.name !== undefined) ? cat.name : ((cat.type !== undefined) ? cat.type : "overall"); %>
                         <table id="<%= tableID %>"> <!--Every table will have ID matching category name-->
                             <tr>
                                 <th>Player</th>
@@ -297,6 +302,10 @@
             if (gameState == "pre"){
                 buttonSection.style.display = 'none';
                 linescoreDiv.style.display = 'none';
+            }
+
+            if (league.toUpperCase() == "MLB"){
+                document.getElementById('boxscore').style.display = 'none';
             }
 
             //when home team buttin div is clicked, hide away player stats and show home player ones
@@ -592,6 +601,7 @@
                     updateOverview.competitions[0].competitors[1].records[0].summary;
                 document.querySelectorAll('.teamOverview')[1].querySelector('h3').textContent = 
                     updateOverview.competitions[0].competitors[0].records[0].summary;
+                document.getElementById('seriesStaus').textContent = updateOverview.competitions[0].series.summary;
                 clearInterval(request);
             }
 
