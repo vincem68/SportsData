@@ -142,7 +142,13 @@
         <!--This will display the overall team stats info-->
         <div id="boxscore">
 
-            <h3>Box Score</h3>
+            <h3 id="boxHeadline">
+                <% if (overview.status.type.state == "pre"){ %>
+                    Season Stats
+                <% } else { %>
+                    Box Score
+                <% } %>
+            </h3>
             <table>
                 <% if (league.toUpperCase() != "MLB") { %>
                     <tr>
@@ -338,6 +344,9 @@
 
                     //make things visible
                     buttonSection.style.display = 'flex';
+                    
+                    //change boxscore headline
+                    document.getElementById('boxHeadline').textContent = "Box Score";
 
                     //set up the details in the gameInfoDiv. This includes the score, timer/status, and setting up
                     //the baseball count and football markers 
@@ -373,19 +382,23 @@
                     //this will set up the player stats section. This part will be for the road players
                     updateSummary.boxscore.players[0].statistics.forEach(cat => {
                         //create a headline for the category name if it exists in JSON
-                        awayPlayerStats.appendChild(document.createElement('h2').textContent = (cat.name !== undefined) ?
-                            cat.name.split(/(?=[A-Z])/).map(word => word.toUpperCase()).join(" ") : "");
+                        const tableName = document.createElement('h2');
+                        tableName.textContent = (cat.name !== undefined) ? cat.name.split(/(?=[A-Z])/)
+                            .map(word => word.toUpperCase()).join(" ") : "";
+                        awayPlayerStats.appendChild(tableName);
                         //create the table for the player category (like rushing, passing, forwards, etc)
                         const table = document.createElement('table');
                         //create first row that contains the names of the stats in category
                         const titleRow = document.createElement('tr');
-                        titleRow.appendChild(document.createElement('th').textContent = "Player");
+                        const playerNameHeader = document.createElement('th');
+                        playerNameHeader.textContent = "Player";
+                        titleRow.appendChild(playerNameHeader);
                         const cols = (cat.labels !== undefined) ? cat.labels : cat.names;
                         //create the column names and give them the stat descriptions when hovered over
                         for (let i = 0; i < cols.length; i++){
                             const head = document.createElement('th');
-                            const div = document.createElement('div').textContent = cols[i];
-                            const span = document.createElement('span').textContent = cat.descriptions[i];
+                            const div = document.createElement('div'); div.textContent = cols[i];
+                            const span = document.createElement('span'); span.textContent = cat.descriptions[i];
                             span.classList.add('tooltip-text'); div.classList.add('tooltip');
                             div.appendChild(span); head.appendChild(div); titleRow.appendChild(head);
                         }
@@ -406,7 +419,9 @@
                                     + athlete.athlete.lastName;
                             playerRow.appendChild(playerName); //add name to row
                             athlete.stats.forEach(stat => { //add stat value to corresponding row cells
-                                playerRow.appendChild(document.createElement('td').textContent = stat);
+                                const statCell = document.createElement('td');
+                                statCell.textContent = stat;
+                                playerRow.appendChild(statCell);
                             });
                             table.appendChild(playerRow); //add the row to the table
                         });
@@ -415,21 +430,24 @@
 
                     //now do the same for the home players
                     updateSummary.boxscore.players[1].statistics.forEach(cat => {
-
                         //create a headline for the category name if it exists in JSON
-                        awayPlayerStats.appendChild(document.createElement('h2').textContent = (cat.name !== undefined) ?
-                            cat.name.split(/(?=[A-Z])/).map(word => word.toUpperCase()).join(" ") : "");
+                        const tableName = document.createElement('h2');
+                        tableName.textContent = (cat.name !== undefined) ? cat.name.split(/(?=[A-Z])/)
+                            .map(word => word.toUpperCase()).join(" ") : "";
+                        homePlayerStats.appendChild(tableName);
                         //create the table for the player category (like rushing, passing, forwards, etc)
                         const table = document.createElement('table');
                         //create first row that contains the names of the stats in category
                         const titleRow = document.createElement('tr');
-                        titleRow.appendChild(document.createElement('th').textContent = "Player");
+                        const playerNameHeader = document.createElement('th');
+                        playerNameHeader.textContent = "Player";
+                        titleRow.appendChild(playerNameHeader);
                         const cols = (cat.labels !== undefined) ? cat.labels : cat.names;
                         //create the column names and give them the stat descriptions when hovered over
                         for (let i = 0; i < cols.length; i++){
                             const head = document.createElement('th');
-                            const div = document.createElement('div').textContent = cols[i];
-                            const span = document.createElement('span').textContent = cat.descriptions[i];
+                            const div = document.createElement('div'); div.textContent = cols[i];
+                            const span = document.createElement('span'); span.textContent = cat.descriptions[i];
                             span.classList.add('tooltip-text'); div.classList.add('tooltip');
                             div.appendChild(span); head.appendChild(div); titleRow.appendChild(head);
                         }
@@ -437,7 +455,6 @@
 
                         //now make rows for each player
                         cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => {
-                            
                             //give each player row their API ID as the HTML ID for easier lookup
                             const playerRow = document.createElement('tr');
                             playerRow.id = athlete.athlete.id;
@@ -451,7 +468,9 @@
                                     + athlete.athlete.lastName;
                             playerRow.appendChild(playerName); //add name to row
                             athlete.stats.forEach(stat => { //add stat value to corresponding row cells
-                                playerRow.appendChild(document.createElement('td').textContent = stat);
+                                const statCell = document.createElement('td');
+                                statCell.textContent = stat;
+                                playerRow.appendChild(statCell);
                             });
                             table.appendChild(playerRow); //add the row to the table
                         });
