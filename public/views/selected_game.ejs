@@ -46,6 +46,7 @@
                 <img class="teamLogo" src="<%= overview.competitions[0].competitors[1].team.logo %>">
                 <h1><%= overview.competitions[0].competitors[1].team.displayName %></h1>
                 <h3><%= overview.competitions[0].competitors[1].records[0].summary %></h3>
+                <img class="footballPossessionImg" src="/images/football_icon.png">
             </div>
 
             <!--This is the middle section for clock/inning info-->
@@ -85,6 +86,7 @@
                 <img class="teamLogo" src="<%= overview.competitions[0].competitors[0].team.logo %>">
                 <h1><%= overview.competitions[0].competitors[0].team.displayName %></h1>
                 <h3><%= overview.competitions[0].competitors[0].records[0].summary %></h3>
+                <img class="footballPossessionImg" src="/images/football_icon.png">
             </div>
         </div>
 
@@ -215,7 +217,8 @@
                                 <% } %>
                             </tr>
                             <% cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { %>
-                                <tr id="<%= athlete.athlete.id %>">
+                                <% const rowID = "row-" + athlete.athlete.id; %>
+                                <tr class="<%= rowID %>">
                                     <th class="name">
                                         <% if (athlete.athlete.shortName !== undefined){ %>
                                             <%= athlete.athlete.shortName %>
@@ -260,7 +263,8 @@
                                 <% } %>
                             </tr>
                             <% cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { %>
-                                <tr id="<%= athlete.athlete.id %>">
+                                <% const rowID = "row-" + athlete.athlete.id; %>
+                                <tr class="<%= rowID %>">
                                     <th class="name">
                                         <% if (athlete.athlete.shortName !== undefined){ %>
                                             <%= athlete.athlete.shortName %>
@@ -295,6 +299,9 @@
             const awayButton = document.getElementById("awayTeamButton");
             const buttonSection = document.getElementById('buttonSection');
 
+            //football possession images
+            const footballPics = document.querySelectorAll('footballPossessionImg');
+
             //use the JSON data from the rendered data of initial page load
             const summaryEndpoint = <%- JSON.stringify(summaryEndpoint) %>;
             const overviewEndpoint = <%- JSON.stringify(overviewEndpoint) %>;
@@ -308,6 +315,13 @@
             if (gameState == "pre"){
                 buttonSection.style.display = 'none';
                 linescoreDiv.style.display = 'none';
+            }
+
+            //if not a football game or game not active
+            footballPics.forEach(icon => icon.style.display = 'none');
+            if (league.toUpperCase() == "NFL" && overviewEndpoint.status.type.state == "in"){
+                footballPics[0].style.display = (overviewEndpoint.competitions[0].situation.possession == overviewEndpoint.competitions[0].competitors[1].id) ? 'flex' : 'none';
+                footballPics[1].style.display = (overviewEndpoint.competitions[0].situation.possession == overviewEndpoint.competitions[0].competitors[0].id) ? 'flex' : 'none';
             }
 
             if (league.toUpperCase() == "MLB"){
@@ -408,7 +422,7 @@
                         cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => {
                             //give each player row their API ID as the HTML ID for easier lookup
                             const playerRow = document.createElement('tr');
-                            playerRow.id = athlete.athlete.id;
+                            playerRow.classList.add("row-" + athlete.athlete.id);
                             const playerName = document.createElement('th'); //put player name in front of row
                             if (athlete.starter !== undefined){ //differentiate between starters and bench
                                 playerName.classList.add((athlete.starter == true) ? "name" : "nonstarter");
@@ -457,7 +471,7 @@
                         cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => {
                             //give each player row their API ID as the HTML ID for easier lookup
                             const playerRow = document.createElement('tr');
-                            playerRow.id = athlete.athlete.id;
+                            playerRow.classList.add("row-" + athlete.athlete.id);
                             const playerName = document.createElement('th'); //put player name in front of row
                             if (athlete.starter !== undefined){ //differentiate between starters and bench
                                 playerName.classList.add((athlete.starter == true) ? "name" : "nonstarter");
@@ -507,15 +521,21 @@
                     document.getElementById('outs').textContent = updateOverview.competitions[0].situation.outs + " outs";
                 }
                 //update football marker if football game
-                if (league.toUpperCase() == "NFL" && updateSummary.meta.gameStatus == "in"){
+                if (league.toUpperCase() == "NFL" && updateOverview.status.type.state == "in"){
                     document.getElementById('footballMarker').textContent = updateOverview.competitions[0].
                         situation.downDistanceText;
                 }
+                //update football possession icon
+                if (league.toUpperCase() == "NFL" && updateOverview.status.type.state == "in"){
+                    footballPics[0].style.display = (updateOverview.competitions[0].situation.possession == updateOverview.competitions[0].competitors[1].id) ? 'flex' : 'none';
+                    footballPics[1].style.display = (updateOverview.competitions[0].situation.possession == updateOverview.competitions[0].competitors[0].id) ? 'flex' : 'none';
+                }
                 //clear out baseball count/football marker if game is over. Score and Status need final update
-                if (updateSummary.meta.gameStatus == "post"){
+                if (updateOverview.status.type.state == "post"){
                     document.getElementById('count').textContent = "";
                     document.getElementById('outs').textContent = "";
                     document.getElementById('footballMarker').textContent = "";
+                    footballPics.forEach(icon => icon.style.display = 'none');
                 }
 
                 //update the linescores
@@ -560,11 +580,12 @@
                     team.statistics.forEach(cat => { // for each category
                         cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { //for every athlete in category
                             //get athlete row
-                            const playerRow = document.getElementById(athlete.athlete.id);
+                            const tableID = (cat.name !== undefined) ? cat.name : ((cat.type !== undefined) ? cat.type : "overall");
+                            const playerRow = document.getElementById(tableID).querySelector(".row-" + athlete.athlete.id);
                             //if we have new athlete in JSON (bench player or new player) add him to table
                             if (playerRow == null){
                                 const newRow = document.createElement('tr'); //create row
-                                newRow.id = athlete.athlete.id; //set ID
+                                newRow.classList.add("row-" + athlete.athlete.id); //set ID
                                 const playerName = document.createElement('th'); //create th for name
                                 if (athlete.starter !== undefined){ //give bench/nonstarters visual difference
                                     playerName.classList.add((athlete.starter == true) ? "name" : "nonstarter");
@@ -600,7 +621,7 @@
                 });
 
                 //if game is final, stop sending requests
-                if (updateSummary.meta.gameState == "post"){
+                if (updateOverview.status.type.state == "post"){
 
                     clearInterval(request);
                 }

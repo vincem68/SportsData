@@ -33,6 +33,12 @@
     width: 200px;
 }
 
+.footballPossessionImg {
+    height: 30px;
+    width: 30px;
+    margin-bottom: 5px;
+}
+
 .nameCol {
     width: 200px;
 }
