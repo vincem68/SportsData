@@ -110,7 +110,7 @@
         <% }) %>
     </div>
         
-    <h3 id="upcomingHeadline" class="sectionHeadline">Upcoming <%= seasonTypeGames %> Games</h3>
+    <h3 class="sectionHeadline">Upcoming <%= seasonTypeGames %> Games</h3>
     <div id="upcomingGames" class="gamesLayout">
 
         <% upcomingGames.forEach(game => { %>
@@ -206,14 +206,14 @@
         const headlines = document.querySelectorAll('.sectionHeadline');
         const upcoming = document.getElementById('upcomingHeadline');
 
-        if (!activeGames.hasChildNodes()){
+        if (activeGames.children.length == 0){
             headlines[0].style.display = 'none';
         }
-        if (!upcomingGames.hasChildNodes()){ 
+        if (upcomingGames.children.length == 0){ 
             console.log("yo");
             headlines[1].style.display = 'none';
         }
-        if (!completedGames.hasChildNodes()){ 
+        if (completedGames.children.length == 0){ 
             headlines[2].style.display = 'none';
         }
 
@@ -302,12 +302,12 @@
                     gameDiv.parentNode.removeChild(gameDiv); //remove from current div
                     //add to correct div
                     if (game.status.type.state == "in"){
-                        if (activeGames.childNodes.length == 0){
+                        if (activeGames.children.length == 0){
                             headlines[0].style.display = 'flex';
                         }
                         activeGames.appendChild(gameDiv);
                     } else {
-                        if (completedGames.childNodes.length == 0){
+                        if (completedGames.children.length == 0){
                             headlines[2].style.display = 'flex';
                         }
                         completedGames.appendChild(gameDiv);
@@ -329,22 +329,22 @@
             });
 
             //check to see if active or upcoming games are empty and hide them if so, or put them back
-            if (!upcomingGames.hasChildNodes()){
+            if (upcomingGames.children.length == 0){
                 headlines[1].style.display = 'none';
             }
 
-            if (!activeGames.hasChildNodes()){
+            if (activeGames.children.length == 0){
                 headlines[0].style.display = 'none';
             }
 
-            if (!activeGames.hasChildNodes() && !upcomingGames.hasChildNodes()){
+            if (activeGames.children.length == 0 && upcomingGames.children.length == 0){
                 clearInterval(requests);
             }
         }
         
         let requests = setInterval(updateGames, 10000); //update games every 20 seconds
         //immediately clear it if all games are already final upon initial page load or user refresh
-        if (activeGames.childNodes.length == 0 && upcomingGames.childNodes.length == 0){
+        if (activeGames.children.length == 0 && upcomingGames.children.length == 0){
             clearInterval(requests);
         }
   </script>

@@ -46,7 +46,6 @@
                 <img class="teamLogo" src="<%= overview.competitions[0].competitors[1].team.logo %>">
                 <h1><%= overview.competitions[0].competitors[1].team.displayName %></h1>
                 <h3><%= overview.competitions[0].competitors[1].records[0].summary %></h3>
-                <img class="footballPossessionImg" src="/images/football_icon.png">
             </div>
 
             <!--This is the middle section for clock/inning info-->
@@ -68,6 +67,7 @@
                         <%= overview.competitions[0].situation.outs %> outs
                     <% } %>
                 </p>
+                <img id="footballPossessionArrow" src="/images/left_arrow.png">
                 <p id="footballMarker"><!--shows what down and yard marker football game is at-->
                     <% if (league.toUpperCase() == "NFL" && overview.competitions[0].situation !== undefined){ %>
                         <%= overview.competitions[0].situation.downDistanceText %>
@@ -86,7 +86,6 @@
                 <img class="teamLogo" src="<%= overview.competitions[0].competitors[0].team.logo %>">
                 <h1><%= overview.competitions[0].competitors[0].team.displayName %></h1>
                 <h3><%= overview.competitions[0].competitors[0].records[0].summary %></h3>
-                <img class="footballPossessionImg" src="/images/football_icon.png">
             </div>
         </div>
 
@@ -300,12 +299,13 @@
             const buttonSection = document.getElementById('buttonSection');
 
             //football possession images
-            const footballPics = document.querySelectorAll('footballPossessionImg');
+            const footballPosArrow = document.getElementById('footballPossessionArrow');
 
             //use the JSON data from the rendered data of initial page load
             const summaryEndpoint = <%- JSON.stringify(summaryEndpoint) %>;
             const overviewEndpoint = <%- JSON.stringify(overviewEndpoint) %>;
             const gameState = <%- JSON.stringify(summary.meta.gameState) %>;
+            const overview = <%- JSON.stringify(overview) %>;
             const league = <%- JSON.stringify(league) %>;
 
             //on default, hide the home team player section
@@ -317,11 +317,13 @@
                 linescoreDiv.style.display = 'none';
             }
 
-            //if not a football game or game not active
-            footballPics.forEach(icon => icon.style.display = 'none');
-            if (league.toUpperCase() == "NFL" && overviewEndpoint.status.type.state == "in"){
-                footballPics[0].style.display = (overviewEndpoint.competitions[0].situation.possession == overviewEndpoint.competitions[0].competitors[1].id) ? 'flex' : 'none';
-                footballPics[1].style.display = (overviewEndpoint.competitions[0].situation.possession == overviewEndpoint.competitions[0].competitors[0].id) ? 'flex' : 'none';
+            //put in football possession arrow if the game is active
+            if (league.toUpperCase() == "NFL" && gameState == "in"){ //set arrow to correct side
+                footballPosArrow.src = (overview.competitions[0].situation.possession == 
+                    overview.competitions[0].competitors[1].id) ? '/images/left_arrow.png' : '/images/right_arrow.png';
+                footballPosArrow.style.display = 'flex';
+            } else {
+                footballPosArrow.style.display = 'none';
             }
 
             if (league.toUpperCase() == "MLB"){
@@ -527,15 +529,9 @@
                 }
                 //update football possession icon
                 if (league.toUpperCase() == "NFL" && updateOverview.status.type.state == "in"){
-                    footballPics[0].style.display = (updateOverview.competitions[0].situation.possession == updateOverview.competitions[0].competitors[1].id) ? 'flex' : 'none';
-                    footballPics[1].style.display = (updateOverview.competitions[0].situation.possession == updateOverview.competitions[0].competitors[0].id) ? 'flex' : 'none';
-                }
-                //clear out baseball count/football marker if game is over. Score and Status need final update
-                if (updateOverview.status.type.state == "post"){
-                    document.getElementById('count').textContent = "";
-                    document.getElementById('outs').textContent = "";
-                    document.getElementById('footballMarker').textContent = "";
-                    footballPics.forEach(icon => icon.style.display = 'none');
+                    footballPosArrow.src = (overview.competitions[0].situation.possession == 
+                        overview.competitions[0].competitors[1].id) ? '/images/left_arrow.png' : '/images/right_arrow.png';
+                    footballPosArrow.style.display = 'flex';
                 }
 
                 //update the linescores
@@ -620,9 +616,19 @@
                     });
                 });
 
-                //if game is final, stop sending requests
+                //if game is final, stop sending requests and clear out live game status stuff
                 if (updateOverview.status.type.state == "post"){
-
+                    //update the overall records of the teams when game ends
+                    document.querySelectorAll('.teamOverview')[0].querySelector('h3').textContent = 
+                        updateOverview.competitions[0].competitors[1].records[0].summary;
+                    document.querySelectorAll('.teamOverview')[1].querySelector('h3').textContent = 
+                        updateOverview.competitions[0].competitors[0].records[0].summary;
+                    document.getElementById('seriesStatus').textContent = updateOverview.competitions[0].series.summary;
+                    document.getElementById('count').textContent = "";
+                    document.getElementById('outs').textContent = "";
+                    document.getElementById('footballMarker').textContent = "";
+                    footballPosArrow.style.display = 'none';
+                    //stop requests
                     clearInterval(request);
                 }
             }
@@ -632,18 +638,7 @@
             //if game hasn't started yet, set setInterval to initalizeStats to check for game start
             //otherwise, set to updateGameStats if game is active/final
             let request = (gameState == "pre") ? setInterval(initializeStats, 10000) : 
-                setInterval(updateGameStats, 10000); //set the interval to send requests
-
-            //if game is already over when page is loaded, no need to send requests
-            if (gameState == "post"){
-                //update the overall records of the teams when game ends
-                document.querySelectorAll('.teamOverview')[0].querySelector('h3').textContent = 
-                    updateOverview.competitions[0].competitors[1].records[0].summary;
-                document.querySelectorAll('.teamOverview')[1].querySelector('h3').textContent = 
-                    updateOverview.competitions[0].competitors[0].records[0].summary;
-                document.getElementById('seriesStaus').textContent = updateOverview.competitions[0].series.summary;
-                clearInterval(request);
-            }
+                ((gameState == "in") ? setInterval(updateGameStats, 10000) : null);
 
         </script>
 
