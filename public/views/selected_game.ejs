@@ -56,29 +56,50 @@
                         <%= overview.competitions[0].series.summary %>
                     <% } %>
                 </p>
-                <p id="count"><!--Keeps track of balls and strikes for at bat in baseball-->
-                    <% if (league.toUpperCase() == "MLB" && overview.competitions[0].situation !== undefined){ %>
-                        <%= overview.competitions[0].situation.balls %> - 
-                        <%= overview.competitions[0].situation.strikes %>
-                    <% } %>
-                </p>
-                <p id="outs"><!--Keeps track of outs in baseball game-->
-                    <% if (league.toUpperCase() == "MLB" && overview.competitions[0].situation !== undefined){ %>
-                        <%= overview.competitions[0].situation.outs %> outs
-                    <% } %>
-                </p>
-                <img id="footballPossessionArrow" src="/images/left_arrow.png">
-                <p id="footballMarker"><!--shows what down and yard marker football game is at-->
-                    <% if (league.toUpperCase() == "NFL" && overview.competitions[0].situation !== undefined){ %>
-                        <%= overview.competitions[0].situation.downDistanceText %>
-                    <% } %>
-                </p>
                 <p id="score"><!--game score-->
                     <% if (overview.status.type.state != "pre"){ %>
                         <%= overview.competitions[0].competitors[1].score %> - 
                         <%= overview.competitions[0].competitors[0].score %>
                     <% } %>
-                </p>       
+                </p>
+                <div id="footballInfo"> <!--have this dive for football specific info-->
+                    <img id="footballPossessionArrow" src="/images/left_arrow.png">
+                    <p id="footballMarker"><!--shows what down and yard marker football game is at-->
+                        <% if (league.toUpperCase() == "NFL" && overview.competitions[0].situation !== undefined){ %>
+                            <%= overview.competitions[0].situation.downDistanceText %>
+                        <% } %>
+                    </p>
+                </div>
+                <div id="atBat">
+                    <div>
+                        <img id="pitcherHeadshot" src="">
+                        <p id="pitcherName">
+                            <% if (league.toUpperCase() == "MLB" && overview.competitions[0].situation !== undefined){ %>
+                                <%= overview.competitions[0].situation.pitcher.athlete.fullName %>
+                            <% } %>
+                        </p>
+                    </div>
+                    <div>
+                        <p id="count"><!--Keeps track of balls and strikes for at bat in baseball-->
+                            <% if (league.toUpperCase() == "MLB" && overview.status.type.state == "in"){ %>
+                                <%= overview.competitions[0].situation.balls %> - <%= overview.competitions[0].situation.strikes %>
+                            <% } %>
+                        </p>
+                        <p id="outs"><!--Keeps track of outs in baseball game-->
+                           <% if (league.toUpperCase() == "MLB" && overview.status.type.state == "in"){ %>
+                                <%= overview.competitions[0].situation.outs %> outs
+                            <% } %>
+                        </p>
+                    </div>
+                    <div>
+                        <img id="batterHeadshot" src="">
+                        <p id="batterName">
+                            <% if (league.toUpperCase() == "MLB" && overview.competitions[0].situation !== undefined){ %>
+                                <%= overview.competitions[0].situation.batter.athlete.fullName %>
+                            <% } %>
+                        </p>
+                    </div>
+                </div>      
             </div>
 
             <!--home team overview-->
@@ -200,7 +221,7 @@
                             <% } %>
                         </h2>
                         <% const tableID = (cat.name !== undefined) ? cat.name : ((cat.type !== undefined) ? cat.type : "overall"); %>
-                        <table id="<%= tableID %>"> <!--Every table will have ID matching category name-->
+                        <table id="<%= summary.boxscore.players[0].team.abbreviation + tableID %>"> <!--Every table will have ID matching category name-->
                             <tr>
                                 <th>Player</th>
                                 <% const cols = (cat.labels !== undefined) ? cat.labels : cat.names; %>
@@ -246,7 +267,7 @@
                             <% } %>
                         </h2>
                         <% const tableID = (cat.name !== undefined) ? cat.name : ((cat.type !== undefined) ? cat.type : "overall"); %>
-                        <table id="<%= tableID %>"> <!--Every table will have ID matching category name-->
+                        <table id="<%= summary.boxscore.players[1].team.abbreviation + tableID %>"> <!--Every table will have ID matching category name-->
                             <tr>
                                 <th>Player</th>
                                 <% const cols = (cat.labels !== undefined) ? cat.labels : cat.names; %>
@@ -292,14 +313,28 @@
             const homePlayerStats = document.getElementById('homeTeamPlayerStats');
             const awayPlayerStats = document.getElementById('awayTeamPlayerStats');
             const linescoreDiv = document.getElementById('linescoreDiv');
+            const leaderSection = document.getElementById('leaderSection');
+            const atBatSection = document.getElementById('atBat');
+            const footballSection = document.getElementById('footballInfo');
+
+            //specific stat keepers
+            const score = document.getElementById('score');
+            const gameStatus = document.getElementById('status');
+            const count = document.getElementById('count');
+            const outs = document.getElementById('outs');
+            const pitcherName = document.getElementById('pitcherName');
+            const batterName = document.getElementById('batterName');
+            const batterHeadshot = document.getElementById('batterHeadshot');
+            const pitcherHeadshot = document.getElementById('pitcherHeadshot');
+            const footballMarker = document.getElementById('footballMarker');
+            const awayTeamBoxscore = document.getElementById('awayTeamBoxscore');
+            const homeTeamBoxscore = document.getElementById('homeTeamBoxscore');
+            const footballPosArrow = document.getElementById('footballPossessionArrow');
 
             //the divs for the buttons of player scoresheets
             const homeButton = document.getElementById("homeTeamButton");
             const awayButton = document.getElementById("awayTeamButton");
             const buttonSection = document.getElementById('buttonSection');
-
-            //football possession images
-            const footballPosArrow = document.getElementById('footballPossessionArrow');
 
             //use the JSON data from the rendered data of initial page load
             const summaryEndpoint = <%- JSON.stringify(summaryEndpoint) %>;
@@ -312,10 +347,12 @@
             homePlayerStats.style.display = "none";
 
             //hide any stat divs if the game has not started yet
-            if (gameState == "pre"){
-                buttonSection.style.display = 'none';
-                linescoreDiv.style.display = 'none';
-            }
+            buttonSection.style.display = (gameState == "pre") ? 'none' : 'flex';
+            linescoreDiv.style.display = (gameState == "pre") ? 'none' : 'flex';
+            atBatSection.style.display = (league.toUpperCase() == "MLB" && gameState == "in") ? 'flex' : 'none';
+            footballSection.style.display = (league.toUpperCase() == "NFL" && gameState == "in") ? 'flex' : 'none';
+
+            //leaderSection.style.display = (gameState == "in") ? 'none' : 'flex';
 
             //put in football possession arrow if the game is active
             if (league.toUpperCase() == "NFL" && gameState == "in"){ //set arrow to correct side
@@ -326,9 +363,8 @@
                 footballPosArrow.style.display = 'none';
             }
 
-            if (league.toUpperCase() == "MLB"){
-                document.getElementById('boxscore').style.display = 'none';
-            }
+            document.getElementById('boxscore').style.display = (league.toUpperCase() == "MLB") ? 'none' : 'flex';
+            
 
             //when home team buttin div is clicked, hide away player stats and show home player ones
             function toggleHomeStats(){
@@ -360,30 +396,30 @@
 
                     //make things visible
                     buttonSection.style.display = 'flex';
-                    
                     //change boxscore headline
                     document.getElementById('boxHeadline').textContent = "Box Score";
 
                     //set up the details in the gameInfoDiv. This includes the score, timer/status, and setting up
                     //the baseball count and football markers 
-                    document.getElementById('status').textContent = updateOverview.competitions[0].status.type.detail;
-                    document.getElementById('score').textContent = updateOverview.competitions[0].competitors[1].score
+                    gameStatus.textContent = updateOverview.competitions[0].status.type.detail;
+                    score.textContent = updateOverview.competitions[0].competitors[1].score
                         + " - " + updateOverview.competitions[0].competitors[0].score;
+
                     if (league.toUpperCase() == "MLB"){ //get balls, strikes and outs
-                        document.getElementById('count').textContent = updateOverview.competitions[0].situation.balls 
-                            + " - " + updateOverview.competitions[0].situation.strikes;
-                        document.getElementById('outs').textContent = updateOverview.competitions[0].
-                            situation.outs + " outs";
+                        count.textContent = updateOverview.competitions[0].situation.balls + " - " + 
+                            updateOverview.competitions[0].situation.strikes;
+                        outs.textContent = updateOverview.competitions[0].situation.outs + " outs";
+                        atBatSection.style.display = 'flex';
                     }
                     if (league.toUpperCase() == "NFL"){ //get yard marker and down
-                        document.getElementById('footballMarker').textContent = updateOverview.competitions[0].
-                            situation.downDistanceText;
+                        footballSection.style.display = 'flex';
+                        footballMarker.textContent = updateOverview.competitions[0].situation.downDistanceText;
                     }
                     
-                    //set up the boxscore
+                    //set up the boxscore if not an MLB game
                     if (league.toUpperCase() != "MLB"){
-                        document.getElementById('awayTeamBoxscore').querySelectorAll('td').forEach(cell => cell.textContent = '0');
-                        document.getElementById('homeTeamBoxscore').querySelectorAll('td').forEach(cell => cell.textContent = '0');
+                        awayTeamBoxscore.querySelectorAll('td').forEach(cell => cell.textContent = '0');
+                        homeTeamBoxscore.querySelectorAll('td').forEach(cell => cell.textContent = '0');
                     }
 
                     //set up the linescore
@@ -512,26 +548,30 @@
                 const updateOverview = await (await fetch(overviewEndpoint)).json();
     
                 //update the score and status/time
-                document.getElementById('status').textContent = updateOverview.competitions[0].status.type.detail;
-                document.getElementById('score').textContent = updateOverview.competitions[0].competitors[1].score 
+                gameStatus.textContent = updateOverview.competitions[0].status.type.detail;
+                score.textContent = updateOverview.competitions[0].competitors[1].score 
                     + " - " + updateOverview.competitions[0].competitors[0].score;
                 
                 //if its a baseball game, update the strike and out count
                 if (league.toUpperCase() == "MLB" && updateSummary.meta.gameStatus == "in"){
-                    document.getElementById('count').textContent = updateOverview.competitions[0].situation.balls 
+                    count.textContent = updateOverview.competitions[0].situation.balls 
                         + " - " + updateOverview.competitions[0].situation.strikes;
-                    document.getElementById('outs').textContent = updateOverview.competitions[0].situation.outs + " outs";
+                    outs.textContent = updateOverview.competitions[0].situation.outs + " outs";
                 }
-                //update football marker if football game
-                if (league.toUpperCase() == "NFL" && updateOverview.status.type.state == "in"){
-                    document.getElementById('footballMarker').textContent = updateOverview.competitions[0].
-                        situation.downDistanceText;
+                //update the at bat pitcher and batter if available
+                if (league.toUpperCase() == "MLB" && updateOverview.competitions[0].situation !== undefined &&
+                    updateOverview.competitions[0].situation.pitcher !== undefined){
+                    pitcherHeadshot.src = updateOverview.competitions[0].situation.pitcher.athlete.headshot;
+                    batterHeadshot.src = updateOverview.competitions[0].situation.batter.athlete.headshot;
+                    batterName.textContent = updateOverview.competitions[0].situation.batter.athlete.fullName;
+                    pitcherName.textContent = updateOverview.competitions[0].situation.pitcher.athlete.fullName;
+                    
                 }
-                //update football possession icon
+                //update football marker if football game and the possession arrow image
                 if (league.toUpperCase() == "NFL" && updateOverview.status.type.state == "in"){
-                    footballPosArrow.src = (overview.competitions[0].situation.possession == 
-                        overview.competitions[0].competitors[1].id) ? '/images/left_arrow.png' : '/images/right_arrow.png';
-                    footballPosArrow.style.display = 'flex';
+                    footballMarker.textContent = updateOverview.competitions[0].situation.downDistanceText;
+                    footballPosArrow.src = (updateOverview.competitions[0].situation.possession == 
+                        updateOverview.competitions[0].competitors[1].id) ? '/images/left_arrow.png' : '/images/right_arrow.png';
                 }
 
                 //update the linescores
@@ -562,8 +602,8 @@
 
                 //update the overall boxscores if we have an NFL, NBA or NHL game
                 if (league.toUpperCase() != "MLB"){
-                    const homeTeamStats = document.getElementById('homeTeamBoxscore').querySelectorAll('td');
-                    const awayTeamStats = document.getElementById('awayTeamBoxscore').querySelectorAll('td');
+                    const homeTeamStats = homeTeamBoxscore.querySelectorAll('td');
+                    const awayTeamStats = awayTeamBoxscore.querySelectorAll('td');
                     for (let i = 0; i < updateSummary.boxscore.teams[0].statistics.length; i++){
                         awayTeamStats[i].textContent = updateSummary.boxscore.teams[0].statistics[i].displayValue;
                         homeTeamStats[i].textContent = updateSummary.boxscore.teams[1].statistics[i].displayValue;
@@ -576,7 +616,8 @@
                     team.statistics.forEach(cat => { // for each category
                         cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { //for every athlete in category
                             //get athlete row
-                            const tableID = (cat.name !== undefined) ? cat.name : ((cat.type !== undefined) ? cat.type : "overall");
+                            const tableID = (cat.name !== undefined) ? team.team.abbreviation + cat.name : 
+                                ((cat.type !== undefined) ? team.team.abbreviation + cat.type : "overall");
                             const playerRow = document.getElementById(tableID).querySelector(".row-" + athlete.athlete.id);
                             //if we have new athlete in JSON (bench player or new player) add him to table
                             if (playerRow == null){
@@ -624,16 +665,12 @@
                     document.querySelectorAll('.teamOverview')[1].querySelector('h3').textContent = 
                         updateOverview.competitions[0].competitors[0].records[0].summary;
                     document.getElementById('seriesStatus').textContent = updateOverview.competitions[0].series.summary;
-                    document.getElementById('count').textContent = "";
-                    document.getElementById('outs').textContent = "";
-                    document.getElementById('footballMarker').textContent = "";
-                    footballPosArrow.style.display = 'none';
+                    footballSection.style.display = 'none';
+                    atBatSection.style.display = 'none';
                     //stop requests
                     clearInterval(request);
                 }
             }
-
-
 
             //if game hasn't started yet, set setInterval to initalizeStats to check for game start
             //otherwise, set to updateGameStats if game is active/final

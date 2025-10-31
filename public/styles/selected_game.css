@@ -19,7 +19,7 @@
     width: 33.333333%;
 }
 
-#boxscore, #leadersDiv, #linescoreDiv {
+#boxscore, #leaderSection, #linescoreDiv {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -121,4 +121,29 @@ h2, h3 {
 
 .nonstarter {
     background-color: lightgray;
+}
+
+#footballInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#atBat {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+#atBat div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#pitcherHeadshot, #batterHeadshot {
+    height: 25px;
+    width: 25px;
 }
