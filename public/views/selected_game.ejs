@@ -22,8 +22,13 @@
             }
         }
     }
-%>
 
+    const homeLeaders = (overview.status.type.state != "in" && league.toUpperCase() != "NFL") ? 
+        overview.competitions[0].competitors[0].leaders.filter(leader => !leader.displayName.includes("Rating")) : summary.leaders[1].leaders;
+    const awayLeaders = (overview.status.type.state != "in" && league.toUpperCase() != "NFL") ?
+        overview.competitions[0].competitors[1].leaders.filter(leader => !leader.displayName.includes("Rating")) : summary.leaders[0].leaders;
+%>
+ 
 
 <!DOCTYPE html>
 <html>
@@ -200,6 +205,45 @@
         </div>
 
 
+        <div id="leaderSection">
+            <h2><%= overview.competitions[0].competitors[1].team.abbreviation %> Leaders</h2>
+            <div id="awayTeamLeaders">
+                <% if (overview.status.type.state != "in"){
+                    awayLeaders.forEach(leader => { %>
+                        <div class="leaderDiv">
+                            <h3><%= leader.displayName %></h3>
+                            <% if (league.toUpperCase() == "NFL"){ %>
+                                <img class="headshot" src="<%= leader.leaders[0].athlete.headshot.href %>">
+                            <% } else { %>
+                                <img class="headshot" src="<%= leader.leaders[0].athlete.headshot %>">
+                            <% } %>
+                            <h4 class="leaderName"><%= leader.leaders[0].athlete.shortName %></h5>
+                            <p class="leaderDesc"><%= leader.leaders[0].displayValue %></p>
+                        </div>
+                    <% })
+                } %>
+            </div>
+
+            <h2><%= overview.competitions[0].competitors[0].team.abbreviation %> Leaders</h2>
+            <div id="homeTeamLeaders">
+                <% if (overview.status.type.state != "in"){
+                    homeLeaders.forEach(leader => { %>
+                        <div class="leaderDiv">
+                            <h3><%= leader.displayName %></h3>
+                            <% if (league.toUpperCase() == "NFL"){ %>
+                                <img class="headshot" src="<%= leader.leaders[0].athlete.headshot.href %>">
+                            <% } else { %>
+                                <img class="headshot" src="<%= leader.leaders[0].athlete.headshot %>">
+                            <% } %>
+                            <h4 class="leaderName"><%= leader.leaders[0].athlete.shortName %></h5>
+                            <p class="leaderDesc"><%= leader.leaders[0].displayValue %></p>
+                        </div>
+                    <% })
+                } %>
+            </div>
+        </div>
+
+
         <div id="buttonSection">
             <div id="awayTeamButton">
                 <%= overview.competitions[0].competitors[1].team.displayName %>
@@ -223,6 +267,9 @@
                         <% const tableID = (cat.name !== undefined) ? cat.name : ((cat.type !== undefined) ? cat.type : "overall"); %>
                         <table id="<%= summary.boxscore.players[0].team.abbreviation + tableID %>"> <!--Every table will have ID matching category name-->
                             <tr>
+                                <% if (league.toUpperCase() == "MLB" && cat.type == "batting"){ %>
+                                    <th>Position</th>
+                                <% } %>
                                 <th>Player</th>
                                 <% const cols = (cat.labels !== undefined) ? cat.labels : cat.names; %>
                                 <% for (let i = 0; i < cols.length; i++){ %>
@@ -239,6 +286,9 @@
                             <% cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { %>
                                 <% const rowID = "row-" + athlete.athlete.id; %>
                                 <tr class="<%= rowID %>">
+                                    <% if (league.toUpperCase() == "MLB" && cat.type == "batting"){ %>
+                                        <th><%= athlete.position.abbreviation %></th>
+                                    <% } %>
                                     <th class="name">
                                         <% if (athlete.athlete.shortName !== undefined){ %>
                                             <%= athlete.athlete.shortName %>
@@ -269,6 +319,9 @@
                         <% const tableID = (cat.name !== undefined) ? cat.name : ((cat.type !== undefined) ? cat.type : "overall"); %>
                         <table id="<%= summary.boxscore.players[1].team.abbreviation + tableID %>"> <!--Every table will have ID matching category name-->
                             <tr>
+                                <% if (league.toUpperCase() == "MLB" && cat.type == "batting"){ %>
+                                    <th>Position</th>
+                                <% } %>
                                 <th>Player</th>
                                 <% const cols = (cat.labels !== undefined) ? cat.labels : cat.names; %>
                                 <% for (let i = 0; i < cols.length; i++){ %>
@@ -285,6 +338,9 @@
                             <% cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { %>
                                 <% const rowID = "row-" + athlete.athlete.id; %>
                                 <tr class="<%= rowID %>">
+                                    <% if (league.toUpperCase() == "MLB" && cat.type == "batting"){ %>
+                                        <th><%= athlete.position.abbreviation %></th>
+                                    <% } %>
                                     <th class="name">
                                         <% if (athlete.athlete.shortName !== undefined){ %>
                                             <%= athlete.athlete.shortName %>
@@ -351,8 +407,7 @@
             linescoreDiv.style.display = (gameState == "pre") ? 'none' : 'flex';
             atBatSection.style.display = (league.toUpperCase() == "MLB" && gameState == "in") ? 'flex' : 'none';
             footballSection.style.display = (league.toUpperCase() == "NFL" && gameState == "in") ? 'flex' : 'none';
-
-            //leaderSection.style.display = (gameState == "in") ? 'none' : 'flex';
+            leaderSection.style.display = (gameState == "in") ? 'none' : 'flex';
 
             //put in football possession arrow if the game is active
             if (league.toUpperCase() == "NFL" && gameState == "in"){ //set arrow to correct side
@@ -394,8 +449,10 @@
 
                 if (updateSummary.meta.gameState == "in"){ //when game starts, start setting everything up
 
-                    //make things visible
+                    //make things visible or invisible
                     buttonSection.style.display = 'flex';
+                    leaderSection.style.display = 'none';
+                    linescoreDiv.style.display = 'flex'; //make div appear
                     //change boxscore headline
                     document.getElementById('boxHeadline').textContent = "Box Score";
 
@@ -422,8 +479,6 @@
                         homeTeamBoxscore.querySelectorAll('td').forEach(cell => cell.textContent = '0');
                     }
 
-                    //set up the linescore
-                    linescoreDiv.style.display = 'flex'; //make div appear
                     //set first interval of linescore to 0
                     document.getElementById('awayTeamLinescoreRow').querySelectorAll('td')[0].textContent = '0';
                     document.getElementById('homeTeamLinescoreRow').querySelectorAll('td')[0].textContent = '0';
