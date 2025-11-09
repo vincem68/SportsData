@@ -23,10 +23,17 @@
         }
     }
 
-    const homeLeaders = (overview.status.type.state != "in" && league.toUpperCase() != "NFL") ? 
-        overview.competitions[0].competitors[0].leaders.filter(leader => !leader.displayName.includes("Rating")) : summary.leaders[1].leaders;
-    const awayLeaders = (overview.status.type.state != "in" && league.toUpperCase() != "NFL") ?
-        overview.competitions[0].competitors[1].leaders.filter(leader => !leader.displayName.includes("Rating")) : summary.leaders[0].leaders;
+    const homeLeaders = (overview.status.type.state != "in" && league.toUpperCase() == "NFL") ? 
+        summary.leaders[1].leaders :
+        (overview.status.type.state != "in" &&  overview.competitions[0].competitors[0].leaders !== undefined) ?
+        overview.competitions[0].competitors[0].leaders.filter(leader => !leader.displayName.includes("Rating"))
+        : [];
+
+    const awayLeaders = (overview.status.type.state != "in" && league.toUpperCase() == "NFL") ? 
+        summary.leaders[0].leaders :
+        (overview.status.type.state != "in" &&  overview.competitions[0].competitors[1].leaders !== undefined) ?
+        overview.competitions[0].competitors[1].leaders.filter(leader => !leader.displayName.includes("Rating"))
+        : [];
 %>
  
 
@@ -206,7 +213,7 @@
 
 
         <div id="leaderSection">
-            <h2><%= overview.competitions[0].competitors[1].team.abbreviation %> Leaders</h2>
+            <h2 class="leaderHeadline"><%= overview.competitions[0].competitors[1].team.abbreviation %> Leaders</h2>
             <div id="awayTeamLeaders">
                 <% if (overview.status.type.state != "in"){
                     awayLeaders.forEach(leader => { %>
@@ -224,7 +231,7 @@
                 } %>
             </div>
 
-            <h2><%= overview.competitions[0].competitors[0].team.abbreviation %> Leaders</h2>
+            <h2 class="leaderHeadline"><%= overview.competitions[0].competitors[0].team.abbreviation %> Leaders</h2>
             <div id="homeTeamLeaders">
                 <% if (overview.status.type.state != "in"){
                     homeLeaders.forEach(leader => { %>
@@ -372,6 +379,8 @@
             const leaderSection = document.getElementById('leaderSection');
             const atBatSection = document.getElementById('atBat');
             const footballSection = document.getElementById('footballInfo');
+            const awayTeamLeaders = document.getElementById('awayTeamLeaders');
+            const homeTeamLeaders = document.getElementById('homeTeamLeaders');
 
             //specific stat keepers
             const score = document.getElementById('score');
@@ -408,6 +417,10 @@
             atBatSection.style.display = (league.toUpperCase() == "MLB" && gameState == "in") ? 'flex' : 'none';
             footballSection.style.display = (league.toUpperCase() == "NFL" && gameState == "in") ? 'flex' : 'none';
             leaderSection.style.display = (gameState == "in") ? 'none' : 'flex';
+            document.getElementById('boxscore').style.display = (league.toUpperCase() == "MLB") ? 'none' : 'flex';
+            document.querySelectorAll('.leaderHeadline')[0].style.display = (awayTeamLeaders.children.length > 0) ? 'block' : 'none';
+            document.querySelectorAll('.leaderHeadline')[1].style.display = (homeTeamLeaders.children.length > 0) ? 'block' : 'none';
+
 
             //put in football possession arrow if the game is active
             if (league.toUpperCase() == "NFL" && gameState == "in"){ //set arrow to correct side
@@ -417,9 +430,6 @@
             } else {
                 footballPosArrow.style.display = 'none';
             }
-
-            document.getElementById('boxscore').style.display = (league.toUpperCase() == "MLB") ? 'none' : 'flex';
-            
 
             //when home team buttin div is clicked, hide away player stats and show home player ones
             function toggleHomeStats(){
@@ -438,6 +448,90 @@
             //set event listeners for the buttons
             homeButton.addEventListener('click', toggleHomeStats);
             awayButton.addEventListener('click', toggleAwayStats);
+
+
+            /**
+             * helper function used in initializeStats() to set up the player boxscores
+             * */
+            function createPlayerBoxscores(players, divID, teamAbbr){
+
+                players.statistics.forEach(cat => {
+                    //create a headline for the category name if it exists in JSON
+                    const tableName = document.createElement('h2');
+                    tableName.textContent = (cat.name !== undefined) ? cat.name.split(/(?=[A-Z])/)
+                        .map(word => word.toUpperCase()).join(" ") : "";
+                    awayPlayerStats.appendChild(tableName);
+                    //create the table for the player category (like rushing, passing, forwards, etc)
+                    const table = document.createElement('table');
+                    const tableID = (cat.name !== undefined) ? cat.name : ((cat.type !== undefined) ? cat.type : "overall");
+                    table.id = teamAbbr + tableID;
+                    //create first row that contains the names of the stats in category
+                    const titleRow = document.createElement('tr');
+                    if (league.toUpperCase() == "MLB" && cat.type == "batting"){
+                        const positionCol = document.createElement('th');
+                        positionCol.textContent = "Position";
+                        titleRow.appendChild(positionCol);
+                    }
+                    const playerNameHeader = document.createElement('th');
+                    playerNameHeader.textContent = "Player";
+                    titleRow.appendChild(playerNameHeader);
+                    const cols = (cat.labels !== undefined) ? cat.labels : cat.names;
+                    //create the column names and give them the stat descriptions when hovered over
+                    for (let i = 0; i < cols.length; i++){
+                        const head = document.createElement('th');
+                        const div = document.createElement('div'); div.textContent = cols[i];
+                        const span = document.createElement('span'); span.textContent = cat.descriptions[i];
+                        span.classList.add('tooltip-text'); div.classList.add('tooltip');
+                        div.appendChild(span); head.appendChild(div); titleRow.appendChild(head);
+                    }
+                    table.appendChild(titleRow); //add row to table
+
+                    //now make rows for each player
+                    cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => {
+                        //give each player row their API ID as the HTML ID for easier lookup
+                        const playerRow = document.createElement('tr');
+                        playerRow.classList.add("row-" + athlete.athlete.id);
+                        const playerName = document.createElement('th'); //put player name in front of row
+                        if (athlete.starter !== undefined){ //differentiate between starters and bench
+                            playerName.classList.add((athlete.starter == true) ? "name" : "nonstarter");
+                        } else { playerName.classList.add("name"); }
+                        //with diff JSON fields, get first initial and last name
+                        playerName.textContent = (athlete.athlete.shortName !== undefined) ? 
+                            athlete.athlete.shortName : athlete.athlete.firstName.substring(0, 1) + ". " 
+                                + athlete.athlete.lastName;
+                        playerRow.appendChild(playerName); //add name to row
+                        athlete.stats.forEach(stat => { //add stat value to corresponding row cells
+                            const statCell = document.createElement('td');
+                            statCell.textContent = stat;
+                            playerRow.appendChild(statCell);
+                        });
+                        table.appendChild(playerRow); //add the row to the table
+                    });
+                    divID.appendChild(table); //add the table to the div
+                });
+            }
+
+            function createLeaders(leaders, divID){
+
+                leaders.forEach(leader => {
+                    const leaderDiv = document.createElement('div');
+                    const leaderHeadline = document.createElement('h3');
+                    leaderHeadline.textContent = leader.displayName;
+                    const headshot = document.createElement('img');
+                    headshot.src = (league.toUpperCase() == "NFL") ? leader.leaders[0].athlete.headshot.href
+                        : leader.leaders[0].athlete.headshot;
+                    headshot.classList.add('headshot');
+                    const leaderName = document.createElement('h4');
+                    leaderName.textContent = leader.leaders[0].athlete.shortName;
+                    leaderName.classList.add('leaderName');
+                    const desc = document.createElement('p'); desc.textContent = leader.leaders[0].displayValue;
+                    desc.classList.add('leaderDesc');
+                    leaderDiv.appendChild(leaderHeadline); leaderDiv.appendChild(headshot);
+                    leaderDiv.appendChild(leaderName); leaderDiv.appendChild(desc);
+                    divID.appendChild(leaderDiv);
+                });
+            }
+
 
             //Use this to initialize the stats if the page is opened pregame but game starts while open
             //this will set up the game score, game status, boxscore, linescore, and player stats
@@ -486,103 +580,11 @@
                         document.querySelectorAll('.mlbLinescore').forEach(cell => cell.textContent = '0');
                     }
 
-                    //this will set up the player stats section. This part will be for the road players
-                    updateSummary.boxscore.players[0].statistics.forEach(cat => {
-                        //create a headline for the category name if it exists in JSON
-                        const tableName = document.createElement('h2');
-                        tableName.textContent = (cat.name !== undefined) ? cat.name.split(/(?=[A-Z])/)
-                            .map(word => word.toUpperCase()).join(" ") : "";
-                        awayPlayerStats.appendChild(tableName);
-                        //create the table for the player category (like rushing, passing, forwards, etc)
-                        const table = document.createElement('table');
-                        //create first row that contains the names of the stats in category
-                        const titleRow = document.createElement('tr');
-                        const playerNameHeader = document.createElement('th');
-                        playerNameHeader.textContent = "Player";
-                        titleRow.appendChild(playerNameHeader);
-                        const cols = (cat.labels !== undefined) ? cat.labels : cat.names;
-                        //create the column names and give them the stat descriptions when hovered over
-                        for (let i = 0; i < cols.length; i++){
-                            const head = document.createElement('th');
-                            const div = document.createElement('div'); div.textContent = cols[i];
-                            const span = document.createElement('span'); span.textContent = cat.descriptions[i];
-                            span.classList.add('tooltip-text'); div.classList.add('tooltip');
-                            div.appendChild(span); head.appendChild(div); titleRow.appendChild(head);
-                        }
-                        table.appendChild(titleRow); //add row to table
-
-                        //now make rows for each player
-                        cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => {
-                            //give each player row their API ID as the HTML ID for easier lookup
-                            const playerRow = document.createElement('tr');
-                            playerRow.classList.add("row-" + athlete.athlete.id);
-                            const playerName = document.createElement('th'); //put player name in front of row
-                            if (athlete.starter !== undefined){ //differentiate between starters and bench
-                                playerName.classList.add((athlete.starter == true) ? "name" : "nonstarter");
-                            } else { playerName.classList.add("name"); }
-                            //with diff JSON fields, get first initial and last name
-                            playerName.textContent = (athlete.athlete.shortName !== undefined) ? 
-                                athlete.athlete.shortName : athlete.athlete.firstName.substring(0, 1) + ". " 
-                                    + athlete.athlete.lastName;
-                            playerRow.appendChild(playerName); //add name to row
-                            athlete.stats.forEach(stat => { //add stat value to corresponding row cells
-                                const statCell = document.createElement('td');
-                                statCell.textContent = stat;
-                                playerRow.appendChild(statCell);
-                            });
-                            table.appendChild(playerRow); //add the row to the table
-                        });
-                        awayPlayerStats.appendChild(table); //add the table to the div
-                    });
-
-                    //now do the same for the home players
-                    updateSummary.boxscore.players[1].statistics.forEach(cat => {
-                        //create a headline for the category name if it exists in JSON
-                        const tableName = document.createElement('h2');
-                        tableName.textContent = (cat.name !== undefined) ? cat.name.split(/(?=[A-Z])/)
-                            .map(word => word.toUpperCase()).join(" ") : "";
-                        homePlayerStats.appendChild(tableName);
-                        //create the table for the player category (like rushing, passing, forwards, etc)
-                        const table = document.createElement('table');
-                        //create first row that contains the names of the stats in category
-                        const titleRow = document.createElement('tr');
-                        const playerNameHeader = document.createElement('th');
-                        playerNameHeader.textContent = "Player";
-                        titleRow.appendChild(playerNameHeader);
-                        const cols = (cat.labels !== undefined) ? cat.labels : cat.names;
-                        //create the column names and give them the stat descriptions when hovered over
-                        for (let i = 0; i < cols.length; i++){
-                            const head = document.createElement('th');
-                            const div = document.createElement('div'); div.textContent = cols[i];
-                            const span = document.createElement('span'); span.textContent = cat.descriptions[i];
-                            span.classList.add('tooltip-text'); div.classList.add('tooltip');
-                            div.appendChild(span); head.appendChild(div); titleRow.appendChild(head);
-                        }
-                        table.appendChild(titleRow); //add row to table
-
-                        //now make rows for each player
-                        cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => {
-                            //give each player row their API ID as the HTML ID for easier lookup
-                            const playerRow = document.createElement('tr');
-                            playerRow.classList.add("row-" + athlete.athlete.id);
-                            const playerName = document.createElement('th'); //put player name in front of row
-                            if (athlete.starter !== undefined){ //differentiate between starters and bench
-                                playerName.classList.add((athlete.starter == true) ? "name" : "nonstarter");
-                            } else { playerName.classList.add("name"); }
-                            //with diff JSON fields, get first initial and last name
-                            playerName.textContent = (athlete.athlete.shortName !== undefined) ? 
-                                athlete.athlete.shortName : athlete.athlete.firstName.substring(0, 1) + ". " 
-                                    + athlete.athlete.lastName;
-                            playerRow.appendChild(playerName); //add name to row
-                            athlete.stats.forEach(stat => { //add stat value to corresponding row cells
-                                const statCell = document.createElement('td');
-                                statCell.textContent = stat;
-                                playerRow.appendChild(statCell);
-                            });
-                            table.appendChild(playerRow); //add the row to the table
-                        });
-                        homePlayerStats.appendChild(table); //add the table to the div
-                    });
+                    //create player boxscore
+                    createPlayerBoxscores(updateSummary.boxscore.players[0], awayPlayerStats, 
+                        updateSummary.boxscore.players[0].team.abbreviation);
+                    createPlayerBoxscores(updateSummary.boxscore.players[1], homePlayerStats,
+                        updateSummary.boxscore.players[1].team.abbreviation);
 
                     //after we finish initialization, switch function to now get updates instead
                     clearInterval(request);
@@ -641,6 +643,7 @@
                         updateOverview.competitions[0].competitors[0].linescores[currentInterval].displayValue;
                     }
                 } else { //otherwise update home team linescore regularly
+                    
                     document.getElementById('homeTeamLinescoreRow').querySelectorAll('td')[currentInterval].textContent = 
                         updateOverview.competitions[0].competitors[0].linescores[currentInterval].displayValue;
                 }
@@ -672,7 +675,7 @@
                         cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { //for every athlete in category
                             //get athlete row
                             const tableID = (cat.name !== undefined) ? team.team.abbreviation + cat.name : 
-                                ((cat.type !== undefined) ? team.team.abbreviation + cat.type : "overall");
+                                ((cat.type !== undefined) ? team.team.abbreviation + cat.type : team.team.abbreviation +  "overall");
                             const playerRow = document.getElementById(tableID).querySelector(".row-" + athlete.athlete.id);
                             //if we have new athlete in JSON (bench player or new player) add him to table
                             if (playerRow == null){
@@ -719,9 +722,36 @@
                         updateOverview.competitions[0].competitors[1].records[0].summary;
                     document.querySelectorAll('.teamOverview')[1].querySelector('h3').textContent = 
                         updateOverview.competitions[0].competitors[0].records[0].summary;
-                    document.getElementById('seriesStatus').textContent = updateOverview.competitions[0].series.summary;
+                    if (updateOverview.season.type == 3){
+                        document.getElementById('seriesStatus').textContent = updateOverview.competitions[0].series.summary;
+                    }
                     footballSection.style.display = 'none';
                     atBatSection.style.display = 'none';
+
+                    //remove any previous leaders if they are hidden
+                    awayTeamLeaders.replaceChildren();
+                    homeTeamLeaders.replaceChildren();
+                    //get new leaders
+                    const homeLeaders = (updateOverview.status.type.state != "in" && league.toUpperCase() == "NFL") ? 
+                        updateSummary.leaders[1].leaders :
+                        (updateOverview.status.type.state != "in" &&  updateOverview.competitions[0].competitors[0].leaders !== undefined) ?
+                        updateOverview.competitions[0].competitors[0].leaders.filter(leader => !leader.displayName.includes("Rating"))
+                        : [];
+
+                    const awayLeaders = (updateOverview.status.type.state != "in" && league.toUpperCase() == "NFL") ? 
+                        updateSummary.leaders[0].leaders :
+                        (updateOverview.status.type.state != "in" &&  updateOverview.competitions[0].competitors[1].leaders !== undefined) ?
+                        updateOverview.competitions[0].competitors[1].leaders.filter(leader => !leader.displayName.includes("Rating"))
+                        : [];
+
+                    document.querySelectorAll('.leaderHeadline')[0].style.display = (awayLeaders) ? 'block' : 'none';
+                    document.querySelectorAll('.leaderHeadline')[1].style.display = (homeLeaders) ? 'block' : 'none';
+
+                    //now go through new postgame leaders and populate the section
+                    createLeaders(awayLeaders, awayTeamLeaders);
+                    createLeaders(homeLeaders, homeTeamLeaders);
+                    leaderSection.style.display = 'flex';
+
                     //stop requests
                     clearInterval(request);
                 }
