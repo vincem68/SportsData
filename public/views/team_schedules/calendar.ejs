@@ -21,8 +21,12 @@ const months = (league.toUpperCase() == "MLB") ?
     {key: "04", totalDays: 30, name: "April"}
 ];
 
+let count = 0;
 data.events.forEach(game => {
 
+    if (game.date === undefined){
+        console.log(count);
+    }
     //change the dates of the games to local time dates
     const localDate = new Date(game.date);
     const year = localDate.getFullYear();
@@ -31,7 +35,7 @@ data.events.forEach(game => {
     const hours = String(localDate.getHours()).padStart(2, '0');
     const minutes = String(localDate.getMinutes()).padStart(2, '0');
     game.date = `${year}-${month}-${day}T${hours}:${minutes}`;
-
+    count++;
 });
 %>
 
@@ -42,7 +46,7 @@ months.forEach(month => {
     //all games in month
     const monthlyGames = data.events.filter(game => game.date.substring(5, 7) == month.key);
 
-    if (monthlyGames){ //if we have games this month
+    if (monthlyGames.length > 0){ //if we have games this month
 
         let weekday = 0; //index of a weekday (0 for Sun, 1 for Mon, etc)
         let dayNum = 1; //numbered day of the month
