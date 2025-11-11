@@ -75,83 +75,10 @@
         </h2> 
     <% } %>
 
-    <% if (activeGames.length != 0){ %>
+    <h3 class="sectionHeadline">Active <%= seasonTypeGames %> Games</h3>
+    <div id="activeGames" class="gamesLayout">
 
-        <h3>Active <%= seasonTypeGames %> Games</h3>
-        <div class="gamesLayout">
-            <% activeGames.forEach(game => { %>
-
-                <div id="<%= game.id %>" class="gameContainer">
-                    <div class="awayTeamDiv">
-                        <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
-                        <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
-                    </div>
-
-                    <div class="gameTimeDiv">
-                        <p><%= game.competitions[0].status.type.detail %></p>
-                        <p><%= game.competitions[0].competitors[1].score %> - 
-                            <%= game.competitions[0].competitors[0].score %></p>
-                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
-                            Game Stats
-                        </a>
-                    </div>
-
-                    <div class="homeTeamDiv">
-                        <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
-                        <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
-                    </div>
-                </div>
-
-            <% }) %>
-        </div>
-    <% } %>
-
-    <% if (upcomingGames.length != 0){ %>
-        
-        <h3>Upcoming <%= seasonTypeGames %> Games</h3>
-        <div class="gamesLayout">
-            <% upcomingGames.forEach(game => { %>
-
-                <div id="<%= game.id %>" class="gameContainer">
-                    <div class="awayTeamDiv">
-                        <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
-                        <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
-                    </div>
-
-                    <div class="gameTimeDiv">
-                        <% if (data.day !== undefined && fullDate != data.day.date){ %>
-                            <p><%= game.competitions[0].status.type.shortDetail %></p>
-                        <% } else { %>
-                            <p>
-                                <%= game.competitions[0].status.type.shortDetail.substring(
-                                game.competitions[0].status.type.shortDetail.indexOf("-") + 2); %>
-                            </p>
-                        <% } 
-
-                        if (data.leagues[0].season.type.type == 3){ %>
-                            <p><%= game.competitions[0].series.summary %></p>
-                        <% } %>
-                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
-                            Game Stats
-                        </a>
-                    </div>
-
-                    <div class="homeTeamDiv">
-                        <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
-                        <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
-                    </div>
-                </div>
-
-            <% }) %>
-        </div>
-    <% } %>
-
-    <% if (completedGames.length != 0){ %>
-        
-        <h3>Completed <%= seasonTypeGames %> Games</h3>
-        <div class="gamesLayout">
-            
-            <% completedGames.forEach(game => { %>
+        <% activeGames.forEach(game => { %>
 
             <div id="<%= game.id %>" class="gameContainer">
                 <div class="awayTeamDiv">
@@ -160,12 +87,56 @@
                 </div>
 
                 <div class="gameTimeDiv">
-                    <p><%= game.competitions[0].status.type.detail %></p>
-                    <p><%= game.competitions[0].competitors[1].score %> - 
+                    <p class="status"><%= game.competitions[0].status.type.shortDetail %></p>
+                    <p class="mlbCount">
+                        <% if (league.toUpperCase() == "MLB"){ %>
+                            <%= game.competitions[0].situation.balls + "-" + game.competitions[0].situation.strikes
+                                +  " " + game.competitions[0].situation.outs + " outs" %>
+                        <% } %>
+                    </p>
+                    <p class="score"><%= game.competitions[0].competitors[1].score %> - 
                         <%= game.competitions[0].competitors[0].score %></p>
-                    <% if (game.competitions[0].series !== undefined){ %>
-                        <p><%= game.competitions[0].series.summary %></p>
-                    <% } %>
+                    <p class="seriesRecord"></p>
+                    <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                        Game Stats
+                    </a>
+                </div>
+
+                <div class="homeTeamDiv">
+                    <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
+                    <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
+                </div>
+            </div>
+        <% }) %>
+    </div>
+        
+    <h3 class="sectionHeadline">Upcoming <%= seasonTypeGames %> Games</h3>
+    <div id="upcomingGames" class="gamesLayout">
+
+        <% upcomingGames.forEach(game => { %>
+
+            <div id="<%= game.id %>" class="gameContainer">
+                <div class="awayTeamDiv">
+                    <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
+                    <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
+                </div>
+
+                <div class="gameTimeDiv">
+                    <p class="status">
+                        <% if (data.day !== undefined && fullDate != data.day.date){ %>
+                            <%= game.competitions[0].status.type.shortDetail %>
+                        <% } else { %>
+                            <%= game.competitions[0].status.type.shortDetail.substring(
+                                game.competitions[0].status.type.shortDetail.indexOf("-") + 2); %>
+                        <% } %>
+                    </p>
+                    <p class="mlbCount"></p>
+                    <p class="score"></p>
+                    <p class="seriesRecord">
+                        <% if (data.leagues[0].season.type.type == 3){ %>
+                            <%= game.competitions[0].series.summary %>
+                        <% } %>
+                    </p>
                     <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
                         Game Stats
                     </a>
@@ -177,19 +148,78 @@
                 </div>
             </div>
 
-            <% }) %>
-        </div>
-    <% } %>
+        <% }) %>
+    </div>
+        
+    <h3 class="sectionHeadline">Completed <%= seasonTypeGames %> Games</h3>
+    <div id="completedGames" class="gamesLayout">
+        
+        <% completedGames.forEach(game => { %>
+
+            <div id="<%= game.id %>" class="gameContainer">
+                <div class="awayTeamDiv">
+                    <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
+                    <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
+                </div>
+
+                <div class="gameTimeDiv">
+                    <p class="status"><%= game.competitions[0].status.type.detail %></p>
+                    <p class="mlbCount"></p>
+                    <p class="score">
+                        <%= game.competitions[0].competitors[1].score %> - 
+                        <%= game.competitions[0].competitors[0].score %>
+                    </p>
+                    <p class="seriesRecord">
+                        <% if (game.competitions[0].series !== undefined){ %>
+                            <%= game.competitions[0].series.summary %>
+                        <% } %>
+                    </p>
+                    <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                        Game Stats
+                    </a>
+                </div>
+
+                <div class="homeTeamDiv">
+                    <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
+                    <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
+                </div>
+            </div>
+
+        <% }) %>
+    </div>
 
     <%- include ('footer') %>
 
     <script>
+
         const form = document.getElementById("dateSelection");
         const dateInput = document.getElementById('date');
 
-        //get the selectors
+        //selectors
         const typeSelector = document.getElementById('typeSelector');
         const weekSelector = document.getElementById('weekSelector');
+
+        //divs
+        const upcomingGames = document.getElementById('upcomingGames');
+        const activeGames = document.getElementById('activeGames');
+        const completedGames = document.getElementById('completedGames');
+        const headlines = document.querySelectorAll('.sectionHeadline');
+        const upcoming = document.getElementById('upcomingHeadline');
+
+        if (activeGames.children.length == 0){
+            headlines[0].style.display = 'none';
+        }
+        if (upcomingGames.children.length == 0){ 
+            console.log("yo");
+            headlines[1].style.display = 'none';
+        }
+        if (completedGames.children.length == 0){ 
+            headlines[2].style.display = 'none';
+        }
+
+        //endpoint to send requests to
+        const endpoint = <%- JSON.stringify(endpoint) %>;
+        const league = <%- JSON.stringify(league) %>;
 
         function getOptions(){
 
@@ -219,18 +249,104 @@
             }
         }
 
-        typeSelector.addEventListener('change', getOptions);
-        getOptions();
+        if (typeSelector){ //if its for football games, add listener for week selection
 
-        form.addEventListener("submit", function() {
-            const dateValue = date.value;
+            typeSelector.addEventListener('change', getOptions);
+            getOptions();
 
-            if (!dateValue) {
-                event.preventDefault();
-                alert('Please select a date.');
-                return;
+        } else { //otherwise, add listener for date selection
+
+            form.addEventListener("submit", function() {
+                const dateValue = date.value;
+
+                if (!dateValue) {
+                    event.preventDefault();
+                    alert('Please select a date.');
+                    return;
+                }
+            });
+        }
+
+        //this will be the function to auto update the games.
+        async function updateGames(){
+
+            //get the data, get link from router
+            const update = await (await fetch(endpoint)).json();
+            //go through updated data for games
+            update.events.forEach(game => {
+                //find the element with game ID
+                const gameDiv = document.getElementById(game.id);
+                //if in first two divs, and status has changed, make changes to game
+                if ((gameDiv.parentNode.id == "upcomingGames" && game.status.type.state != "pre") ||
+                    (gameDiv.parentNode.id == "activeGames" && game.status.type.state != "in")){
+                    //get status of game
+                    if (league.toUpperCase() == "MLB" && game.status.type.state == "in"){
+                        gameDiv.querySelector('.status').textContent = game.status.type.shortDetail;
+                        gameDiv.querySelector('.mlbCount').textContent = game.competitions[0].situation.balls +
+                             "-" + game.competitions[0].situation.strikes +  " " + 
+                                game.competitions[0].situation.outs + " outs";
+                    } else {
+                        gameDiv.querySelector('.status').textContent = game.status.type.shortDetail;
+                        gameDiv.querySelector('.mlbCount').textContent = "";
+                    }
+                    //get score of game
+                    gameDiv.querySelector('.score').textContent = game.competitions[0].competitors[1].score + " - "
+                        + game.competitions[0].competitors[0].score;
+                    //for series score updates on final games
+                    if (game.status.type.state == "post" && game.competitions[0].series !== undefined){
+                        gameDiv.querySelector('.seriesRecord').textContent = game.competitions[0].series.summary;
+                    } else {
+                        gameDiv.querySelector('.seriesRecord').textContent = "";
+                    }
+
+                    gameDiv.parentNode.removeChild(gameDiv); //remove from current div
+                    //add to correct div
+                    if (game.status.type.state == "in"){
+                        if (activeGames.children.length == 0){
+                            headlines[0].style.display = 'flex';
+                        }
+                        activeGames.appendChild(gameDiv);
+                    } else {
+                        if (completedGames.children.length == 0){
+                            headlines[2].style.display = 'flex';
+                        }
+                        completedGames.appendChild(gameDiv);
+                    }
+                }
+                //else, if game is active but no status change, just update the score and time
+                else if (gameDiv.parentNode.id == "activeGames") {
+                    if (league.toUpperCase() == "MLB" && game.status.type.state == "in"){
+                        gameDiv.querySelector('.status').textContent = game.status.type.shortDetail;
+                        gameDiv.querySelector('.mlbCount').textContent = game.competitions[0].situation.balls +
+                             "-" + game.competitions[0].situation.strikes +  " " + 
+                                game.competitions[0].situation.outs + " outs";
+                    } else {
+                        gameDiv.querySelector('.status').textContent = game.status.type.shortDetail;
+                    }
+                    gameDiv.querySelector('.score').textContent = game.competitions[0].competitors[1].score + " - " 
+                        + game.competitions[0].competitors[0].score;
+                }
+            });
+
+            //check to see if active or upcoming games are empty and hide them if so, or put them back
+            if (upcomingGames.children.length == 0){
+                headlines[1].style.display = 'none';
             }
-        });
+
+            if (activeGames.children.length == 0){
+                headlines[0].style.display = 'none';
+            }
+
+            if (activeGames.children.length == 0 && upcomingGames.children.length == 0){
+                clearInterval(requests);
+            }
+        }
+        
+        let requests = setInterval(updateGames, 10000); //update games every 20 seconds
+        //immediately clear it if all games are already final upon initial page load or user refresh
+        if (activeGames.children.length == 0 && upcomingGames.children.length == 0){
+            clearInterval(requests);
+        }
   </script>
 </body>
 </html>

@@ -11,7 +11,7 @@
     justify-content: center;
 }
 
-h3 {
+.sectionHeadline {
     background-color: lightgoldenrodyellow;
     border-top-style: solid; border-bottom-style: solid;
     border-top-color: lightgreen; border-bottom-color: lightgreen;
@@ -44,9 +44,14 @@ h3 {
 
 .gameTimeDiv {
     font-family: 'Arial Black';
+    font-size: 15px;
 }
 
 #noGamesWarning {
     text-align: center;
     font-size: 75px;
+}
+
+.gameTimeDiv > p {
+    margin: 5%;
 }

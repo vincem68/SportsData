@@ -19,16 +19,11 @@
     width: 33.333333%;
 }
 
-.boxscoreDiv, #awayTeamPlayerStats, #homeTeamPlayerStats, .leadersDiv {
+#boxscore, #leaderSection, #linescoreDiv {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    overflow-x: auto;
-}
-
-.boxscoreDiv {
-    margin-left: 0%;
     overflow-x: auto;
 }
 
@@ -38,15 +33,17 @@
     width: 200px;
 }
 
-#mlbBoxscore {
-    width: 500px;
+#footballPossessionArrow {
+    height: 30px;
+    width: 30px;
+    margin-bottom: 5px;
 }
 
 .nameCol {
     width: 200px;
 }
 
-.awayTeamLeaders, .homeTeamLeaders {
+#awayTeamLeaders, #homeTeamLeaders {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -65,19 +62,18 @@
     width: 135px;
 }
 
-.leaderTitleDiv {
+.leaderDiv {
     display: flex;
     flex-direction: column;
     align-items: center;
-    font-size: 20px;
 }
 
-h2 {
+h2, h3 {
     text-align: center;
 }
 
 .leaderDesc {
-    font-size: 30px;
+    font-size: 15px;
 }
 
 #buttonSection {
@@ -85,6 +81,7 @@ h2 {
     flex-direction: row;
     justify-content: space-around;
     font-size: 50px;
+    margin-top: 25px;
 }
 
 #homeTeamButton, #awayTeamButton {
@@ -102,6 +99,15 @@ h2 {
 
 #playerStats {
     background-color: lightsalmon;
+    overflow-x: auto;
+}
+
+#homeTeamPlayerStats, #awayTeamPlayerStats {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow-x: auto;
 }
 
 #homeTeamButton {
@@ -114,4 +120,29 @@ h2 {
 
 .nonstarter {
     background-color: lightgray;
+}
+
+#footballInfo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#atBat {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+}
+
+#atBat div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#pitcherHeadshot, #batterHeadshot {
+    height: 25px;
+    width: 25px;
 }
