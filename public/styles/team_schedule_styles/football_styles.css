@@ -1,0 +1,57 @@
+.footballWeekDiv, .byeWeekDiv {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    border-width: 2px;
+    border-style: solid;
+    border-color: black;
+    margin-left: 20%;
+    margin-right: 20%;
+}
+
+.gameSymbol {
+    height: 40px;
+    width: 40px;
+    margin-right: 50px;
+}
+
+.footballTitleDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-right: 60px;
+}
+
+.byeWeekDiv {
+    background-color: azure;
+}
+
+.byeWeekDiv > h1 {
+    margin-left: 70px;
+}
+
+.footballOpponentLogo {
+    width: 125px;
+    height: 125px;
+}
+
+.footballTeamName {
+    font-size: 30px;
+}
+
+.week {
+    background-color: lightgoldenrodyellow;
+    border-top-style: solid; border-bottom-style: solid;
+    border-top-color: lightgreen; border-bottom-color: lightgreen;
+    border-top-width: 10px; border-bottom-width: 10px;
+    text-align: center;
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-bottom: 0%;
+    margin-top: 0%;
+}
+
+.gameDetails {
+    font-size: 30px;
+}

@@ -1,0 +1,79 @@
+#scheduleDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.opponentLogo {
+    height: 40px;
+    width: 40px;
+    margin-left: 30px;
+}
+
+.monthDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 10px;
+}
+
+.weekDiv {
+    display: flex;
+    flex-direction: row;
+}
+
+.gameDay, .deadDay, .emptyDay {
+    height: 125px;
+    width: 100px;
+    border-style: solid;
+    border-width: 2px;
+    border-color: black;
+    margin: 0px;
+    align-items: center;
+    justify-content: center;
+}
+
+.gameDay :not(.dayNum) {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.dayNum {
+    margin-left: 5px;
+    margin-top: 5px;
+    margin-bottom: 2px;
+}
+
+.deadDay {
+    background-color: darkgray;
+}
+
+.emptyDay {
+    background-color: aliceblue;
+}
+
+.gameDay > h6 {
+    margin-top: 0px;
+    margin-bottom: 2px;
+}
+
+.gameDay > p {
+    margin-bottom: auto;
+}
+
+.currentDay {
+    background-color: gold;
+}
+
+.monthTitle {
+    background-color: lightgoldenrodyellow;
+    border-top-style: solid; border-bottom-style: solid;
+    border-top-color: lightgreen; border-bottom-color: lightgreen;
+    border-top-width: 10px; border-bottom-width: 10px;
+    text-align: center;
+    width: 100%;
+}

@@ -1,0 +1,40 @@
+@import "general_styles/general_styles.css";
+
+#headlineDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#teamLogo {
+    height: 200px;
+    width: 200px;;
+}
+
+#scheduleDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.winner {
+    color: green;
+}
+
+.loser {
+    color: red;
+}
+
+.roadGame {
+    background-color: lightcoral;
+}
+
+.homeGame {
+    background-color: aqua;
+}
+
+body {
+    background-color: lightgoldenrodyellow;
+}

@@ -4,7 +4,7 @@
 <html>
     <head>
         <title><%= data.team.displayName %> Schedule</title>
-        <link rel="stylesheet" href="/styles/team_schedule.css">
+        <link rel="stylesheet" href="/styles/team_schedule_styles/general_schedule_styles.css">
     </head>
 
     <body>
@@ -25,6 +25,7 @@
                 <% } %>
              </select>
              <select name="seasonType">
+                <option value="1">Preseason</option>
                 <option value="2">Regular Season</option>
                 <option value="3">Post Season</option>
              </select>
@@ -47,26 +48,24 @@
 
         <% } else { %>
 
-            <div class="scheduleDiv">
+            <% if (league.toUpperCase() == "NFL"){ %> <!--NFL will have different schedule format-->
 
-                <% if (league.toUpperCase() == "NFL"){ %> <!--NFL will have different schedule format-->
+                <%- include ('weeks') %>
 
-                    <%- include ('weeks') %>
+            <% } else if (data.requestedSeason.type == 3){ %>
 
-                <% } else {  <!--for NBA, NHL and MLB schedules-->
+                <%- include ('postseason_series') %>
 
-                    if (data.requestedSeason.type == 3){ %>
-                        <%- include('postseason_series') %>
-                    <% } else { %>
-                        <%- include ('calendar') %>
-                    <% }
+            <% } else if (data.requestedSeason.type == 1){ %>
 
-                } %>
+                <%- include ('preseason') %>
 
-            </div>
-            
+            <% } else { %>
+
+                <%- include ('calendar') %>
+
+            <% } %>
+
         <% } %>
-
-        <%- include ('../footer') %>
     </body>
 </html>

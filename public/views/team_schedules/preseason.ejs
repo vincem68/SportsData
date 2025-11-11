@@ -1,0 +1,63 @@
+
+<!--Simple idea: just list all the games. Nothing crazy.-->
+
+<div id="scheduleDiv">
+
+    <% data.events.forEach(game => {
+
+        //change the dates of the games to local time dates
+        const localDate = new Date(game.date);
+        const year = localDate.getFullYear();
+        const month = String(localDate.getMonth() + 1).padStart(2, '0');
+        const day = String(localDate.getDate()).padStart(2, '0');
+        const hours = String(localDate.getHours()).padStart(2, '0');
+        const minutes = String(localDate.getMinutes()).padStart(2, '0');
+        game.date = `${year}-${month}-${day}T${hours}:${minutes}`;
+
+        let homeTeam = true; //set to either road or home game class
+
+        //if our team is the road team, set gameClass to roadGame and swap the array elements
+        if (data.team.abbreviation == game.competitions[0].competitors[1].team.abbreviation){
+            const temp = game.competitions[0].competitors[0];
+            game.competitions[0].competitors[0] = game.competitions[0].competitors[1];
+            game.competitions[0].competitors[1] = temp;
+            homeTeam = false;
+        }
+
+        %>
+
+        <div class="gameDay <% if (homeTeam){ %> homeGame <% } else { %> roadGame <% } %>">
+
+            <% if (game.competitions[0].competitors[1].team.logos !== undefined){ %>
+                <img class="opponentLogo" src="<%= game.competitions[0].competitors[1].team.logos[0].href %>">
+            <% } else { %>
+                <img class="opponentLogo" src="">
+            <% } %>
+            
+            <h4><%= game.competitions[0].competitors[1].team.abbreviation %></h4>
+            <!--put the needed details here depending on pre, in progress or final-->
+            <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                <% if (game.competitions[0].status.type.state == "pre"){ %>
+
+                    <%= game.competitions[0].status.type.shortDetail.split('-')[1] %>
+
+                <% } else if (game.competitions[0].status.type.detail == "Postponed"){ %>
+
+                    Postponed
+
+                <% } else if (game.competitions[0].status.type.state == "post"){ %>
+                    <strong class="<% if (game.competitions[0].competitors[0].winner) { %> winner <% } else { %> loser <% } %>">
+                        <% if (game.competitions[0].competitors[0].winner) { %> W <% } else { %> L <% } %>
+                    </strong>
+                    <%= game.competitions[0].competitors[0].score.displayValue + 
+                        "-" + game.competitions[0].competitors[1].score.displayValue %>
+                <% } else { %>
+                    In Progress
+                <% } %>
+            </a>
+        </div>
+
+    <% }) %>
+</div>
+
+<link rel="stylesheet" href="/styles/team_schedule_styles/preseason_styles.css">

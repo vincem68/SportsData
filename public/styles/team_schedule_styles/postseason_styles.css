@@ -1,0 +1,77 @@
+#scheduleDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.teamLogo {
+    height: 50px;
+    width: 50px;
+}
+
+.seriesDiv {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
+h3, .seriesTitle {
+    background-color: lightgoldenrodyellow;
+    border-top-style: solid; border-bottom-style: solid;
+    border-top-color: lightgreen; border-bottom-color: lightgreen;
+    border-top-width: 10px; border-bottom-width: 10px;
+    text-align: center;
+    width: 100%;
+}
+
+.gameContainer {
+    display: flex;
+    flex-direction: row;
+
+    border-style: solid;
+    border-color: black;
+
+    margin: 20px;
+}
+
+.awayTeamDiv, .homeTeamDiv, .gameTimeDiv {
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.awayTeamDiv, .homeTeamDiv {
+    font-family: 'Franklin Gothic Medium';
+}
+
+.gameTimeDiv {
+    font-family: 'Arial Black';
+}
+
+.seriesResult {
+    width: 100%;
+    text-align: center;
+}
+
+.seriesOpponent {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.seriesOpponent div {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left: 40px;
+}
+
+.seriesOpponent img {
+    height: 70px;
+    width: 70px;
+}
