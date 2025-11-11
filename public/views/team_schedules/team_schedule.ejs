@@ -48,30 +48,24 @@
 
         <% } else { %>
 
-            <div id="scheduleDiv">
+            <% if (league.toUpperCase() == "NFL"){ %> <!--NFL will have different schedule format-->
 
-                <% if (league.toUpperCase() == "NFL"){ %> <!--NFL will have different schedule format-->
+                <%- include ('weeks') %>
 
-                    <%- include ('weeks') %>
+            <% } else if (data.requestedSeason.type == 3){ %>
 
-                <% } else if (data.requestedSeason.type == 3){ %>
+                <%- include ('postseason_series') %>
 
-                    <%- include ('postseason_series') %>
+            <% } else if (data.requestedSeason.type == 1){ %>
 
-                <% } else if (data.requestedSeason.type == 1){ %>
+                <%- include ('preseason') %>
 
-                    <%- include ('preseason') %>
+            <% } else { %>
 
-                <% } else { %>
+                <%- include ('calendar') %>
 
-                    <%- include ('calendar') %>
+            <% } %>
 
-                <% } %>
-
-            </div>
-            
         <% } %>
-
-        <%- include ('../footer') %>
     </body>
 </html>
