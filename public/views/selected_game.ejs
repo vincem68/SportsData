@@ -24,13 +24,13 @@
     }
 
     const homeLeaders = (overview.status.type.state != "in" && league.toUpperCase() == "NFL") ? 
-        summary.leaders[1].leaders :
+        summary.leaders[1].leaders.filter(cat => cat.leaders !== undefined) :
         (overview.status.type.state != "in" &&  overview.competitions[0].competitors[0].leaders !== undefined) ?
         overview.competitions[0].competitors[0].leaders.filter(leader => !leader.displayName.includes("Rating"))
         : [];
 
     const awayLeaders = (overview.status.type.state != "in" && league.toUpperCase() == "NFL") ? 
-        summary.leaders[0].leaders :
+        summary.leaders[0].leaders.filter(cat => cat.leaders !== undefined) :
         (overview.status.type.state != "in" &&  overview.competitions[0].competitors[1].leaders !== undefined) ?
         overview.competitions[0].competitors[1].leaders.filter(leader => !leader.displayName.includes("Rating"))
         : [];
@@ -62,6 +62,7 @@
 
             <!--This is the middle section for clock/inning info-->
             <div id="gameInfoOverview"> <!--Put status of game here-->
+                <img id="live_status_img" src="/images/live_status.gif">
                 <p id="status"><%= overview.competitions[0].status.type.detail %></p>
                 <p id="seriesStatus">
                     <% if (overview.season.type == 3){ %>
@@ -213,7 +214,7 @@
 
 
         <div id="leaderSection">
-            <h2 class="leaderHeadline"><%= overview.competitions[0].competitors[1].team.abbreviation %> Leaders</h2>
+            <h2 class="leaderHeadline"><%= summary.boxscore.teams[0].team.abbreviation %> Leaders</h2>
             <div id="awayTeamLeaders">
                 <% if (overview.status.type.state != "in"){
                     awayLeaders.forEach(leader => { %>
@@ -221,6 +222,7 @@
                             <h3><%= leader.displayName %></h3>
                             <% if (league.toUpperCase() == "NFL"){ %>
                                 <img class="headshot" src="<%= leader.leaders[0].athlete.headshot.href %>">
+                                
                             <% } else { %>
                                 <img class="headshot" src="<%= leader.leaders[0].athlete.headshot %>">
                             <% } %>
@@ -231,7 +233,7 @@
                 } %>
             </div>
 
-            <h2 class="leaderHeadline"><%= overview.competitions[0].competitors[0].team.abbreviation %> Leaders</h2>
+            <h2 class="leaderHeadline"><%= summary.boxscore.teams[1].team.abbreviation %> Leaders</h2>
             <div id="homeTeamLeaders">
                 <% if (overview.status.type.state != "in"){
                     homeLeaders.forEach(leader => { %>
@@ -384,6 +386,7 @@
 
             //specific stat keepers
             const score = document.getElementById('score');
+            const live_image = document.getElementById('live_status_img');
             const gameStatus = document.getElementById('status');
             const count = document.getElementById('count');
             const outs = document.getElementById('outs');
@@ -412,6 +415,7 @@
             homePlayerStats.style.display = "none";
 
             //hide any stat divs if the game has not started yet
+            live_image.style.display = (gameState != "in") ? 'none' : 'flex';
             buttonSection.style.display = (gameState == "pre") ? 'none' : 'flex';
             linescoreDiv.style.display = (gameState == "pre") ? 'none' : 'flex';
             atBatSection.style.display = (league.toUpperCase() == "MLB" && gameState == "in") ? 'flex' : 'none';
@@ -547,6 +551,7 @@
                     buttonSection.style.display = 'flex';
                     leaderSection.style.display = 'none';
                     linescoreDiv.style.display = 'flex'; //make div appear
+                    live_image.style.display = 'flex';
                     //change boxscore headline
                     document.getElementById('boxHeadline').textContent = "Box Score";
 
@@ -727,19 +732,20 @@
                     }
                     footballSection.style.display = 'none';
                     atBatSection.style.display = 'none';
+                    live_image.style.display = 'none';
 
                     //remove any previous leaders if they are hidden
                     awayTeamLeaders.replaceChildren();
                     homeTeamLeaders.replaceChildren();
                     //get new leaders
                     const homeLeaders = (updateOverview.status.type.state != "in" && league.toUpperCase() == "NFL") ? 
-                        updateSummary.leaders[1].leaders :
+                        updateSummary.leaders[1].leaders.filter(cat => cat.leaders !== undefined) :
                         (updateOverview.status.type.state != "in" &&  updateOverview.competitions[0].competitors[0].leaders !== undefined) ?
                         updateOverview.competitions[0].competitors[0].leaders.filter(leader => !leader.displayName.includes("Rating"))
                         : [];
 
                     const awayLeaders = (updateOverview.status.type.state != "in" && league.toUpperCase() == "NFL") ? 
-                        updateSummary.leaders[0].leaders :
+                        updateSummary.leaders[0].leaders.filter(cat => cat.leaders !== undefined) :
                         (updateOverview.status.type.state != "in" &&  updateOverview.competitions[0].competitors[1].leaders !== undefined) ?
                         updateOverview.competitions[0].competitors[1].leaders.filter(leader => !leader.displayName.includes("Rating"))
                         : [];

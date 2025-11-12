@@ -2,6 +2,7 @@ table {
     border-collapse: collapse;
     margin-top: 30px;
     margin-bottom: 30px;
+    width: auto;
 }
 
 th, td {
@@ -35,7 +36,7 @@ td {
     border-radius: 5px;
     padding: 5px;
     position: absolute;
-    z-index: 1;
+    z-index: 99;
     bottom: 125%; /* Position above the text */
     left: 50%;
     margin-left: -90px;
@@ -51,4 +52,16 @@ td {
 
 .name {
     background-color: lightseagreen;
+}
+
+select {
+    background-color: green;
+    color: azure;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }

@@ -3,8 +3,10 @@
 
 .tableDivide {
     overflow-x: auto;
-    width: 100%;
     padding-top: 50px;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 20px;
 }
 
 .tableDivide > h4 {
@@ -13,6 +15,8 @@
 }
 
 #teamTitleSection {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
@@ -20,4 +24,16 @@
 #teamTitleSection > img {
     height: 200px;
     width: 200px;
+}
+
+#statsSection {
+    border-top: 50px;
+    border-top-style: solid;
+    border-top-color: lightgreen;
+    margin-top: 60px;
+}
+
+h1, h2, h3, h4 {
+    text-align: center;
+    z-index: 1;
 }

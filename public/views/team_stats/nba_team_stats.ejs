@@ -1,7 +1,7 @@
 <% data.results.stats.categories.forEach(category => { %>
 
+    <h2><%= category.displayName %></h2>
     <div class="tableDivide">
-        <h2><%= category.displayName %></h2>
         <table>
             <tr>
                 <% category.stats.forEach(stat => {
