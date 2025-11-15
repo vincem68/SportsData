@@ -1,3 +1,11 @@
 body {
     background-color: lightyellow;
 }
+
+.importantHeadline {
+    background-color: lightgoldenrodyellow;
+    border-top-style: solid; border-bottom-style: solid;
+    border-top-color: lightgreen; border-bottom-color: lightgreen;
+    border-top-width: 10px; border-bottom-width: 10px;
+    text-align: center;
+}

@@ -12,7 +12,7 @@
 
         <%- include ('menu_header') %>
 
-        <% if (playerOverview.statistics.labels === undefined){ %>
+        <% if (playerOverview.statistics === undefined){ %>
             <h1>Data is Not Available</h1>
         <% } else { %>
 
@@ -23,11 +23,12 @@
                 <div id="extraPlayerInfo">
                     <img id="teamLogo" src="<%= generalInfo.athlete.team.logos[0].href %>">
                     <h2><%= generalInfo.athlete.team.displayName + " " + generalInfo.athlete.position.displayName %></h2>
-                    <h3>No. <%= generalInfo.athlete.jersey %></h3>
                 </div>
+                <h2>No. <%= generalInfo.athlete.jersey %></h2>
             
             </div>
 
+            <h3 class="importantHeadline">Overall Stats</h3>
             <div id="mainStats">
 
                 <table>
@@ -83,9 +84,9 @@
                     <% }) %>
                 </div>
 
-                <div id="advancedStatsTables">
 
-                    <h3>Showing Stats for <%= playerSplits.splitCategories[0].splits[0].displayName %></h3>
+                <h3 class="importantHeadline">Advanced Splits %></h3>
+                <div id="advancedStatsTables">
 
                     <table id="advancedSplitsTable">
                         <tr>

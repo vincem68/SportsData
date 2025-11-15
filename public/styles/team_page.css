@@ -4,11 +4,11 @@
 #titleSection {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    
 }
 
-h1 {
+#titleSection h1 {
     text-shadow: 1px 1px 1px red;
 }
 
@@ -57,7 +57,7 @@ h1 {
 .newsImage {
     margin-top: 15px;
     height: 200px;
-    width: 400px;
+    width: 350px;
     border-color: black;
     border-width: 5px;
     border-style: solid;
@@ -76,4 +76,10 @@ h1 {
 
 .article h3 {
     text-transform: uppercase;
+}
+
+.article p {
+    font-size: 18px;
+    text-align: center;
+    width: 60%;
 }

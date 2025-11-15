@@ -16,7 +16,13 @@
             <h3><%= data.team.displayName %></h3>
             <h4>Season: <%= data.team.seasonSummary %></h4>
             <h4>Record: <%= data.team.recordSummary %></h4>
-            <h4>Head Coach: <%= data.coach[0].firstName + ' ' + data.coach[0].lastName %></h4>
+            <h4>Head Coach:
+                <% if (data.coach !== undefined){ %>
+                    <%= data.coach[0].firstName + ' ' + data.coach[0].lastName %>
+                <% } else { %>
+                    Vacant
+                <% } %> 
+            </h4>
         </div>
 
         <div id="rosterDiv">
@@ -40,8 +46,6 @@
                 <%- include('team_roster_data/mlb_team_roster') %>
 
             <% } %>
-
-            <%- include ('footer') %>
         </div>
     </body>
 </html>

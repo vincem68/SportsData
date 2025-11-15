@@ -21,7 +21,7 @@
             <h1><%= league.toUpperCase() %> Teams</h1>
         </div>
 
-        <h3>Click on a Team to Visit their own Page</h3>
+        <h3 class="importantHeadline">Click on a Team to Visit their own Page</h3>
 
         <div id="teamsContainer">
             <% teams.forEach(team => { %>
@@ -33,7 +33,5 @@
                 </div>
             <% }) %>
         </div>
-
-        <%- include ('footer') %>
     </body>
 </html>
