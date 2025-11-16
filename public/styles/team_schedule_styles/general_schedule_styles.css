@@ -38,3 +38,10 @@
 body {
     background-color: lightgoldenrodyellow;
 }
+
+form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
