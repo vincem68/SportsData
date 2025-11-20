@@ -175,15 +175,14 @@
         </div>
 
         <!--This will display the overall team stats info-->
+        <h3 id="boxHeadline">
+            <% if (overview.status.type.state == "pre"){ %>
+                Season Stats
+            <% } else { %>
+                Box Score
+            <% } %>
+        </h3>
         <div id="boxscore">
-
-            <h3 id="boxHeadline">
-                <% if (overview.status.type.state == "pre"){ %>
-                    Season Stats
-                <% } else { %>
-                    Box Score
-                <% } %>
-            </h3>
             <table>
                 <% if (league.toUpperCase() != "MLB") { %>
                     <tr>
@@ -274,44 +273,46 @@
                             <% } %>
                         </h2>
                         <% const tableID = (cat.name !== undefined) ? cat.name : ((cat.type !== undefined) ? cat.type : "overall"); %>
-                        <table id="<%= summary.boxscore.players[0].team.abbreviation + tableID %>"> <!--Every table will have ID matching category name-->
-                            <tr>
-                                <% if (league.toUpperCase() == "MLB" && cat.type == "batting"){ %>
-                                    <th>Position</th>
-                                <% } %>
-                                <th>Player</th>
-                                <% const cols = (cat.labels !== undefined) ? cat.labels : cat.names; %>
-                                <% for (let i = 0; i < cols.length; i++){ %>
-                                    <th>
-                                        <div class="tooltip">
-                                            <%= cols[i] %>
-                                            <span class="tooltip-text">
-                                                <%= cat.descriptions[i] %>
-                                            </span>
-                                        </div>
-                                    </th>
-                                <% } %>
-                            </tr>
-                            <% cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { %>
-                                <% const rowID = "row-" + athlete.athlete.id; %>
-                                <tr class="<%= rowID %>">
+                        <div class="tableDiv">
+                            <table id="<%= summary.boxscore.players[0].team.abbreviation + tableID %>"> <!--Every table will have ID matching category name-->
+                                <tr>
                                     <% if (league.toUpperCase() == "MLB" && cat.type == "batting"){ %>
-                                        <th><%= athlete.position.abbreviation %></th>
+                                        <th>Position</th>
                                     <% } %>
-                                    <th class="name">
-                                        <% if (athlete.athlete.shortName !== undefined){ %>
-                                            <%= athlete.athlete.shortName %>
-                                        <% } else { %>
-                                            <%= athlete.athlete.firstName.substring(0, 1) + ". " + 
-                                            athlete.athlete.lastName %>
-                                        <% } %>
-                                    </th>
-                                    <% athlete.stats.forEach(stat => { %>
-                                        <td><%= stat %></td>
-                                    <% }) %>
+                                    <th>Player</th>
+                                    <% const cols = (cat.labels !== undefined) ? cat.labels : cat.names; %>
+                                    <% for (let i = 0; i < cols.length; i++){ %>
+                                        <th>
+                                            <div class="tooltip">
+                                                <%= cols[i] %>
+                                                <span class="tooltip-text">
+                                                    <%= cat.descriptions[i] %>
+                                                </span>
+                                            </div>
+                                        </th>
+                                    <% } %>
                                 </tr>
-                            <% }) %>
-                        </table>
+                                <% cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { %>
+                                    <% const rowID = "row-" + athlete.athlete.id; %>
+                                    <tr class="<%= rowID %>">
+                                        <% if (league.toUpperCase() == "MLB" && cat.type == "batting"){ %>
+                                            <th><%= athlete.position.abbreviation %></th>
+                                        <% } %>
+                                        <th class="name">
+                                            <% if (athlete.athlete.shortName !== undefined){ %>
+                                                <%= athlete.athlete.shortName %>
+                                            <% } else { %>
+                                                <%= athlete.athlete.firstName.substring(0, 1) + ". " + 
+                                                athlete.athlete.lastName %>
+                                            <% } %>
+                                        </th>
+                                        <% athlete.stats.forEach(stat => { %>
+                                            <td><%= stat %></td>
+                                        <% }) %>
+                                    </tr>
+                                <% }) %>
+                            </table>
+                        </div>
                     <% }) %>
                 <% } %>
             </div>
@@ -326,44 +327,46 @@
                             <% } %>
                         </h2>
                         <% const tableID = (cat.name !== undefined) ? cat.name : ((cat.type !== undefined) ? cat.type : "overall"); %>
-                        <table id="<%= summary.boxscore.players[1].team.abbreviation + tableID %>"> <!--Every table will have ID matching category name-->
-                            <tr>
-                                <% if (league.toUpperCase() == "MLB" && cat.type == "batting"){ %>
-                                    <th>Position</th>
-                                <% } %>
-                                <th>Player</th>
-                                <% const cols = (cat.labels !== undefined) ? cat.labels : cat.names; %>
-                                <% for (let i = 0; i < cols.length; i++){ %>
-                                    <th>
-                                        <div class="tooltip">
-                                            <%= cols[i] %>
-                                            <span class="tooltip-text">
-                                                <%= cat.descriptions[i] %>
-                                            </span>
-                                        </div>
-                                    </th>
-                                <% } %>
-                            </tr>
-                            <% cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { %>
-                                <% const rowID = "row-" + athlete.athlete.id; %>
-                                <tr class="<%= rowID %>">
+                        <div class="tableDiv">
+                            <table id="<%= summary.boxscore.players[1].team.abbreviation + tableID %>"> <!--Every table will have ID matching category name-->
+                                <tr>
                                     <% if (league.toUpperCase() == "MLB" && cat.type == "batting"){ %>
-                                        <th><%= athlete.position.abbreviation %></th>
+                                        <th>Position</th>
                                     <% } %>
-                                    <th class="name">
-                                        <% if (athlete.athlete.shortName !== undefined){ %>
-                                            <%= athlete.athlete.shortName %>
-                                        <% } else { %>
-                                            <%= athlete.athlete.firstName.substring(0, 1) + ". " + 
-                                            athlete.athlete.lastName %>
-                                        <% } %>
-                                    </th>
-                                    <% athlete.stats.forEach(stat => { %>
-                                        <td><%= stat %></td>
-                                    <% }) %>
+                                    <th>Player</th>
+                                    <% const cols = (cat.labels !== undefined) ? cat.labels : cat.names; %>
+                                    <% for (let i = 0; i < cols.length; i++){ %>
+                                        <th>
+                                            <div class="tooltip">
+                                                <%= cols[i] %>
+                                                <span class="tooltip-text">
+                                                    <%= cat.descriptions[i] %>
+                                                </span>
+                                            </div>
+                                        </th>
+                                    <% } %>
                                 </tr>
-                            <% }) %>
-                        </table>
+                                <% cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { %>
+                                    <% const rowID = "row-" + athlete.athlete.id; %>
+                                    <tr class="<%= rowID %>">
+                                        <% if (league.toUpperCase() == "MLB" && cat.type == "batting"){ %>
+                                            <th><%= athlete.position.abbreviation %></th>
+                                        <% } %>
+                                        <th class="name">
+                                            <% if (athlete.athlete.shortName !== undefined){ %>
+                                                <%= athlete.athlete.shortName %>
+                                            <% } else { %>
+                                                <%= athlete.athlete.firstName.substring(0, 1) + ". " + 
+                                                athlete.athlete.lastName %>
+                                            <% } %>
+                                        </th>
+                                        <% athlete.stats.forEach(stat => { %>
+                                            <td><%= stat %></td>
+                                        <% }) %>
+                                    </tr>
+                                <% }) %>
+                            </table>
+                        </div>
                     <% }) %>
                 <% } %>
             </div>

@@ -2,7 +2,7 @@ table {
     border-collapse: collapse;
     margin-top: 30px;
     margin-bottom: 30px;
-    width: auto;
+    width: max-content;
 }
 
 th, td {
@@ -25,6 +25,7 @@ td {
     position: relative;
     display: inline-block;
     cursor: help;
+    z-index: 10;
 }
 
 .tooltip .tooltip-text {

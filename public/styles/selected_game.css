@@ -14,18 +14,23 @@
 .teamOverview, #gameInfoOverview {
     display: flex;
     flex-flow: column;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     width: 33.333333%;
-    
+}
+
+#gameInfoOverview {
+    padding-top: 50px;
 }
 
 #boxscore, #leaderSection, #linescoreDiv {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
     overflow-x: auto;
+}
+
+#linescoreDiv {
+    align-items: center;
 }
 
 .teamLogo {
@@ -100,15 +105,18 @@ h2, h3 {
 
 #playerStats {
     background-color: lightsalmon;
-    overflow-x: auto;
 }
 
 #homeTeamPlayerStats, #awayTeamPlayerStats {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+}
+
+.tableDiv {
+    display: flex;
+    flex-direction: column;
     overflow-x: auto;
+    margin-left: 40px;
 }
 
 #homeTeamButton {
@@ -149,14 +157,15 @@ h2, h3 {
 }
 
 #score {
-    font-size: 80px;
+    font-size: 60px;
 }
 
 #status {
-    font-size: 40px;
+    text-align: center;
+    font-size: 30px;
 }
 
 #live_status_img {
     height: 50px;
-    width: 100px;
+    width: 140px;
 }

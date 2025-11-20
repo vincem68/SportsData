@@ -13,6 +13,9 @@
         <div id="teamTitleSection">
             <img src="<%= logo %>">
             <h1><%= teamName %></h1>
+            <p>Showing Stats for the <%= data.requestedSeason.year %> <%= data.requestedSeason.name %></p>
+            <p>Season Record: <%= data.team.recordSummary %></p>
+            <p>Standings: <%= data.team.standingSummary %></p>
         </div>
 
         <form method="GET">
@@ -43,11 +46,6 @@
         <% } else { %>
 
             <div id="statsSection">
-
-                <h3>Showing Stats for the <%= data.requestedSeason.year %> <%= data.requestedSeason.name %></h3>
-
-                <h4>Season Record: <%= data.team.recordSummary %></h4>
-                <h4>Standings: <%= data.team.standingSummary %></h4>
 
                 <!--This will be used to get the right page-->
                 <% if (league.toUpperCase() == "NFL"){ %>

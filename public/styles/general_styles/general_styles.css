@@ -6,6 +6,7 @@ body {
     background-color: lightgoldenrodyellow;
     border-top-style: solid; border-bottom-style: solid;
     border-top-color: lightgreen; border-bottom-color: lightgreen;
-    border-top-width: 10px; border-bottom-width: 10px;
+    border-top-width: 5px; border-bottom-width: 5px;
     text-align: center;
+    width: 100%;
 }

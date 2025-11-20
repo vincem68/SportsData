@@ -7,13 +7,12 @@ by position-->
     const specialPositions = ["PK", "P", "LS"];
 %>
 
-<h3 class="importantHeadline">Offensive Roster</h3>
 <div id="offenseRosterDiv">
 
     <% offensivePositions.forEach(pos => { %>
         <% const players = data.athletes[0].items.filter(player => player.position.abbreviation == pos); %>
         <% if (players.length > 0){ %>
-            <h4><%= players[0].position.displayName %></h4>
+            <h4 class="importantHeadline"><%= players[0].position.displayName %></h4>
             <table>
                 <tr>
                     <th>Picture</th>
@@ -23,13 +22,14 @@ by position-->
                     <th>Weight</th>
                     <th>Height</th>
                     <th>YOE</th>
+                    <th>Stats</th>
                 </tr>
                 <% players.forEach(athlete => { %>
                     <tr>
                         <% if (athlete.headshot !== undefined){ %>
                             <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
                         <% } else { %>
-                            <td><img class="headshot" src="/images/default_headshot.png"></td>
+                            <td><img class="altHeadshot" src="/images/default_headshot.png"></td>
                         <% } %>
                         <td><%= athlete.displayName %></td>
                         <td><%= athlete.jersey %></td>
@@ -37,6 +37,11 @@ by position-->
                         <td><%= athlete.displayWeight %></td>
                         <td><%= athlete.displayHeight %></td>
                         <td><%= athlete.experience.years %></td>
+                        <td>
+                            <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/player/<%= athlete.id %>">
+                                Player Stats
+                            </a>
+                        </td>
                     </tr>
                 <% }) %>
             </table>
@@ -44,13 +49,12 @@ by position-->
     <% }) %>
 </div>
 
-<h3 class="importantHeadline">Defensive Roster</h3>
 <div id="defensiveRosterDiv">
 
     <% defensivePositions.forEach(pos => { %>
         <% const players = data.athletes[1].items.filter(player => player.position.abbreviation == pos); %>
         <% if (players.length > 0){ %>
-            <h4><%= players[0].position.displayName %></h4>
+            <h4 class="importantHeadline"><%= players[0].position.displayName %></h4>
             <table>
                 <tr>
                     <th>Picture</th>
@@ -60,13 +64,14 @@ by position-->
                     <th>Weight</th>
                     <th>Height</th>
                     <th>YOE</th>
+                    <th>Stats</th>
                 </tr>
                 <% players.forEach(athlete => { %>
                     <tr>
                         <% if (athlete.headshot !== undefined){ %>
                             <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
                         <% } else { %>
-                            <td><img class="headshot" src="/images/default_headshot.png"></td>
+                            <td><img class="altHeadshot" src="/images/default_headshot.png"></td>
                         <% } %>
                         <td><%= athlete.displayName %></td>
                         <td><%= athlete.jersey %></td>
@@ -74,6 +79,11 @@ by position-->
                         <td><%= athlete.displayWeight %></td>
                         <td><%= athlete.displayHeight %></td>
                         <td><%= athlete.experience.years %></td>
+                        <td>
+                            <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/player/<%= athlete.id %>">
+                                Player Stats
+                            </a>
+                        </td>
                     </tr>
                 <% }) %>
             </table>
@@ -81,13 +91,12 @@ by position-->
     <% }) %>
 </div>
 
-<h3 class="importantHeadline">Special Teams Roster</h3>
 <div class="specialRosterDiv">
 
     <% specialPositions.forEach(pos => { %>
         <% const players = data.athletes[2].items.filter(player => player.position.abbreviation == pos); %>
         <% if (players.length > 0){ %>
-            <h4><%= players[0].position.displayName %></h4>
+            <h4 class="importantHeadline"><%= players[0].position.displayName %></h4>
             <table>
                 <tr>
                     <th>Picture</th>
@@ -97,13 +106,14 @@ by position-->
                     <th>Weight</th>
                     <th>Height</th>
                     <th>YOE</th>
+                    <th>Stats</th>
                 </tr>
                 <% players.forEach(athlete => { %>
                     <tr>
                         <% if (athlete.headshot !== undefined){ %>
                             <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
                         <% } else { %>
-                            <td><img class="headshot" src="/images/default_headshot.png"></td>
+                            <td><img class="altHeadshot" src="/images/default_headshot.png"></td>
                         <% } %>
                         <td><%= athlete.displayName %></td>
                         <td><%= athlete.jersey %></td>
@@ -111,6 +121,11 @@ by position-->
                         <td><%= athlete.displayWeight %></td>
                         <td><%= athlete.displayHeight %></td>
                         <td><%= athlete.experience.years %></td>
+                        <td>
+                            <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/player/<%= athlete.id %>">
+                                Player Stats
+                            </a>
+                        </td>
                     </tr>
                 <% }) %>
             </table>
@@ -120,22 +135,36 @@ by position-->
 
 <h3 class="importantHeadline">Injured Reserve</h3>
 <div class="injuredRosterDiv">
-
     <table>
         <tr>
             <th>Picture</th>
             <th>Name</th>
             <th>Jersey No.</th>
+            <th>Age</th>
+            <th>Weight</th>
+            <th>Height</th>
+            <th>YOE</th>
+            <th>Stats</th>
         </tr>
         <% data.athletes[3].items.forEach(athlete => { %>
             <tr>
                 <% if (athlete.headshot !== undefined){ %>
                     <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
                 <% } else { %>
-                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                    <td><img class="altHeadshot" src="/images/default_headshot.png"></td>
                 <% } %>
+
                 <td><%= athlete.displayName %></td>
                 <td><%= athlete.jersey %></td>
+                <td><%= athlete.age %></td>
+                <td><%= athlete.displayWeight %></td>
+                <td><%= athlete.displayHeight %></td>
+                <td><%= athlete.experience.years %></td>
+                <td>
+                    <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/player/<%= athlete.id %>">
+                        Player Stats
+                    </a>
+                </td>
             </tr>
         <% }) %>
     </table>
@@ -149,16 +178,30 @@ by position-->
             <th>Picture</th>
             <th>Name</th>
             <th>Jersey No.</th>
+            <th>Age</th>
+            <th>Weight</th>
+            <th>Height</th>
+            <th>YOE</th>
+            <th>Stats</th>
         </tr>
         <% data.athletes[5].items.forEach(athlete => { %>
             <tr>
                 <% if (athlete.headshot !== undefined){ %>
                     <td><img class ="headshot" src="<%= athlete.headshot.href %>"></td>
                 <% } else { %>
-                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                    <td><img class="altHeadshot" src="/images/default_headshot.png"></td>
                 <% } %>
                 <td><%= athlete.displayName %></td>
                 <td><%= athlete.jersey %></td>
+                <td><%= athlete.age %></td>
+                <td><%= athlete.displayWeight %></td>
+                <td><%= athlete.displayHeight %></td>
+                <td><%= athlete.experience.years %></td>
+                <td>
+                    <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/player/<%= athlete.id %>">
+                        Player Stats
+                    </a>
+                </td>
             </tr>
         <% }) %>
     </table>

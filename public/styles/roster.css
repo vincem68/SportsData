@@ -11,8 +11,24 @@
     height: 100px;
 }
 
+.altHeadshot {
+    width: 100px;
+    height: 100px;
+}
+
 #rosterDiv {
     display:flex;
     flex-direction: column;
     align-items: center;
+}
+
+#teamTitleDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.injuredImg {
+    width: 30px;
+    height: 30px;
 }

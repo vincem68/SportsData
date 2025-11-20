@@ -12,7 +12,7 @@
 
         <%- include ('menu_header') %>
 
-        <% if (playerOverview.statistics === undefined){ %>
+        <% if (playerOverview.statistics === undefined || playerOverview.statistics.labels === undefined){ %>
             <h1>Data is Not Available</h1>
         <% } else { %>
 

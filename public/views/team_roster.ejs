@@ -9,25 +9,22 @@
 
         <%- include ('menu_header') %>
 
-        <div id = 'teamTitleDispayDiv'> <!--Shows the general info of the team-->
+        <div id = 'teamTitleDiv'> <!--Shows the general info of the team-->
 
             <img id="teamLogo" src="<%= data.team.logo %>" alt="Logo of <%= data.team.displayName %>">
 
-            <h3><%= data.team.displayName %></h3>
-            <h4>Season: <%= data.team.seasonSummary %></h4>
-            <h4>Record: <%= data.team.recordSummary %></h4>
-            <h4>Head Coach:
+            <h1><%= data.team.displayName %></h1>
+            <p>Season: <%= data.team.seasonSummary %></p>
+            <p>Head Coach:
                 <% if (data.coach !== undefined){ %>
                     <%= data.coach[0].firstName + ' ' + data.coach[0].lastName %>
                 <% } else { %>
                     Vacant
                 <% } %> 
-            </h4>
+                </p>
         </div>
 
         <div id="rosterDiv">
-
-            <h2>Roster:</h2>
 
             <% if (league.toUpperCase() == "NHL"){ %>
 

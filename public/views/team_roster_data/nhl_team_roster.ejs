@@ -1,27 +1,39 @@
 
 <% data.athletes.forEach(positionGroup => { %>
 
+    <h4 class="importantHeadline"><%= positionGroup.position %></h4>
     <div>
-        <h4><%= positionGroup.position %></h4>
         <table>
             <tr>
                 <th>Headshot</th>
                 <th>Name</th>
                 <th>Jersey No.</th>
+                <th>Injured</th>
+                <th>Shoots</th>
                 <th>Age</th>
                 <th>Weight</th>
                 <th>Height</th>
                 <th>YOE</th>
+                <th>Stats Link</th>
             </tr>
             <% positionGroup.items.forEach(player => { %>
                 <tr>
                 <% if (player.headshot !== undefined){ %>
                     <td><img class="headshot" src="<%= player.headshot.href %>"></td>
                 <% } else { %>
-                    <td><img class="headshot" src="/images/default_headshot.png"></td>
+                    <td><img class="altHeadshot" src="/images/default_headshot.png"></td>
                 <% } %>
                 <td><%= player.displayName %></td>
                 <td><%= player.jersey %></td>
+                <td>
+                    <% if (player.injuries.length != 0){ %>
+                        <img class="injuredImg" src="/images/injured_symbol.png">
+                        <p><%= player.injuries[0].status %></p>
+                    <% } else { %>
+                        ---
+                    <% } %>
+                </td>
+                <td><%= player.hand.abbreviation %></td>
                 <td><%= player.age %></td>
                 <td><%= player.displayWeight %></td>
                 <td><%= player.displayHeight %></td>

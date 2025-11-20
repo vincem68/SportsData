@@ -195,7 +195,17 @@
         <% }) %>
     </div>
 
-    <%- include ('footer') %>
+    <% if (league.toUpperCase() == "NFL" && data.week.teamsOnBye !== undefined){ %>
+        <h3 id="byeWeekHeadline" class="importantHeadline">Teams on Bye Week</h3>
+        <div id="byeWeekSection">
+            <% data.week.teamsOnBye.forEach(team => { %>
+                <div class="byeTeamsDiv">
+                    <img class="teamLogo" src="<%= team.logo %>">
+                    <p><%= team.abbreviation %></p>
+                </div>
+            <% }) %>
+        </div>
+    <% } %>
 
     <script>
 

@@ -6,11 +6,12 @@
         <th>Name</th>
         <th>Position</th>
         <th>Jersey No.</th>
+        <th>Injured</th>
         <th>Age</th>
         <th>Weight</th>
         <th>Height</th>
-        <th>Position</th>
         <th>Year</th>
+        <th>Stats Page</th>
     </tr>
     
     <% data.athletes.forEach(athlete => { %>
@@ -19,15 +20,22 @@
             <% if (athlete.headshot !== undefined){ %>
                 <td><img class="headshot" src="<%= athlete.headshot.href %>"></td>
             <% } else { %>
-                <td><img class="headshot" src="/images/default_headshot.png"></td>
+                <td><img class="altHeadshot" src="/images/default_headshot.png"></td>
             <% } %>
             <td><%= athlete.displayName %></td>
             <td><%= athlete.position.name %></td>
             <td><%= athlete.jersey %></td>
+            <td>
+                <% if (athlete.injuries.length != 0){ %>
+                    <img class="injuredImg" src="/images/injured_symbol.png" alt="Injured">
+                    <p><%= athlete.injuries[0].status %></p>
+                <% } else { %>
+                    ---
+                <% } %>
+            </td>
             <td><%= athlete.age %></td>
             <td><%= athlete.displayWeight %></td>
             <td><%= athlete.displayHeight %></td>
-            <td><%= athlete.position.abbreviation %></td>
             <td><%= athlete.experience.years %></td>
             <td>
                 <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/player/<%= athlete.id %>">

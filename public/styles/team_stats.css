@@ -6,7 +6,7 @@
     padding-top: 50px;
     display: flex;
     flex-direction: column;
-    padding-bottom: 20px;
+    padding-bottom: 10px;
 }
 
 .tableDivide > h4 {
@@ -26,14 +26,7 @@
     width: 200px;
 }
 
-#statsSection {
-    border-top: 50px;
-    border-top-style: solid;
-    border-top-color: lightgreen;
-    margin-top: 60px;
-}
-
 h1, h2, h3, h4 {
     text-align: center;
-    z-index: 1;
+    z-index: 0;
 }
