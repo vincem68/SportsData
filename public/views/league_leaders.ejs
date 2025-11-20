@@ -1,0 +1,56 @@
+<html>
+    <head>
+        <title><%= league.toUpperCase() %> Leaders</title>
+        <link rel="stylesheet" href="/styles/league_leaders.css">
+    </head>
+
+    <body>
+
+        <%- include ('menu_header') %>
+
+        <% if (data.leaders === undefined){ %>
+            <h1>Data is Not Available</h1>
+        <% } else { %>
+
+            <h1><%= league.toUpperCase() %> Stat Leaders</h1>
+            <div id="leaderSection">
+                <% data.leaders.categories.forEach(cat => { %>
+                    <h3 class="importantHeadline"><%= cat.displayName %></h3>
+                    <div class="leaderCategory">
+                        <table>
+                            <tr>
+                                <th>Rank</th>
+                                <th></th>
+                                <th>Player</th>
+                                <th>Team</th>
+                                <th>Total</th>
+                                <th>Profile</th>
+                            </tr>
+                            <% let rank = 1; %>
+                            <% cat.leaders.forEach(leader => { %>
+                                <tr>
+                                    <td><%= rank %></td>
+                                    <td>
+                                        <img class="headshot" src="<%= leader.athlete.headshot.href %>">
+                                    </td>
+                                    <td><%= leader.athlete.displayName %></td>
+                                    <td>
+                                        <% if (leader.team !== undefined) { %>
+                                            <img class="teamLogo" src="<%= leader.team.logos[0].href %>">
+                                        <% } else { %>
+                                            <img class="teamLogo" src="<%= leader.teams[0].logos[0].href %>">
+                                        <% } %>
+                                    </td>
+                                    <td><%= leader.displayValue %></td>
+                                    <td><a href="http://localhost:8000/<%= sport %>/<%= league %>/player/<%= leader.athlete.id %>">More Stats</a></td>
+                                </tr>
+                                <% rank++; %>
+                            <% }) %>
+                        </table>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
+    </body>
+
+</html>

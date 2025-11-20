@@ -258,6 +258,18 @@ app.get('/:sport/:league/stats', async function(req: Request, res: Response){
     
 })
 
+app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
+    const sport = req.params.sport;
+    const league = req.params.league;
+    let endpoint = `https://site.api.espn.com/apis/site/v3/sports/${sport}/${league}/leaders`;
+    if (req.query.season !== undefined && req.query.seasonType !== undefined){
+        endpoint += `?season=${req.query.season}&seasontype=${req.query.seasonType}`;
+    }
+
+    const data = await (await fetch(endpoint)).json();
+    res.render('league_leaders', {port: port, sport: sport, league: league, data: data});
+})
+
 app.get('/:sport/:league/player/:playerID', async function(req: Request, res: Response){
 
     const sport = req.params.sport;

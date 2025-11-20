@@ -1,0 +1,18 @@
+@import "general_styles/general_styles.css";
+@import "general_styles/table_styles.css";
+
+#leaderSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.headshot {
+    height: 60px;
+    width: 75px;
+}
+
+.teamLogo {
+    height: 50px;
+    width: 50px;
+}
