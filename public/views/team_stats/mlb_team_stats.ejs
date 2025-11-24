@@ -18,14 +18,15 @@
 
 <% splits.forEach(split => { %>
 
+    <h3>Stats for: <%= split.abbreviation %></h3>
+
     <div id="<%= counter %>" class="filteredSection">
 
-        <h3>Stats for: <%= split.abbreviation %></h3>
-
         <% split.categories.forEach(category => { %>
-            <div class="tableDivide">
 
-                <h2><%= category.displayName %></h2>
+            <h2 class="importantHeadline"><%= category.displayName %></h2>
+
+            <div class="tableDivide">
                 <table>
                     <tr>
                         <% category.stats.forEach(stat => { %>

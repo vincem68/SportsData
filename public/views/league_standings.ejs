@@ -1,0 +1,99 @@
+<%
+
+    const firstConferenceDivisions = (league.toUpperCase() == "NFL") ? ["AFC East", "AFC North", "AFC South", "AFC West"] 
+        : (league.toUpperCase() == "NBA") ? ["Atlantic", "Central", "Southeast"] :
+        (league.toUpperCase() == "NHL") ? ["Atlantic", "Metropolitan"] : ["AL East", "AL Cent", "AL West"];
+    
+    const secondConferenceDivisions = (league.toUpperCase() == "NFL") ? ["NFC East", "NFC North", "NFC South", "NFC West"] 
+        : (league.toUpperCase() == "NBA") ? ["Northwest", "Pacific", "Southwest"] :
+        (league.toUpperCase() == "NHL") ? ["Central", "Pacific"] : ["NL East", "NL Cent", "NL West"];
+
+%>
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title><%= league.toUpperCase() %> Standings</title>
+        <link rel="stylesheet" href="/styles/league_standings.css">
+    </head>
+
+    <body>
+
+        <%- include ('menu_header') %>
+
+        <h1><%= league.toUpperCase() %> Standings</h1>
+
+        <div id="divisionStandingsDiv"><!--This will have flex direction row, have conference side by side-->
+
+            <div class="conferenceDiv">
+                <% firstConferenceDivisions.forEach(division => { %>
+                    <div class="divisionDiv">
+                        <h2 class="importantHeadline"><%= division %></h2>
+                        <table>
+                            <tr>
+                                <th>Team</th>
+                                <th>W</th>
+                                <th>L</th>
+                                <th>T</th>
+                                <th>PCT</th>
+                            </tr>
+                            <% const divisionTeams = teamStandings.filter(team => team.team.standingSummary.includes(division)); %>
+                            <!--Sort the teams by playoff seeds-->
+                            <% divisionTeams.sort((a, b) => 
+                                a.team.record.items[0].stats.find(stat => stat.name == "playoffSeed").value - 
+                                    b.team.record.items[0].stats.find(stat => stat.name == "playoffSeed").value); %>
+                            <% divisionTeams.forEach(team => { %>
+                                <tr>
+                                    <td class="teamTD">
+                                        <img src="<%= team.team.logos[0].href %>" alt="<%= team.team.name %> Logo" class="teamLogo">
+                                        <%= team.team.abbreviation %>
+                                    </td>
+                                    <td><%= Math.trunc(team.team.record.items[0].stats.find(stat => stat.name == "wins").value) %></td>
+                                    <td><%= Math.trunc(team.team.record.items[0].stats.find(stat => stat.name == "losses").value) %></td>
+                                    <td><%= Math.trunc(team.team.record.items[0].stats.find(stat => stat.name == "ties").value) %></td>
+                                    <td><%= Math.trunc(team.team.record.items[0].stats.find(stat => stat.name == "winPercent").value * 100) %>%</td>
+                                </tr>
+                            <% }) %>
+                        </table>
+                    </div>
+                <% }) %>
+            </div>
+
+            <div class="conferenceDiv">
+                <% secondConferenceDivisions.forEach(division => { %>
+                    <div class="divisionDiv">
+                        <h2 class="importantHeadline"><%= division %></h2>
+                        <table>
+                            <tr>
+                                <th>Team</th>
+                                <th>W</th>
+                                <th>L</th>
+                                <th>T</th>
+                                <th>PCT</th>
+                            </tr>
+                            <% const divisionTeams = teamStandings.filter(team => team.team.standingSummary.includes(division)); %>
+                            <!--Sort the teams by playoff seeds-->
+                            <% divisionTeams.sort((a, b) => 
+                                a.team.record.items[0].stats.find(stat => stat.name == "playoffSeed").value - 
+                                    b.team.record.items[0].stats.find(stat => stat.name == "playoffSeed").value); %>
+                            <% divisionTeams.forEach(team => { %>
+                                <tr>
+                                    <td class="teamTD">
+                                        <img src="<%= team.team.logos[0].href %>" alt="<%= team.team.name %> Logo" class="teamLogo">
+                                        <%= team.team.abbreviation %>
+                                    </td>
+                                    <td><%= Math.trunc(team.team.record.items[0].stats.find(stat => stat.name == "wins").value) %></td>
+                                    <td><%= Math.trunc(team.team.record.items[0].stats.find(stat => stat.name == "losses").value) %></td>
+                                    <td><%= Math.trunc(team.team.record.items[0].stats.find(stat => stat.name == "ties").value) %></td>
+                                    <td><%= Math.trunc(team.team.record.items[0].stats.find(stat => stat.name == "winPercent").value * 100) %>%</td>
+                                </tr>
+                            <% }) %>
+                        </table>
+                    </div>
+                <% }) %>
+            </div>
+        </div>
+    </body>
+
+</html>

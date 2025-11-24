@@ -258,6 +258,28 @@ app.get('/:sport/:league/stats', async function(req: Request, res: Response){
     
 })
 
+
+/**
+ * This will be the route that gives us the standings for the requested league
+ */
+app.get('/:sport/:league/standings', async function(req: Request, res: Response){
+    const sport = req.params.sport;
+    const league = req.params.league;
+
+    //array to store the team data
+    const teamStandings: any[] = [];
+
+    const teamIDs = (league.toUpperCase() == "NFL") ? nflTeams : (league.toUpperCase() == "NBA") ? nbaTeams :
+        (league.toUpperCase() == "MLB") ? mlbTeams : nhlTeams;
+
+    //start sending requests for data
+    for (const team of teamIDs){
+        teamStandings.push(await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}`)).json());
+    }
+
+    res.render('league_standings', {port: port, sport: sport, league: league, teamStandings: teamStandings});
+})
+
 app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
     const sport = req.params.sport;
     const league = req.params.league;
@@ -270,6 +292,9 @@ app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
     res.render('league_leaders', {port: port, sport: sport, league: league, data: data});
 })
 
+/**
+ * This route will be for getting the stats of a specific player
+ */
 app.get('/:sport/:league/player/:playerID', async function(req: Request, res: Response){
 
     const sport = req.params.sport;

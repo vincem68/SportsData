@@ -12,7 +12,20 @@
             <h1>Data is Not Available</h1>
         <% } else { %>
 
-            <h1><%= league.toUpperCase() %> Stat Leaders</h1>
+            <div id="titleSection">
+                <% if (league.toUpperCase() == "MLB"){ %>
+                    <img src = '/images/mlb_logo.png' id = 'mainLogo' alt = 'MLB Logo'>
+                <% } else if (league.toUpperCase() == "NBA"){ %>
+                    <img src = '/images/nba_logo.png' id = 'mainLogo' alt = 'NBA Logo'>
+                <% } else if (league.toUpperCase() == "NFL"){ %>
+                    <img src = '/images/nfl_logo.png' id = 'mainLogo' alt = 'NFL Logo'>
+                <% } else { %>
+                    <img src = '/images/nhl_logo.png' id = 'mainLogo' alt = 'NHL Logo'>
+                <% } %>
+                <h1><%= league.toUpperCase() %> Stat Leaders</h1>
+            </div>
+
+
             <div id="leaderSection">
                 <% data.leaders.categories.forEach(cat => { %>
                     <h3 class="importantHeadline"><%= cat.displayName %></h3>

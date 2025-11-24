@@ -1,0 +1,26 @@
+@import "general_styles/general_styles.css";
+@import "general_styles/table_styles.css";
+
+.teamLogo {
+    height: 50px;
+    width: 50px;
+}
+
+#divisionStandingsDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+.conferenceDiv {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    margin: 50px
+}
+
+.teamTD {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}

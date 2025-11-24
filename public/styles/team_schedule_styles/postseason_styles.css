@@ -51,6 +51,10 @@ h3, .seriesTitle {
     font-family: 'Arial Black';
 }
 
+.gameTimeDiv p {
+    margin: 0;
+}
+
 .seriesResult {
     width: 100%;
     text-align: center;

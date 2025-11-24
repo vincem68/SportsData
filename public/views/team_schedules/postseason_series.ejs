@@ -65,8 +65,8 @@ baseSeriesNames.forEach(round => { //go through each round
                     </div>
 
                     <div class="gameTimeDiv">
-                        <p><%= game.competitions[0].status.type.detail %></p>
                         <p>Game <%= gameNum %></p>
+                        <p><%= game.competitions[0].status.type.detail %></p>
                         <p>
                             <% if (team.winner){ %>
                                 <strong class="winner">W</strong>

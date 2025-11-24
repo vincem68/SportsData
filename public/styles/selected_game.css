@@ -104,7 +104,16 @@ h2, h3 {
 }
 
 #playerStats {
-    background-color: lightsalmon;
+    background-color: #ffa07a;
+    border-bottom-width: 5px;
+    border-left-width: 5px;
+    border-right-width: 5px;
+    border-bottom-color: black;
+    border-left-color: black;
+    border-right-color: black;
+    border-bottom-style: solid;
+    border-left-style: solid;
+    border-right-style: solid;
 }
 
 #homeTeamPlayerStats, #awayTeamPlayerStats {
