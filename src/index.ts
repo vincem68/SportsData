@@ -281,15 +281,27 @@ app.get('/:sport/:league/standings', async function(req: Request, res: Response)
 })
 
 app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
+
     const sport = req.params.sport;
     const league = req.params.league;
-    let endpoint = `https://site.api.espn.com/apis/site/v3/sports/${sport}/${league}/leaders`;
-    if (req.query.season !== undefined && req.query.seasonType !== undefined){
-        endpoint += `?season=${req.query.season}&seasontype=${req.query.seasonType}`;
+
+    //base endpoint for leaders
+    let leadersEndpoint = `https://site.api.espn.com/apis/site/v3/sports/${sport}/${league}/leaders`;
+
+    const getYearEndpoint = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard`)).json();
+    const currentYear = getYearEndpoint.season.year;
+    //add year query to end of endpoint
+    if (req.query.season === undefined){
+        leadersEndpoint += `?season=${currentYear}`;
+    } else {
+        leadersEndpoint += `?season=${req.query.season}`;
     }
 
-    const data = await (await fetch(endpoint)).json();
-    res.render('league_leaders', {port: port, sport: sport, league: league, data: data});
+    console.log(leadersEndpoint);
+    
+    //send the leaders request
+    const data = await (await fetch(leadersEndpoint)).json();
+    res.render('league_leaders', {port: port, sport: sport, league: league, data: data, currentYear: currentYear});
 })
 
 /**

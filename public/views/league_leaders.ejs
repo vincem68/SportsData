@@ -8,23 +8,34 @@
 
         <%- include ('menu_header') %>
 
-        <% if (data.leaders === undefined){ %>
-            <h1>Data is Not Available</h1>
-        <% } else { %>
+        <div id="titleSection">
+            <% if (league.toUpperCase() == "MLB"){ %>
+                <img src = '/images/mlb_logo.png' id = 'mainLogo' alt = 'MLB Logo'>
+            <% } else if (league.toUpperCase() == "NBA"){ %>
+                <img src = '/images/nba_logo.png' id = 'mainLogo' alt = 'NBA Logo'>
+            <% } else if (league.toUpperCase() == "NFL"){ %>
+                <img src = '/images/nfl_logo.png' id = 'mainLogo' alt = 'NFL Logo'>
+            <% } else { %>
+                <img src = '/images/nhl_logo.png' id = 'mainLogo' alt = 'NHL Logo'>
+            <% } %>
+            <h1><%= league.toUpperCase() %> Stat Leaders</h1>
+        </div>
 
-            <div id="titleSection">
-                <% if (league.toUpperCase() == "MLB"){ %>
-                    <img src = '/images/mlb_logo.png' id = 'mainLogo' alt = 'MLB Logo'>
-                <% } else if (league.toUpperCase() == "NBA"){ %>
-                    <img src = '/images/nba_logo.png' id = 'mainLogo' alt = 'NBA Logo'>
-                <% } else if (league.toUpperCase() == "NFL"){ %>
-                    <img src = '/images/nfl_logo.png' id = 'mainLogo' alt = 'NFL Logo'>
-                <% } else { %>
-                    <img src = '/images/nhl_logo.png' id = 'mainLogo' alt = 'NHL Logo'>
+        <form method="GET">
+            <label for="season">Select Year</label>
+            <select name="season">
+                <% for (let i = currentYear; i >= 2000; i--){ %>
+                    <option value="<%= i %>"><%= i %></option>
                 <% } %>
-                <h1><%= league.toUpperCase() %> Stat Leaders</h1>
-            </div>
+            </select>
+            <button>Submit</button>
+        </form>
 
+        <% if (data.leaders === undefined){ %>
+
+            <h1>Data is Not Available</h1>
+
+        <% } else { %>
 
             <div id="leaderSection">
                 <% data.leaders.categories.forEach(cat => { %>
@@ -33,7 +44,7 @@
                         <table>
                             <tr>
                                 <th>Rank</th>
-                                <th></th>
+                                <th>Headshot</th>
                                 <th>Player</th>
                                 <th>Team</th>
                                 <th>Total</th>

@@ -18,6 +18,7 @@
     const secondConferenceTeams = teamStandings.filter(team => 
         secondConferenceDivisions.some(division => team.team.standingSummary.includes(division)));
 
+    const playoffSeedCutoff = (league.toUpperCase() == "NFL") ? 7 : (league.toUpperCase() == "NBA") ? 8 : (league.toUpperCase() == "NHL") ? 8 : 6;
 %>
 
 <!DOCTYPE html>
@@ -73,7 +74,8 @@
                                 a.team.record.items[0].stats.find(stat => stat.name == "playoffSeed").value - 
                                     b.team.record.items[0].stats.find(stat => stat.name == "playoffSeed").value); %>
                             <% divisionTeams.forEach(team => { %>
-                                <tr>
+                                <% const seed = team.team.record.items[0].stats.find(stat => stat.name == "playoffSeed").value; %>
+                                <tr class="<% if (seed <= playoffSeedCutoff) { %> playoffTeam <% } else { %> nonPlayoffTeam <% } %>">
                                     <td class="teamTD">
                                         <img src="<%= team.team.logos[0].href %>" alt="<%= team.team.name %> Logo" class="teamLogo">
                                         <%= team.team.abbreviation %>
@@ -123,7 +125,8 @@
                                 a.team.record.items[0].stats.find(stat => stat.name == "playoffSeed").value - 
                                     b.team.record.items[0].stats.find(stat => stat.name == "playoffSeed").value); %>
                             <% divisionTeams.forEach(team => { %>
-                                <tr>
+                                <% const seed = team.team.record.items[0].stats.find(stat => stat.name == "playoffSeed").value; %>
+                                <tr class="<% if (seed <= playoffSeedCutoff) { %> playoffTeam <% } else { %> nonPlayoffTeam <% } %>">
                                     <td class="teamTD">
                                         <img src="<%= team.team.logos[0].href %>" alt="<%= team.team.name %> Logo" class="teamLogo">
                                         <%= team.team.abbreviation %>
@@ -177,7 +180,8 @@
                             stat.name == "playoffSeed").value); %>
                     
                     <% firstConferenceTeams.forEach(team => { %>
-                        <tr>
+                        <% const seed = team.team.record.items[0].stats.find(stat => stat.name == "playoffSeed").value; %>
+                        <tr class="<% if (seed <= playoffSeedCutoff) { %> playoffTeam <% } else { %> nonPlayoffTeam <% } %>">
                             <td class="teamTD">
                                 <img src="<%= team.team.logos[0].href %>" alt="<%= team.team.name %> Logo" class="teamLogo">
                                 <%= team.team.abbreviation %>
@@ -225,7 +229,8 @@
                             stat.name == "playoffSeed").value); %>
                     
                     <% secondConferenceTeams.forEach(team => { %>
-                        <tr>
+                        <% const seed = team.team.record.items[0].stats.find(stat => stat.name == "playoffSeed").value; %>
+                        <tr class="<% if (seed <= playoffSeedCutoff) { %> playoffTeam <% } else { %> nonPlayoffTeam <% } %>">
                             <td class="teamTD">
                                 <img src="<%= team.team.logos[0].href %>" alt="<%= team.team.name %> Logo" class="teamLogo">
                                 <%= team.team.abbreviation %>
