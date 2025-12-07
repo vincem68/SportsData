@@ -21,15 +21,19 @@
             <h1><%= league.toUpperCase() %> Stat Leaders</h1>
         </div>
 
-        <form method="GET">
-            <label for="season">Select Year</label>
-            <select name="season">
-                <% for (let i = currentYear; i >= 2000; i--){ %>
-                    <option value="<%= i %>"><%= i %></option>
-                <% } %>
-            </select>
-            <button>Submit</button>
-        </form>
+        <div class="form-container">
+            <form method="GET">
+                <div class="form-group">
+                     <label for="season">Select Year</label>
+                    <select name="season">
+                        <% for (let i = currentYear; i >= 2000; i--){ %>
+                            <option value="<%= i %>"><%= i %></option>
+                        <% } %>
+                    </select>
+                </div>
+                <button>Submit</button>
+            </form>
+        </div>
 
         <% if (data.leaders === undefined){ %>
 

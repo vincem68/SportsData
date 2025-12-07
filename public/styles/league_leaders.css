@@ -1,5 +1,6 @@
 @import "general_styles/general_styles.css";
 @import "general_styles/table_styles.css";
+@import "general_styles/select_styles.css";
 
 #leaderSection {
     display: flex;

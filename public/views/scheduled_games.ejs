@@ -144,9 +144,11 @@
                             <%= game.competitions[0].series.summary %>
                         <% } %>
                     </p>
-                    <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
-                        Game Stats
-                    </a>
+                    <% if (game.competitions[0].status.type.shortDetail != "TBD"){ %>
+                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                            Game Stats
+                        </a>
+                    <% } %>
                 </div>
 
                 <div class="homeTeamDiv">

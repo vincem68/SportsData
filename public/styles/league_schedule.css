@@ -1,4 +1,5 @@
 @import "general_styles/general_styles.css";
+@import "general_styles/select_styles.css";
 
 .teamLogo {
     height: 50px;
