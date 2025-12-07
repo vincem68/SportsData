@@ -9,8 +9,8 @@
 }
 
 .headshot {
-    height: 60px;
-    width: 75px;
+    height: 50px;
+    width: 65px;
 }
 
 .teamLogo {
@@ -28,4 +28,14 @@
     flex-direction: column;
     align-items: center;
     margin-top: 40px;
+}
+
+.catDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.playerName, .playerTeamLogo {
+    text-align: center;
 }
