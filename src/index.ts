@@ -284,20 +284,22 @@ app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
 
     const sport = req.params.sport;
     const league = req.params.league;
+    let leadersEndpoint = `https://sports.core.api.espn.com/v2/sports/${sport}/leagues/${league}/seasons/`;
+    `2025/types/3/leaders`;
 
-    //base endpoint for leaders
-    let leadersEndpoint = `https://site.api.espn.com/apis/site/v3/sports/${sport}/${league}/leaders`;
+    const yearAndTypeResponse = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard`)).json();
+    const currentYear = yearAndTypeResponse.season.year;
+    const seasonType = yearAndTypeResponse.season.type;
 
-    const getYearEndpoint = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard`)).json();
-    const currentYear = getYearEndpoint.season.year;
-    //add year query to end of endpoint
-    if (req.query.season === undefined){
-        leadersEndpoint += `?season=${currentYear}`;
+    if (req.query.season !== undefined && req.query.seasonType !== undefined){
+        const season = req.query.season;
+        const type = req.query.seasonType;
+        leadersEndpoint += `${season}/types/${type}/leaders`;
+    } else if (seasonType != 2 || seasonType != 3){
+        leadersEndpoint += `${currentYear - 1}/types/2/leaders`;
     } else {
-        leadersEndpoint += `?season=${req.query.season}`;
+        leadersEndpoint += `${currentYear}/types/${seasonType}/leaders`;
     }
-
-    console.log(leadersEndpoint);
     
     //send the leaders request
     const data = await (await fetch(leadersEndpoint)).json();

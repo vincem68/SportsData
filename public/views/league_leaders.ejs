@@ -28,53 +28,114 @@
                     <option value="<%= i %>"><%= i %></option>
                 <% } %>
             </select>
+            <label for="seasonType">Select Season Type:</label>
+            <select name="seasonType">
+                <option value="2">Regular Season</option>
+                <option value="3">Postseason</option>
+            </select>
             <button>Submit</button>
         </form>
 
-        <% if (data.leaders === undefined){ %>
+        <% if (data.categories === undefined){ %>
 
             <h1>Data is Not Available</h1>
 
         <% } else { %>
 
-            <div id="leaderSection">
-                <% data.leaders.categories.forEach(cat => { %>
-                    <h3 class="importantHeadline"><%= cat.displayName %></h3>
-                    <div class="leaderCategory">
-                        <table>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Headshot</th>
-                                <th>Player</th>
-                                <th>Team</th>
-                                <th>Total</th>
-                                <th>Profile</th>
-                            </tr>
-                            <% let rank = 1; %>
-                            <% cat.leaders.forEach(leader => { %>
-                                <tr>
-                                    <td><%= rank %></td>
-                                    <td>
-                                        <img class="headshot" src="<%= leader.athlete.headshot.href %>">
-                                    </td>
-                                    <td><%= leader.athlete.displayName %></td>
-                                    <td>
-                                        <% if (leader.team !== undefined) { %>
-                                            <img class="teamLogo" src="<%= leader.team.logos[0].href %>">
-                                        <% } else { %>
-                                            <img class="teamLogo" src="<%= leader.teams[0].logos[0].href %>">
-                                        <% } %>
-                                    </td>
-                                    <td><%= leader.displayValue %></td>
-                                    <td><a href="http://localhost:8000/<%= sport %>/<%= league %>/player/<%= leader.athlete.id %>">More Stats</a></td>
-                                </tr>
-                                <% rank++; %>
-                            <% }) %>
-                        </table>
-                    </div>
+            <select id="catSelect">
+                <% data.categories.forEach(cat => { %>
+                    <option value="<%= cat.name %>"><%= cat.displayName %></option>
                 <% }) %>
-            </div>
+            </select>
+
+            <% data.categories.forEach(cat => { %>
+
+                <div id="<%= cat.name %>" class="catDiv">
+                    <h2 class="categoryHeadline"><%= cat.displayName %></h2>
+                    <table>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Player</th>
+                            <th>Current Team</th>
+                            <th>Total</th>
+                            <th>More Stats</th>
+                        </tr>
+                        <% let rank = 1; %>
+                        <% cat.leaders.forEach(leader => { %>
+                            <tr>
+                                <td><%= rank %></td>
+                                <td class="playerName"></td>
+                                <td class="playerTeamLogo"></td>
+                                <td><%= Math.round(leader.value * 1000) / 1000 %></td>
+                                <td class="playerLink"></td>
+                            </tr>
+                            <% rank++; %>
+                        <% }) %>
+                        
+                    </table>
+                </div>
+            <% }) %>
         <% } %>
     </body>
+
+    <script>
+        //all div elements for tables
+        const catSelect = document.getElementById("catSelect");
+        const catDivs = document.querySelectorAll(".catDiv");
+
+        const leaderData = <%- JSON.stringify(data.categories) %>;
+        const sport = "<%= sport %>";
+        const league = "<%= league %>";
+
+        //hide every div element 
+        function hideAllCatDivs(){
+            for (let i = 0; i < catDivs.length; i++){
+                catDivs[i].style.display = "none";
+            }
+        }
+
+        //since the JSON data doesn't contain needed info, send requests to fill up names, teams and link tds
+        async function getAthletes(category){
+            //get the div element
+            const div = document.getElementById(category);
+            //check to see if names are already filled, if not continue with function
+            if (div.querySelector(".playerName").textContent == "") {
+                //get the leaders for the category
+                const leaders = leaderData.find(cat => cat.name === category).leaders;
+                //get the row elements under the selected div
+                const rows = div.querySelectorAll("tr"); //get the rows of the div
+                for (let i = 0; i < leaders.length; i++){
+                    const leader = leaders[i];
+                    const row = rows[i + 1]; //skip header row
+                    //fetch athlete data
+                    const playerData = await (await fetch(leader.athlete.$ref)).json();
+                    //fill in name
+                    const nameTd = row.querySelector(".playerName");
+                    nameTd.innerHTML =`<img class="headshot" src="${playerData.headshot.href}">` + playerData.displayName;
+                    //fill in team logo
+                    const teamData = await (await fetch(leader.team.$ref)).json();
+                    const teamTd = row.querySelector(".playerTeamLogo");
+                    teamTd.innerHTML = `<img class="teamLogo" src="${teamData.logos[0].href}">${teamData.abbreviation}`;
+                    //fill in player link
+                    const playerID = leader.athlete.$ref.substring(leader.athlete.$ref.lastIndexOf("/") + 1, leader.athlete.$ref.indexOf("?"));
+                    const linkTd = row.querySelector(".playerLink");
+                    linkTd.innerHTML = `<a href="http://localhost:<%= port %>/${sport}/${league}/player/${playerID}">Player Stats</a>`;
+                }
+            }
+        }
+
+        //event listener for drowpdown, switches table display
+        catSelect.addEventListener("change", function(){
+            hideAllCatDivs();
+            const selectedCat = catSelect.value;
+            getAthletes(selectedCat); //send request to data before displaying
+            document.getElementById(selectedCat).style.display = "flex";
+        });
+
+        // Initialize - hide all except first
+        hideAllCatDivs();
+        getAthletes(catSelect.value); //send request to data before displaying
+        document.getElementById(catSelect.value).style.display = "flex";
+    </script>
 
 </html>
