@@ -17,9 +17,9 @@
 
 <% splits.forEach(split => { %>
 
-    <h3>Stats for: <%= split.abbreviation %></h3>
-
     <div id="<%= counter %>" class="filteredSection">
+
+        <h3>Stats for: <%= split.abbreviation %></h3>
 
         <% split.categories.forEach(category => { %>
 
@@ -49,8 +49,8 @@
             </div>
         <% }) %>
     </div>
-<% counter++;
-    }) %>
+    <% counter++;
+}) %>
 
 <script>
 

@@ -3,6 +3,17 @@
 @import "general_styles/form_styles.css";
 @import "general_styles/select_styles.css";
 
+#mainLogo {
+    height: 15%;
+    width: 15%;
+}
+
+#titleSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 40px;
+}
 
 .leastSorted {
     background-color: lightcoral;
