@@ -1,28 +1,35 @@
-/* Center a standalone select on the page */
-.select-wrapper {
-  max-width: 300px;           /* controls how wide the select can be */
-  margin: 3rem auto;          /* centers it */
-  text-align: center;         /* centers optional text above/below */
+/* Center the entire form on the page */
+.form-container {
+  max-width: 400px;            /* controls how wide the form can get */
+  margin: 3rem auto;           /* centers it horizontally */
+  padding: 2rem;
+  background: lightgreen;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* Optional label styling */
-.select-wrapper label {
+/* Form group styling */
+.form-group {
+  margin-bottom: 1.2rem;
+}
+
+/* Label styling */
+label {
   display: block;
-  margin-bottom: 0.4rem;
   font-size: 0.95rem;
   font-weight: 600;
+  margin-bottom: 0.35em;
   color: #333;
 }
 
-/* Standalone select styling */
-.select-wrapper select {
-  width: 100%;
+/* Select styling */
+select {
+  width: 100%;                 /* width inside the card, not full page */
   padding: 0.6rem 0.75rem;
   font-size: 1rem;
-
   color: #333;
-  background-color: #fff;
 
+  background-color: white;
   border: 1.5px solid #ccc;
   border-radius: 6px;
 
@@ -36,12 +43,12 @@
   transition: border 0.2s, box-shadow 0.2s;
 }
 
-/* Hover & Focus */
-.select-wrapper select:hover {
+/* Hover + focus */
+select:hover {
   border-color: #888;
 }
 
-.select-wrapper select:focus {
+select:focus {
   border-color: #2962ff;
   box-shadow: 0 0 0 3px rgba(41, 98, 255, 0.25);
   outline: none;

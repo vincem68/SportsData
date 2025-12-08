@@ -1,5 +1,10 @@
 @import "general_styles/general_styles.css";
-@import "general_styles/select_styles.css";
+@import "general_styles/form_styles.css";
+
+#dateHeader {
+    text-align: center;
+    margin-top: 20px;
+}
 
 .teamLogo {
     height: 50px;
@@ -69,4 +74,56 @@
     flex-direction: column;
     align-items: center;
     margin: 20px;
+}
+
+/* Center a standalone date input */
+.date-wrapper {
+  max-width: 300px;
+  margin: 3rem auto;
+  text-align: center;
+}
+
+/* Optional label */
+.date-wrapper label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+}
+
+/* Date input styling */
+.date-wrapper input[type="date"] {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  font-size: 1rem;
+
+  color: #333;
+  background-color: #fff;
+  border: 1.5px solid #ccc;
+  border-radius: 6px;
+
+  /* Makes it consistent across browsers */
+  appearance: none;
+
+  /* For browsers that show a calendar icon */
+  background-image:
+    url("data:image/svg+xml;utf8,<svg fill='gray' height='22' viewBox='0 0 24 24' width='22' xmlns='http://www.w3.org/2000/svg'><path d='M19 3h-1V1h-2v2H8V1H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.8rem center;
+  background-size: 1.1rem;
+
+  cursor: pointer;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+
+/* Hover + Focus */
+.date-wrapper input[type="date"]:hover {
+  border-color: #888;
+}
+
+.date-wrapper input[type="date"]:focus {
+  border-color: #2962ff;
+  box-shadow: 0 0 0 3px rgba(41,98,255,0.25);
+  outline: none;
 }

@@ -14,29 +14,45 @@
 
         <%- include ('menu_header') %>
 
-        <h1><%= league.toUpperCase() %> Stats for the <%= requestedSeason %> 
-            <% if (leagueStats.length > 16) { %> Regular Season <% } else { %> Postseason <% } %></h1>
+        <div id="titleSection">
+            <% if (league.toUpperCase() == "MLB"){ %>
+                <img src = '/images/mlb_logo.png' id = 'mainLogo' alt = 'MLB Logo'>
+            <% } else if (league.toUpperCase() == "NBA"){ %>
+                <img src = '/images/nba_logo.png' id = 'mainLogo' alt = 'NBA Logo'>
+            <% } else if (league.toUpperCase() == "NFL"){ %>
+                <img src = '/images/nfl_logo.png' id = 'mainLogo' alt = 'NFL Logo'>
+            <% } else { %>
+                <img src = '/images/nhl_logo.png' id = 'mainLogo' alt = 'NHL Logo'>
+            <% } %>
+            <h1><%= league.toUpperCase() %> Stats for the <%= requestedSeason %> 
+                <% if (leagueStats.length > 16) { %> Regular Season <% } else { %> Postseason <% } %></h1>
+        </div>
 
-        <div id="seasonAndTypeFormDiv">
+        <div class="form-container">
             <form method="GET">
-                <label for="season">Select Year</label>
-                <select name="season">
-                    <% for (let i = currentSeason; i >= 2000; i--){ %>
-                        <option value="<%= i %>"><%= i %></option>
-                    <% } %>
-                </select>
-                <label for="seasonType">Select Season Type</label>
-                <select name="seasonType">
-                    <option value="2">Regular Season</option>
-                    <option value="3">Postseason</option>
-                </select>
+                <div class="form-group">
+                    <label for="season">Select Year</label>
+                    <select name="season">
+                        <% for (let i = currentSeason; i >= 2000; i--){ %>
+                            <option value="<%= i %>"><%= i %></option>
+                        <% } %>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="seasonType">Select Season Type</label>
+                    <select name="seasonType">
+                        <option value="2">Regular Season</option>
+                        <option value="3">Postseason</option>
+                    </select>
+                </div>
                 <button>Submit</button>
             </form>
         </div>
 
         <!--Lets do it so you can pick a category-->
         <% if (leagueStats.length != 0){ %>
-            <div name="selectors">
+            <div class="select-wrapper">
                 <label for="categorySelect">Select Category:</label>
                 <select id="categorySelect" name="categorySelect"> <!--pick category-->
                     <% leagueStats[0].categories.forEach(category => { %>
@@ -63,7 +79,7 @@
                     index = 0; %>
                     <div class="tableDiv">
 
-                        <h3><%= leagueStats[0].categories[i].displayName %></h3> <!--category name-->
+                        <h3 class="importantHeadline"><%= leagueStats[0].categories[i].displayName %></h3> <!--category name-->
                         <table>
                             <tr>
                                 <th>Rank</th>

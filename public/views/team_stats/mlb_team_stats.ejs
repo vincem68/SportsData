@@ -5,16 +5,15 @@
     let counter = 0;
 %>
 
-
-<select id="sortIndex">
-
-    <% splits.forEach(split => { %>
-        
-        <option value="<%= counter %>"><%= split.abbreviation %></option>
-        <% counter++;
-    });
-    counter = 0; %>
-</select>
+<div class="select-wrapper">
+    <select id="sortIndex">
+        <% splits.forEach(split => { %>    
+            <option value="<%= counter %>"><%= split.abbreviation %></option>
+            <% counter++;
+        });
+        counter = 0; %>
+    </select>
+</div>
 
 <% splits.forEach(split => { %>
 

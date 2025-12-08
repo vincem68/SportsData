@@ -1,5 +1,7 @@
 @import "general_styles/general_styles.css";
 @import "general_styles/table_styles.css";
+@import "general_styles/form_styles.css";
+@import "general_styles/select_styles.css";
 
 
 .leastSorted {
@@ -12,4 +14,8 @@
 
 .tableDiv {
     overflow-x: auto;
+}
+
+h4 {
+    text-align: center;
 }

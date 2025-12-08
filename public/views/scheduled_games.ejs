@@ -40,32 +40,43 @@
     <% if (league.toUpperCase() == "NFL"){ %>
 
         <!--This will be what we select for the week, will show all games for the week-->
-        <form method="GET">
+        <div class="form-container">
+            <form method="GET">
 
-            <label for="season">Select Season:</label>
-            <select name="season">
-                <% for (let i = year; i >= 2000; i--){ %>
-                    <option value="<%= i %>"><%= i %></option>
-                <% } %>
-            </select>
+                <div class="form-group">
+                    <label for="season">Select Season:</label>
+                    <select name="season">
+                        <% for (let i = year; i >= 2000; i--){ %>
+                            <option value="<%= i %>"><%= i %></option>
+                        <% } %>
+                    </select>
+                </div>
 
-            <label for="seasonType">Select Season Type:</label>
-            <select id="typeSelector" name="seasonType">
-                <option value="2">Regular Season</option>
-                <option value="3">Postseason</option>
-            </select>
+                <div class="form-group">
+                    <label for="seasonType">Select Season Type:</label>
+                    <select id="typeSelector" name="seasonType">
+                        <option value="2">Regular Season</option>
+                        <option value="3">Postseason</option>
+                    </select>
+                </div>
 
-            <label for="week">Select Week:</label>
-            <select id="weekSelector" name="week"></select>
+                <div class="form-group">
+                    <label for="week">Select Week:</label>
+                    <select id="weekSelector" name="week"></select>
+                </div>
 
-            <button>Submit</button>
-        </form>
+                <button>Submit</button>
+            </form>
+        </div>
 
     <% } else { %>
-        <form id="dateSelection" method="GET">
-            <input id="date" name="date" type="date" max="<%= endDate %>">
-            <button type="submit">Submit</button>
-        </form>
+
+        <div class="date-wrapper">
+            <form id="dateSelection" method="GET">
+                <input id="date" name="date" type="date" max="<%= endDate %>">
+                <button type="submit">Submit</button>
+            </form>
+        </div>
     <% } %>
 
     <% if (data.events.length == 0){ %>
@@ -73,7 +84,7 @@
     <% } %>
 
     <% if (league.toUpperCase() == "NFL") { %> 
-        <h2>
+        <h2 id="dateHeader">
             <% if (data.season.type == 3){ %>
                 <%= postseasonGames.find(round => round.key == data.week.number).value %>
             <% } else { %>

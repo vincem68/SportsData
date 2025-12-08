@@ -274,7 +274,12 @@ app.get('/:sport/:league/standings', async function(req: Request, res: Response)
 
     //start sending requests for data
     for (const team of teamIDs){
-        teamStandings.push(await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}`)).json());
+        const teamData = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}`)).json();
+        if (teamData.team.record.items === undefined){
+            break;
+        } else {
+            teamStandings.push(teamData);
+        }
     }
 
     res.render('league_standings', {port: port, sport: sport, league: league, teamStandings: teamStandings});
@@ -295,7 +300,7 @@ app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
         const season = req.query.season;
         const type = req.query.seasonType;
         leadersEndpoint += `${season}/types/${type}/leaders`;
-    } else if (seasonType != 2 || seasonType != 3){
+    } else if (seasonType != 2 && seasonType != 3){
         leadersEndpoint += `${currentYear - 1}/types/2/leaders`;
     } else {
         leadersEndpoint += `${currentYear}/types/${seasonType}/leaders`;

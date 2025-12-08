@@ -1,5 +1,5 @@
 @import "general_styles/general_styles.css";
-@import "general_styles/select_styles.css";
+@import "general_styles/form_styles.css";
 
 #headlineDiv {
     display: flex;
@@ -29,11 +29,11 @@
 }
 
 .roadGame {
-    background-color: lightcoral;
+    background-color: #CCCCCC;
 }
 
 .homeGame {
-    background-color: aqua;
+    background-color: #3CB371;
 }
 
 body {

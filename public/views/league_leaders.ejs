@@ -31,6 +31,13 @@
                         <% } %>
                     </select>
                 </div>
+                <div class="form-group">
+                    <label for="seasonType">Select Season Type:</label>
+                    <select name="seasonType">
+                        <option value="2">Regular Season</option>
+                        <option value="3">Postseason</option>
+                    </select>
+                </div>
                 <button>Submit</button>
             </form>
         </div>
@@ -41,12 +48,14 @@
 
         <% } else { %>
 
-            <select id="catSelect">
-                <% data.categories.forEach(cat => { %>
-                    <option value="<%= cat.name %>"><%= cat.displayName %></option>
-                <% }) %>
-            </select>
-
+            <div class="select-wrapper">
+                <select id="catSelect">
+                    <% data.categories.forEach(cat => { %>
+                        <option value="<%= cat.name %>"><%= cat.displayName %></option>
+                    <% }) %>
+                </select>
+            </div>
+            
             <% data.categories.forEach(cat => { %>
 
                 <div id="<%= cat.name %>" class="catDiv">
