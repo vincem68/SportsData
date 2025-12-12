@@ -48,6 +48,10 @@
     background-color: lightgreen;
 }
 
-.nonPlayoffTeam {
-    background-color: lightcoral;
+.wildcardTeam td {
+    background-color: lightyellow;
+}
+
+.nonplayoffTeam td {
+    background-color: lightgray;
 }
