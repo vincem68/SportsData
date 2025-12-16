@@ -174,14 +174,15 @@ app.get('/:sport/:league/teams/:team', async function(req: Request, res: Respons
     const team = req.params.team;
 
     //get basic team data
-    const response = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}`);
+    const data = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}`)).json();
 
     //get news on team
-    const response2 = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/news?team=${team}`);
-    const news = await response2.json();
+    const news = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/news?team=${team}`)).json();
 
-    const data = await response.json();
-    res.render('selected_team', {port: port, sport: sport, league: league, team: team, data: data, news: news});
+    const gameID = data.team.nextEvent[0].id;
+    const game = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard/${gameID}`)).json();
+
+    res.render('selected_team', {port: port, sport: sport, league: league, team: team, data: data, news: news, game: game});
 })
 
 /**

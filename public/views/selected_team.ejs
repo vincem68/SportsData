@@ -41,6 +41,60 @@
             </div>
         </div>
 
+        <h3 class="importantHeadline">
+            <% if (game.competitions[0].status.type.state == "pre"){ %>
+                Upcoming Game
+            <% } else if (game.competitions[0].status.type.state == "in") { %>
+                Current Game
+            <% } else { %>
+                Latest Game
+            <% } %>
+        </h3>
+        <div class="gamesLayout">
+            <div class="gameContainer">
+                <div class="awayTeamDiv">
+                    <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
+                    <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
+                </div>
+
+                <div class="gameTimeDiv">
+                    <p class="status"><%= game.competitions[0].status.type.shortDetail %></p>
+                    <p class="mlbCount">
+                        <% if (league.toUpperCase() == "MLB" && game.competitions[0].situation !== undefined){ %>
+                            <%= game.competitions[0].situation.balls + "-" + game.competitions[0].situation.strikes
+                                +  " " + game.competitions[0].situation.outs + " outs" %>
+                        <% } %>
+                    </p>
+
+                    <img class="arrow_img" src="/images/left_arrow.png">
+                    <p class="yardMarker">
+                        <% if (league.toUpperCase() == "NFL" && game.competitions[0].situation !== undefined){ %>
+                            <%= game.competitions[0].situation.downDistanceText %>
+                        <% } %>
+                    </p>
+                    <p class="score">
+                        <% if (game.competitions[0].status.type.state != "pre"){ %>
+                            <%= game.competitions[0].competitors[1].score %> - 
+                                <%= game.competitions[0].competitors[0].score %>
+                        <% } %>
+                    </p>
+                    <p class="seriesRecord">
+                        <% if (game.season.type == 3){ %>
+                            <%= game.competitions[0].series.summary %>
+                        <% } %>
+                    </p>
+                    <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                        Game Stats
+                    </a>
+                </div>
+
+                <div class="homeTeamDiv">
+                    <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
+                    <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
+                </div>
+            </div>
+        </div>
+
         <h2 class="importantHeadline">Latest News</h2>
         <div id="newsSection">
 
@@ -67,7 +121,80 @@
                 <% })
             } %>
         </div>
-
-        <%- include ('footer') %>
     </body>
+
+    <script>
+        const team = "<%= team %>";
+        const sport = "<%= sport %>";
+        const league = "<%= league.toUpperCase() %>";
+        const game = <%- JSON.stringify(game) %>;
+        const gameID = game.id;
+        const state = game.competitions[0].status.type.state;
+        const status = document.querySelector('.status');
+        const count = document.querySelector('.mlbCount');
+        const score = document.querySelector('.score');
+        const seriesRecord = document.querySelector('.seriesRecord');
+        const yardMarker = document.querySelector('.yardMarker');
+        const arrowImage = document.querySelector('.arrow_img');
+        const endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league.toLowerCase()}/scoreboard/${gameID}`;
+
+        async function updateEvent(){
+            //send the request
+            const response = await (await fetch(endpoint)).json();
+
+            //if we're not in pregame, we're updating the stuff inside here anyway like score and status
+            if (response.competitions[0].status.type.state != "pre"){
+
+                seriesRecord.textContent.style.display = "none";
+                score.style.display = "flex";
+                score.textContent = response.competitions[0].competitors[1].score + "-"
+                            + response.competitions[0].competitors[0].score;
+
+                status.textContent = response.competitions[0].status.type.shortDetail;
+            }
+
+            //if done, clear in game stuff and stop sending requests
+            if (response.competitions[0].status.type.state == "post"){
+                seriesRecord.textContent = (response.season.type == 3) ? response.competitions[0].series.summary : "";
+                count.style.display = "none";
+                yardMarker.style.display = "none";
+                arrowImage.style.display = 'none';
+                clearInterval(requests);
+
+            } else if (response.competitions[0].situation !== undefined){
+                //update baseball count
+                count.style.display = "flex";
+                count.textContent = (league == "MLB") ? response.competitions[0].situation.balls 
+                    + "-" + response.competitions[0].situation.strikes +  " " + response.competitions[0].situation.outs + " outs" : "";
+                //update football marker
+                arrowImage.style.display = "flex";
+                if (response.competitions[0].situation.possession == 
+                    response.competitions[0].competitors[1].id){
+                    arrowImage.src = "/images/left_arrow.png";
+                } else {
+                    arrowImage.src = "/images/right_arrow.png";
+                }
+                yardMarker.style.display = "flex";
+                yardMarker.textContent = (league == "NFL") ? response.competitions[0].situation.downDistanceText : "";
+            }
+        }
+
+        //set displays for elements on initial load
+        count.style.display = (league == "MLB" && game.competitions[0].situation !== undefined) ? 'flex' : 'none';
+        yardMarker.style.display = (league == "NFL" && game.competitions[0].situation !== undefined) ? 'flex' : 'none'; 
+        score.style.display = (game.competitions[0].status.type.state != "pre") ? 'flex' : 'none';
+        seriesRecord.style.display = (game.season.type == 3 && game.competitions[0].status.type.state != "pre") ? 'flex' : 'none';
+        //determine image src and display for football possession arrow
+        arrowImage.style.display = (league == "NFL" && game.competitions[0].situation !== undefined) ? 'flex' : 'none';
+        if (league == "NFL" && game.competitions[0].situation !== undefined){
+            arrowImage.src = (game.competitions[0].situation.possession == 
+                game.competitions[0].competitors[1].id) ? "/images/left_arrow.png" : "/images/right_arrow.png";
+        }
+
+        let requests = setInterval(updateEvent, 10000);
+        if (state == "post"){
+            clearInterval(requests);
+        }
+
+    </script>
 </html>
