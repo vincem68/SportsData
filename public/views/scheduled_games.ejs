@@ -112,9 +112,15 @@
                                 +  " " + game.competitions[0].situation.outs + " outs" %>
                         <% } %>
                     </p>
+                    <img class="arrow_img" src="/images/left_arrow.png">
+                    <p class="yardMarker">
+                        <% if (league.toUpperCase() == "NFL" && game.competitions[0].situation !== undefined){ %>
+                            <%= game.competitions[0].situation.downDistanceText %>
+                        <% } %>
+                    </p>
                     <p class="score"><%= game.competitions[0].competitors[1].score %> - 
                         <%= game.competitions[0].competitors[0].score %></p>
-                    <p class="seriesRecord"></p>
+                    <p class="seriesRecord" style="display:none"></p>
                     <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
                         Game Stats
                     </a>
@@ -148,7 +154,9 @@
                                 game.competitions[0].status.type.shortDetail.indexOf("-") + 2); %>
                         <% } %>
                     </p>
-                    <p class="mlbCount"></p>
+                    <p class="mlbCount" style="display:none"></p>
+                    <img class="arrow_img" src="/images/left_arrow.png">
+                    <p class="yardMarker"></p>
                     <p class="score"></p>
                     <p class="seriesRecord">
                         <% if (data.leagues[0].season.type.type == 3){ %>
@@ -185,6 +193,8 @@
                 <div class="gameTimeDiv">
                     <p class="status"><%= game.competitions[0].status.type.detail %></p>
                     <p class="mlbCount"></p>
+                    <img class="arrow_img" src="/images/left_arrow.png">
+                    <p class="yardMarker"></p>
                     <p class="score">
                         <%= game.competitions[0].competitors[1].score %> - 
                         <%= game.competitions[0].competitors[0].score %>
@@ -236,11 +246,26 @@
         const headlines = document.querySelectorAll('.sectionHeadline');
         const upcoming = document.getElementById('upcomingHeadline');
 
+        //hide game active sections within the games yet to start
+        upcomingGames.querySelectorAll('.gameContainer').forEach(game => {
+            game.querySelector('.score').style.display = 'none';
+            game.querySelector('.mlbCount').style.display = 'none';
+            game.querySelector('.yardMarker').style.display = 'none';
+            game.querySelector('.arrow_img').style.display = 'none';
+        });
+
+        //hide mlb count and football marker in the finished games
+        completedGames.querySelectorAll('.gameContainer').forEach(game => {
+            game.querySelector('.mlbCount').style.display = 'none';
+            game.querySelector('.yardMarker').style.display = 'none';
+            game.querySelector('.arrow_img').style.display = 'none';
+        });
+
+
         if (activeGames.children.length == 0){
             headlines[0].style.display = 'none';
         }
         if (upcomingGames.children.length == 0){ 
-            console.log("yo");
             headlines[1].style.display = 'none';
         }
         if (completedGames.children.length == 0){ 
@@ -251,6 +276,8 @@
         const endpoint = <%- JSON.stringify(endpoint) %>;
         const league = <%- JSON.stringify(league) %>;
 
+
+        //this is the function to get the week options for football games
         function getOptions(){
 
             const type = typeSelector.value;
@@ -297,75 +324,112 @@
             });
         }
 
-        //this will be the function to auto update the games.
         async function updateGames(){
 
-            //get the data, get link from router
+            //get the data from the response
             const update = await (await fetch(endpoint)).json();
-            //go through updated data for games
-            update.events.forEach(game => {
-                //find the element with game ID
-                const gameDiv = document.getElementById(game.id);
-                //if in first two divs, and status has changed, make changes to game
-                if ((gameDiv.parentNode.id == "upcomingGames" && game.status.type.state != "pre") ||
-                    (gameDiv.parentNode.id == "activeGames" && game.status.type.state != "in")){
-                    //get status of game
-                    if (league.toUpperCase() == "MLB" && game.status.type.state == "in"){
-                        gameDiv.querySelector('.status').textContent = game.status.type.shortDetail;
-                        gameDiv.querySelector('.mlbCount').textContent = game.competitions[0].situation.balls +
-                             "-" + game.competitions[0].situation.strikes +  " " + 
-                                game.competitions[0].situation.outs + " outs";
-                    } else {
-                        gameDiv.querySelector('.status').textContent = game.status.type.shortDetail;
-                        gameDiv.querySelector('.mlbCount').textContent = "";
-                    }
-                    //get score of game
-                    gameDiv.querySelector('.score').textContent = game.competitions[0].competitors[1].score + " - "
-                        + game.competitions[0].competitors[0].score;
-                    //for series score updates on final games
-                    if (game.status.type.state == "post" && game.competitions[0].series !== undefined){
-                        gameDiv.querySelector('.seriesRecord').textContent = game.competitions[0].series.summary;
-                    } else {
-                        gameDiv.querySelector('.seriesRecord').textContent = "";
+
+            //first go through upcoming games to see if any have started
+            upcomingGames.querySelectorAll('.gameContainer').forEach(gameDiv => {
+                const gameID = gameDiv.id;
+                const gameData = update.events.find(event => event.id == gameID);
+
+                const status = gameDiv.querySelector('.status');
+                const score = gameDiv.querySelector('.score');
+                const mlbCount = gameDiv.querySelector('.mlbCount');
+                const yardMarker = gameDiv.querySelector('.yardMarker');
+                const arrowImage = gameDiv.querySelector('.arrow_img');
+                const seriesRecord = gameDiv.querySelector('.seriesRecord');
+
+                //if the game has started, move it to active games
+                if (gameData.status.type.state != "pre"){
+
+                    seriesRecord.style.display = "none";
+
+                    //update the status of the game
+                    status.textContent = gameData.status.type.shortDetail;
+
+                    //update baseball count if in MLB game
+                    mlbCount.style.display = (league.toUpperCase() == "MLB" && gameData.competitions[0].situation !== undefined) ? "flex" : "none";
+                    mlbCount.textContent = (league.toUpperCase() == "MLB" && gameData.competitions[0].situation !== undefined) ? 
+                        gameData.competitions[0].situation.balls + "-" + gameData.competitions[0].situation.strikes +  " " + 
+                            gameData.competitions[0].situation.outs + " outs" : "";
+
+                    //update football marker if in NFL game
+                    arrowImage.style.display = (league.toUpperCase() == "NFL" && gameData.competitions[0].situation !== undefined) ? "flex" : "none";
+                    if (league.toUpperCase() == "NFL" && gameData.competitions[0].situation !== undefined){
+                        if (gameData.competitions[0].situation.possession == 
+                            gameData.competitions[0].competitors[1].id){
+                            arrowImage.src = "/images/left_arrow.png";
+                        } else {
+                            arrowImage.src = "/images/right_arrow.png";
+                        }
                     }
 
-                    gameDiv.parentNode.removeChild(gameDiv); //remove from current div
-                    //add to correct div
-                    if (game.status.type.state == "in"){
-                        if (activeGames.children.length == 0){
-                            headlines[0].style.display = 'flex';
-                        }
-                        activeGames.appendChild(gameDiv);
-                    } else {
-                        if (completedGames.children.length == 0){
-                            headlines[2].style.display = 'flex';
-                        }
-                        completedGames.appendChild(gameDiv);
+                    //get score of game
+                    score.textContent = gameData.competitions[0].competitors[1].score + " - "
+                        + gameData.competitions[0].competitors[0].score;
+
+                    gameDiv.parentNode.removeChild(gameDiv); //remove from upcoming
+
+                    //add to active games
+                    if (activeGames.children.length == 0){
+                        headlines[0].style.display = 'flex';
                     }
-                }
-                //else, if game is active but no status change, just update the score and time
-                else if (gameDiv.parentNode.id == "activeGames") {
-                    if (league.toUpperCase() == "MLB" && game.status.type.state == "in"){
-                        gameDiv.querySelector('.status').textContent = game.status.type.shortDetail;
-                        gameDiv.querySelector('.mlbCount').textContent = game.competitions[0].situation.balls +
-                             "-" + game.competitions[0].situation.strikes +  " " + 
-                                game.competitions[0].situation.outs + " outs";
-                    } else {
-                        gameDiv.querySelector('.status').textContent = game.status.type.shortDetail;
+                    if (upcomingGames.children.length == 0){
+                        headlines[1].style.display = 'none';
                     }
-                    gameDiv.querySelector('.score').textContent = game.competitions[0].competitors[1].score + " - " 
-                        + game.competitions[0].competitors[0].score;
+                    activeGames.appendChild(gameDiv);
                 }
             });
 
-            //check to see if active or upcoming games are empty and hide them if so, or put them back
-            if (upcomingGames.children.length == 0){
-                headlines[1].style.display = 'none';
-            }
+            activeGames.querySelectorAll('.gameContainer').forEach(gameDiv => {
+                const gameID = gameDiv.id;
+                const gameData = update.events.find(event => event.id == gameID);
 
-            if (activeGames.children.length == 0){
-                headlines[0].style.display = 'none';
-            }
+                const status = gameDiv.querySelector('.status');
+                const score = gameDiv.querySelector('.score');
+                const mlbCount = gameDiv.querySelector('.mlbCount');
+                const yardMarker = gameDiv.querySelector('.yardMarker');
+                const arrowImage = gameDiv.querySelector('.arrow_img');
+                const seriesRecord = gameDiv.querySelector('.seriesRecord');
+
+                //if the game is now finished, move it to completed games
+                if (gameData.status.type.state == "post"){
+
+                    //update the status of the game
+                    status.textContent = gameData.status.type.detail;
+
+                    //hide any baseball and football in game details
+                    mlbCount.style.display = "none";
+                    yardMarker.style.display = "none";
+                    arrowImage.style.display = "none";
+
+                    //get score of game
+                    score.textContent = gameData.competitions[0].competitors[1].score + " - "
+                        + gameData.competitions[0].competitors[0].score;
+
+                    //for series score updates on final games
+                    if (gameData.competitions[0].series !== undefined){
+                        seriesRecord.style.display = "flex";
+                        seriesRecord.textContent = gameData.competitions[0].series.summary;
+                    } else {
+                        seriesRecord.style.display = "none";
+                    }
+
+                    gameDiv.parentNode.removeChild(gameDiv); //remove from active
+
+                    //add to completed games
+                    if (completedGames.children.length == 0){
+                        headlines[2].style.display = 'flex';
+                    }
+                    //hide activeGames headline if no more active games
+                    if (activeGames.children.length == 0){
+                        headlines[0].style.display = 'none';
+                    }
+                    completedGames.appendChild(gameDiv);
+                }
+            });
 
             if (activeGames.children.length == 0 && upcomingGames.children.length == 0){
                 clearInterval(requests);

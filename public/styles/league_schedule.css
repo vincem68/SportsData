@@ -52,9 +52,31 @@
     font-family: 'Franklin Gothic Medium';
 }
 
-.gameTimeDiv {
-    font-family: 'Arial Black';
-    font-size: 15px;
+.gameTimeDiv p {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.score {
+  font-size: 28–36px;
+  font-weight: 700–800;
+  letter-spacing: 0.03em;
+}
+
+.status {
+    font-size: 18–22px;
+    font-weight: 600;
+
+}
+
+.mlbCount {
+  font-size: 14–16px;
+  font-weight: 600;
+}
+
+.yardMarker {
+  font-size: 14–18px;
+  font-weight: 600;
 }
 
 #noGamesWarning {
