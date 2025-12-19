@@ -9,3 +9,23 @@ body {
     border-top-width: 5px; border-bottom-width: 5px;
     text-align: center;
 }
+
+.topSection {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.titleSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mainLogo {
+    max-height: 200px;
+    max-width: 220px;
+}

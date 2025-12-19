@@ -1,5 +1,6 @@
-@import "general_styles/general_styles.css";
-@import "general_styles/form_styles.css";
+@import "../general_styles/general_styles.css";
+@import "../general_styles/form_styles.css";
+@import "../general_styles/select_styles.css";
 
 #headlineDiv {
     display: flex;

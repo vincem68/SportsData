@@ -37,47 +37,64 @@
 
     <%- include ('menu_header') %>
 
-    <% if (league.toUpperCase() == "NFL"){ %>
-
-        <!--This will be what we select for the week, will show all games for the week-->
-        <div class="form-container">
-            <form method="GET">
-
-                <div class="form-group">
-                    <label for="season">Select Season:</label>
-                    <select name="season">
-                        <% for (let i = year; i >= 2000; i--){ %>
-                            <option value="<%= i %>"><%= i %></option>
-                        <% } %>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="seasonType">Select Season Type:</label>
-                    <select id="typeSelector" name="seasonType">
-                        <option value="2">Regular Season</option>
-                        <option value="3">Postseason</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="week">Select Week:</label>
-                    <select id="weekSelector" name="week"></select>
-                </div>
-
-                <button>Submit</button>
-            </form>
+    <div class="topSection">
+        
+        <div class="titleSection">
+            <% if (league.toUpperCase() == "MLB"){ %>
+                <img src = '/images/mlb_logo.png' class='mainLogo' alt = 'MLB Logo'>
+            <% } else if (league.toUpperCase() == "NBA"){ %>
+                <img src = '/images/nba_logo.png' class='mainLogo' alt = 'NBA Logo'>
+            <% } else if (league.toUpperCase() == "NFL"){ %>
+                <img src = '/images/nfl_logo.png' class='mainLogo' alt = 'NFL Logo'>
+            <% } else { %>
+                <img src = '/images/nhl_logo.png' class='mainLogo' alt = 'NHL Logo'>
+            <% } %>
+            <h1><%= league.toUpperCase() %> Scheduled Games</h1>
         </div>
 
-    <% } else { %>
+        <% if (league.toUpperCase() == "NFL"){ %>
 
-        <div class="date-wrapper">
-            <form id="dateSelection" method="GET">
-                <input id="date" name="date" type="date" max="<%= endDate %>">
-                <button type="submit">Submit</button>
-            </form>
-        </div>
-    <% } %>
+            <!--This will be what we select for the week, will show all games for the week-->
+            <div class="form-container">
+                <form method="GET">
+
+                    <div class="form-group">
+                        <label for="season">Select Season:</label>
+                        <select name="season">
+                            <% for (let i = year; i >= 2000; i--){ %>
+                                <option value="<%= i %>"><%= i %></option>
+                            <% } %>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="seasonType">Select Season Type:</label>
+                        <select id="typeSelector" name="seasonType">
+                            <option value="2">Regular Season</option>
+                            <option value="3">Postseason</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="week">Select Week:</label>
+                        <select id="weekSelector" name="week"></select>
+                    </div>
+
+                    <button>Submit</button>
+                </form>
+            </div>
+
+        <% } else { %>
+
+            <div class="date-wrapper">
+                <form id="dateSelection" method="GET">
+                    <input id="date" name="date" type="date" max="<%= endDate %>">
+                    <button type="submit">Submit</button>
+                </form>
+            </div>
+        <% } %>
+    </div>
+
 
     <% if (data.events.length == 0){ %>
         <h1 id="noGamesWarning">No Games Scheduled</h1>

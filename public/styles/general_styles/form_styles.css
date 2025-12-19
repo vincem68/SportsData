@@ -1,7 +1,6 @@
 /* Center the entire form on the page */
 .form-container {
   max-width: 400px;            /* controls how wide the form can get */
-  margin: 3rem auto;           /* centers it horizontally */
   padding: 2rem;
   background: lightgreen;
   border-radius: 10px;

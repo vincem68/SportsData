@@ -10,35 +10,34 @@
 
         <%- include ('../menu_header') %>
 
-        <div id="teamTitleSection">
-            <img src="<%= logo %>">
-            <h1><%= teamName %></h1>
-            <p>Showing Stats for the <%= data.requestedSeason.year %> <%= data.requestedSeason.name %></p>
-            <p>Season Record: <%= data.team.recordSummary %></p>
-            <p>Standings: <%= data.team.standingSummary %></p>
-        </div>
+        <div class="topSection">
+            <div class="titleSection">
+                <img class="mainLogo" src="<%= logo %>">
+                <h1><%= teamName %> Team Stats</h1>
+            </div>
 
-        <div class="form-container">
-            <form method="GET">
+            <div class="form-container">
+                <form method="GET">
 
-                <div class="form-group">
-                    <label for="season">Select a Season:</label>
-                    <select name="season">
-                        <% for (let i = year; i >= 2000; i--){ %>
-                            <option value="<%= i %>"><%= i %></option>
-                        <% } %>
-                    </select>
-                </div>
+                    <div class="form-group">
+                        <label for="season">Select a Season:</label>
+                        <select name="season">
+                            <% for (let i = year; i >= 2000; i--){ %>
+                                <option value="<%= i %>"><%= i %></option>
+                            <% } %>
+                        </select>
+                    </div>
 
-                <div class="form-group">
-                    <label for="seasonType">Select Season Type:</label>
-                    <select name="seasonType">
-                        <option value="2">Regular Season</option>
-                        <option value="3">Postseason</option>
-                    </select>
-                </div>
-                <button>Submit</button>
-            </form>
+                    <div class="form-group">
+                        <label for="seasonType">Select Season Type:</label>
+                        <select name="seasonType">
+                            <option value="2">Regular Season</option>
+                            <option value="3">Postseason</option>
+                        </select>
+                    </div>
+                    <button>Submit</button>
+                </form>
+            </div>
         </div>
 
         <% if (data.code !== undefined){ %>
@@ -50,6 +49,10 @@
             <h1>Team Did Not Make the Postseason for the Requested Season.</h1>
 
         <% } else { %>
+
+            <p>Showing Stats for the <%= data.requestedSeason.year %> <%= data.requestedSeason.name %></p>
+            <p>Season Record: <%= data.team.recordSummary %></p>
+            <p>Standings: <%= data.team.standingSummary %></p>
 
             <div id="statsSection">
 
@@ -73,7 +76,5 @@
                 <% } %>
             </div>
         <% } %>
-
-        <%- include ('../footer') %>
     </body>
 </html>
