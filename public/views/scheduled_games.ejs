@@ -263,6 +263,10 @@
         const headlines = document.querySelectorAll('.sectionHeadline');
         const upcoming = document.getElementById('upcomingHeadline');
 
+        //endpoint to send requests to
+        const endpoint = <%- JSON.stringify(endpoint) %>;
+        const league = <%- JSON.stringify(league) %>;
+
         //hide game active sections within the games yet to start
         upcomingGames.querySelectorAll('.gameContainer').forEach(game => {
             game.querySelector('.score').style.display = 'none';
@@ -278,6 +282,16 @@
             game.querySelector('.arrow_img').style.display = 'none';
         });
 
+        activeGames.querySelectorAll('.gameContainer').forEach(game => {
+            if (league.toUpperCase() != "MLB"){
+                game.querySelector('.mlbCount').style.display = 'none';
+            }
+            if (league.toUpperCase() != "NFL"){
+                game.querySelector('.arrow_img').style.display = 'none';
+                game.querySelector('.yardMarker').style.display = 'none';
+            }
+        });
+
 
         if (activeGames.children.length == 0){
             headlines[0].style.display = 'none';
@@ -288,11 +302,6 @@
         if (completedGames.children.length == 0){ 
             headlines[2].style.display = 'none';
         }
-
-        //endpoint to send requests to
-        const endpoint = <%- JSON.stringify(endpoint) %>;
-        const league = <%- JSON.stringify(league) %>;
-
 
         //this is the function to get the week options for football games
         function getOptions(){
@@ -343,6 +352,8 @@
 
         async function updateGames(){
 
+            console.log("hello");
+
             //get the data from the response
             const update = await (await fetch(endpoint)).json();
 
@@ -384,6 +395,7 @@
                     }
 
                     //get score of game
+                    score.style.display = "flex";
                     score.textContent = gameData.competitions[0].competitors[1].score + " - "
                         + gameData.competitions[0].competitors[0].score;
 
@@ -411,20 +423,20 @@
                 const arrowImage = gameDiv.querySelector('.arrow_img');
                 const seriesRecord = gameDiv.querySelector('.seriesRecord');
 
+                //update the status of the game
+                status.textContent = gameData.status.type.shortDetail;
+
+                //get score of game
+                score.textContent = gameData.competitions[0].competitors[1].score + " - "
+                    + gameData.competitions[0].competitors[0].score;
+
                 //if the game is now finished, move it to completed games
                 if (gameData.status.type.state == "post"){
-
-                    //update the status of the game
-                    status.textContent = gameData.status.type.detail;
 
                     //hide any baseball and football in game details
                     mlbCount.style.display = "none";
                     yardMarker.style.display = "none";
                     arrowImage.style.display = "none";
-
-                    //get score of game
-                    score.textContent = gameData.competitions[0].competitors[1].score + " - "
-                        + gameData.competitions[0].competitors[0].score;
 
                     //for series score updates on final games
                     if (gameData.competitions[0].series !== undefined){
