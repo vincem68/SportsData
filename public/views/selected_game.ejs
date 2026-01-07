@@ -49,6 +49,10 @@
 
         <%- include ('menu_header') %>
 
+
+
+        <!--GAME OVERVIEW SECTION-->
+
         <!--This section will be about the general info about the game. Score, team logos
             and names, and the clock/inning info. Add season series stuff here-->
         <div id="overview">
@@ -124,7 +128,9 @@
         </div>
 
 
-        <!--Linescore (this shows the points for both teams in every interval)-->
+        
+        <!--LINESCORE-->
+        <!--(this shows the points for both teams in every interval)-->
         <div id="linescoreDiv">
             <h2>Linescores</h2>
             <table id="linescores">
@@ -174,6 +180,9 @@
             </table>
         </div>
 
+
+
+        <!--BOX SCORE-->
         <!--This will display the overall team stats info-->
         <h3 id="boxHeadline">
             <% if (overview.status.type.state == "pre"){ %>
@@ -212,6 +221,8 @@
         </div>
 
 
+        <!--LEADER SECTION-->
+        <!--This will display the leaders of the game from both teams-->
         <div id="leaderSection">
             <h2 class="leaderHeadline"><%= summary.boxscore.teams[0].team.abbreviation %> Leaders</h2>
             <div id="awayTeamLeaders">
@@ -252,6 +263,9 @@
         </div>
 
 
+        <!--BUTTON SECTION-->
+        <!--This will be where we have two big divs that act as buttons. Clicking on them will show the player 
+        stats for the corresponding team-->
         <div id="buttonSection">
             <div id="awayTeamButton">
                 <%= overview.competitions[0].competitors[1].team.displayName %>
@@ -261,6 +275,9 @@
             </div>
         </div>
 
+
+        <!--PLAYER STATS SECTION-->
+        <!--This will be where we have the tables for the player stats on both teams-->
         <div id="playerStats">
 
             <div id="awayTeamPlayerStats">
@@ -408,11 +425,11 @@
             //use the JSON data from the rendered data of initial page load
             const summaryEndpoint = <%- JSON.stringify(summaryEndpoint) %>;
             const overviewEndpoint = <%- JSON.stringify(overviewEndpoint) %>;
-            const gameState = <%- JSON.stringify(summary.meta.gameState) %>;
+            const gameState = "<%= summary.meta.gameState %>";
             const overview = <%- JSON.stringify(overview) %>;
-            const league = <%- JSON.stringify(league) %>;
+            const league = "<%= league %>";
 
-            //on default, hide the home team player section
+            //on initial page load, hide the home team player section
             homePlayerStats.style.display = "none";
 
             //hide any stat divs if the game has not started yet
@@ -457,6 +474,9 @@
 
             /**
              * helper function used in initializeStats() to set up the player boxscores
+             * 
+             * happens when the page is loaded pregame but the game starts while the page is open, creates the 
+             * tables for the player stats for both teams
              * */
             function createPlayerBoxscores(players, divID, teamAbbr){
 
@@ -516,6 +536,13 @@
                 });
             }
 
+
+            /**
+             * helper function used in at end of games to set up the leaders section
+             * 
+             * happens when the page is loaded before game ends but remains open,
+             * creates the leaders for both teams
+             * */
             function createLeaders(leaders, divID){
 
                 leaders.forEach(leader => {
@@ -703,10 +730,9 @@
                                 });
                                 //if adding batter to baseball game, add that batter in order of lineup.
                                 if (cat.name == "hitting" && nextPlayerRow != null){
-                                    document.getElementById('hitting').insertBefore(nextPlayerRow, newRow);                                   
+                                    document.getElementById(tableID).insertBefore(nextPlayerRow, newRow);                                   
                                 } else { //for other sports/cateogries just add player to end
-                                    document.getElementById((league.toUpperCase() == "NBA") ? "overall" 
-                                        : cat.name).appendChild(newRow);
+                                    document.getElementById(tableID).appendChild(newRow);
                                 }
                                 nextPlayerRow = newRow.nextSibling; //set nextPlayerRow to the next row
                                 newRow.classList.add('nonstarter'); //give non starter class

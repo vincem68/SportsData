@@ -43,6 +43,7 @@ const nhlTeams = [
     'STL', 'TB', 'TOR', 'UTA', 'VAN', 'VGK', 'WPG', 'WSH'
 ];
 
+
 /**
  * This route will be for getting specific game data. Using the game's ID, we can get both the general overview
  * of the game which includes the team logos, scores, game time/status and records, and also get the overall

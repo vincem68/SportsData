@@ -6,7 +6,7 @@
     width: 50px;
 }
 
-#divisionStandingsDiv {
+#basicStandingsDiv {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -25,7 +25,7 @@
     align-items: center;
 }
 
-#conferenceStandingsDiv {
+#overallStandingsDiv {
     display: flex;
     flex-direction: row;
     justify-content: center;
