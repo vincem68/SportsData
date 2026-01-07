@@ -97,10 +97,10 @@
 
 
     <% if (data.events.length == 0){ %>
+        
         <h1 id="noGamesWarning">No Games Scheduled</h1>
-    <% } %>
 
-    <% if (league.toUpperCase() == "NFL") { %> 
+    <% } else if (league.toUpperCase() == "NFL") { %> 
         <h2 id="dateHeader">
             <% if (data.season.type == 3){ %>
                 <%= postseasonGames.find(round => round.key == data.week.number).value %>
