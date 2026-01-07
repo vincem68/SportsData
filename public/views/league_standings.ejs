@@ -206,18 +206,7 @@
             }
         }
 
-        function addClasses(row){
-            const seed = (row.id.includes("conf")) ? row.id.replace("conf", "") : row.id.replace("secondConf", "");
-            const rank = row.getAttribute("name").replace("rank", "");
-            if (league.toUpperCase() == "NHL"){
-                row.classList.add((rank <= 3) ? 'playoffTeam' : 
-                    (seed <= wildcardSeedCutoff) ? 'wildcardTeam' : 'nonplayoffTeam');
-            } else {
-                row.classList.add((seed <= playoffSeedCutoff) ? 'playoffTeam' : 
-                    (seed <= wildcardSeedCutoff) ? 'wildcardTeam' : 'nonplayoffTeam');
-            }
-        }
-
+        //function to add specific classes to rows in conference portion
         function addClassesToConfStandings(row){
             const seed = row.id.split("-seed")[1].split("-rank")[0];
             row.classList.add((seed <= playoffSeedCutoff) ? 'playoffTeam' : 
