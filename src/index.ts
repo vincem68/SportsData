@@ -1,9 +1,11 @@
 import express, {Request, Response} from 'express';
 import path from 'path';
+import teamRoutes from './routes/teams';
+import gameRoutes from './routes/games';
 
 const app = express();
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '../public/views'));
+app.set('views', path.join(process.cwd(), 'public', 'views'));
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -44,11 +46,8 @@ const nhlTeams = [
 ];
 
 
-const gamesRouter = require('./routes/games');
-const teamsRouter = require('./routes/teams');
-
-app.use('/:sport/:league/teams', teamsRouter);
-app.use('/:sport/:league/games', gamesRouter);
+app.use('/:sport/:league/teams', teamRoutes);
+app.use('/:sport/:league/games', gameRoutes);
 
 /**
  * this route is for gathering the overall stats from the entire league. By default, grabs the current stats
@@ -198,3 +197,5 @@ app.get('/', (req: Request, res: Response) => {
 app.listen(port, () => {
     console.log("Started!");
 });
+
+export default port;

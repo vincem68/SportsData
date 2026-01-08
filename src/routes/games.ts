@@ -1,16 +1,14 @@
-import express, {Request, Response} from 'express';
+import {Router, Request, Response} from 'express';
+import port from '../index';
 
-const app = express();
-const router = express.Router();
-
-const port = 8000; //the port we will listen on, change this for whatever port you will use
+const router = Router({ mergeParams: true });
 
 /**
  * This route will be for getting specific game data. Using the game's ID, we can get both the general overview
  * of the game which includes the team logos, scores, game time/status and records, and also get the overall
  * stats for the game's boxscore.
  */
-app.get('/:id', async function(req: Request, res: Response){
+router.get('/:id', async function(req: Request, res: Response){
 
     const sport = req.params.sport;
     const league = req.params.league;
@@ -36,7 +34,7 @@ app.get('/:id', async function(req: Request, res: Response){
  * This route will be for displaying any upcomig games for the day by default. Can also go back and display 
  * games at whatever date you want to put in.
  */
-app.get('/', async function(req: Request, res: Response) {
+router.get('/', async function(req: Request, res: Response) {
 
     const sport = req.params.sport;
     const league = req.params.league;
@@ -58,3 +56,5 @@ app.get('/', async function(req: Request, res: Response) {
     const data = await (await fetch(endpoint)).json();
     res.render('scheduled_games', { port: port, sport: sport, league: league, data: data, endpoint: endpoint});
 })
+
+export default router;
