@@ -176,7 +176,7 @@
                     <p class="yardMarker"></p>
                     <p class="score"></p>
                     <p class="seriesRecord">
-                        <% if (data.leagues[0].season.type.type == 3){ %>
+                        <% if (data.leagues[0].season.type.type == 3 && league.toUpperCase() != "NFL"){ %>
                             <%= game.competitions[0].series.summary %>
                         <% } %>
                     </p>
