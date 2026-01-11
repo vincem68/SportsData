@@ -69,7 +69,7 @@
                 <img id="live_status_img" src="/images/live_status.gif">
                 <p id="status"><%= overview.competitions[0].status.type.detail %></p>
                 <p id="seriesStatus">
-                    <% if (overview.season.type == 3){ %>
+                    <% if (overview.season.type == 3 && league.toUpperCase() != "NFL"){ %>
                         <%= overview.competitions[0].series.summary %>
                     <% } %>
                 </p>
