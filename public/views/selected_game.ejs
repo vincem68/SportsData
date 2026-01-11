@@ -754,7 +754,7 @@
                         updateOverview.competitions[0].competitors[1].records[0].summary;
                     document.querySelectorAll('.teamOverview')[1].querySelector('h3').textContent = 
                         updateOverview.competitions[0].competitors[0].records[0].summary;
-                    if (updateOverview.season.type == 3){
+                    if (updateOverview.season.type == 3 && league.toUpperCase() != "NFL"){
                         document.getElementById('seriesStatus').textContent = updateOverview.competitions[0].series.summary;
                     }
                     footballSection.style.display = 'none';
