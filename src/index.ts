@@ -1,9 +1,11 @@
 import express, {Request, Response} from 'express';
 import path from 'path';
+import teamRoutes from './routes/teams';
+import gameRoutes from './routes/games';
 
 const app = express();
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, '../public/views'));
+app.set('views', path.join(process.cwd(), 'public', 'views'));
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -44,160 +46,8 @@ const nhlTeams = [
 ];
 
 
-/**
- * This route will be for getting specific game data. Using the game's ID, we can get both the general overview
- * of the game which includes the team logos, scores, game time/status and records, and also get the overall
- * stats for the game's boxscore.
- */
-app.get('/:sport/:league/games/:id', async function(req: Request, res: Response){
-
-    const sport = req.params.sport;
-    const league = req.params.league;
-    const game_id = req.params.id;
-
-    const overviewEndpoint = `https://site.api.espn.com/apis/site/v2/sports` +
-        `/${sport}/${league}/scoreboard/${game_id}`;
-
-    const summaryEndpoint = `https://site.api.espn.com/apis/site/v2/sports` +
-        `/${sport}/${league}/summary?event=${game_id}`;
-
-    const overview = await (await fetch(overviewEndpoint)).json();
-
-    const summary = await (await fetch(summaryEndpoint)).json();
-
-    //maybe we need to see what kinds of data is available in the pre state
-    //overview will be used for selected_game, boxscore will be used for the more specific subfile
-    res.render('selected_game', {port: port, league: league, overview: overview, summary: summary, 
-        overviewEndpoint: overviewEndpoint, summaryEndpoint: summaryEndpoint});
-})
-
-/**
- * This route will be for displaying any upcomig games for the day by default. Can also go back and display 
- * games at whatever date you want to put in.
- */
-app.get('/:sport/:league/games', async function(req: Request, res: Response) {
-
-    const sport = req.params.sport;
-    const league = req.params.league;
-    let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard`;
-
-    //gotta take out the hyphons I think
-    if (req.query.date !== undefined){
-        const date = req.query.date.toString();
-        endpoint += `?dates=${date.replace(/-/g, "")}`;
-    }
-
-    if (req.query.season !== undefined && req.query.week !== undefined && req.query.seasonType !== undefined){
-        const season = req.query.season;
-        const week = req.query.week;
-        const type = req.query.seasonType;
-        endpoint += `?dates=${season}&week=${week}&seasontype=${type}`;
-    }
-
-    const data = await (await fetch(endpoint)).json();
-    res.render('scheduled_games', { port: port, sport: sport, league: league, data: data, endpoint: endpoint});
-})
-
-/**
- * Used when the user has selected a specific team
- */
-app.get('/:sport/:league/teams/:team/roster', async function(req: Request, res: Response){
-
-    const sport = req.params.sport;
-    const league = req.params.league;
-    const team = req.params.team;
-
-    const response = await fetch('https://site.api.espn.com/apis/site/v2/sports/' + 
-        `${sport}/${league}/teams/${team}/roster`);
-    
-    const data = await response.json();
-    res.render('team_roster', {port: port, league: league, sport: sport, team: team, data: data});
-})
-
-/**
- * This route will get the schedule for the specified team
- */
-app.get('/:sport/:league/teams/:team/schedule', async function(req: Request, res: Response){
-    const sport = req.params.sport;
-    const league = req.params.league;
-    const team = req.params.team;
-
-    let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/schedule`;
-
-    if (req.query.season !== undefined && req.query.seasonType !== undefined){
-        endpoint += `?season=${req.query.season}&seasontype=${req.query.seasonType}`;
-    }
-
-    const response = await fetch(endpoint);
-    const data = await response.json();
-
-    const requestedSeason = (req.query.season !== undefined) ? req.query.season : 0;
-    const requestedType = (req.query.seasonType !== undefined) ? req.query.seasonType : "0";
-
-    res.render('team_schedules/team_schedule', {port: port, team: team, league: league, sport: sport, 
-        requestedSeason: requestedSeason, requestedType: requestedType, data: data});
-})
-
-/**
- * This route will be for the stats of a team.
- */
-app.get('/:sport/:league/teams/:team/stats', async function(req: Request, res: Response){
-    const sport = req.params.sport;
-    const league = req.params.league;
-    const team = req.params.team;
-    let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/statistics`;
-    const requestedType = (req.query.seasonType !== undefined) ? req.query.seasonType : 2;
-
-    if (req.query.season !== undefined && req.query.seasonType !== undefined){
-        endpoint += `?season=${req.query.season}&seasontype=${req.query.seasonType}`;
-    }
-
-    //check to get team name and season if requested endpoint has code 404, get required data
-    const checkData = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/` +
-        `${league}/teams/${team}/statistics`)).json();
-    const year = (checkData.season.type != 1) ? checkData.season.year : checkData.season.year - 1;
-    const teamName = checkData.team.displayName;
-    const logo = checkData.team.logo;
-
-    const data = await (await fetch(endpoint)).json();
-
-    res.render('team_stats/overview', {port: port, league: league, year: year, teamName: teamName, logo: logo, 
-        requestedType: requestedType, data: data});
-})
-
-/**
- * This will act as sort of the home page for the selected team. Will feature the logo, any scheduled games, 
- * and the links to the roster, stats or schedule pages
- */
-app.get('/:sport/:league/teams/:team', async function(req: Request, res: Response){
-    const sport = req.params.sport;
-    const league = req.params.league;
-    const team = req.params.team;
-
-    //get basic team data
-    const data = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}`)).json();
-
-    //get news on team
-    const news = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/news?team=${team}`)).json();
-
-    const gameID = data.team.nextEvent[0].id;
-    const game = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard/${gameID}`)).json();
-
-    res.render('selected_team', {port: port, sport: sport, league: league, team: team, data: data, news: news, game: game});
-})
-
-/**
- * This will be for sending the user to the teams page. Get JSON data of all teams in a league and 
- * display them all
- */
-app.get('/:sport/:league/teams', async function(req: Request, res: Response){
-
-    const sport = req.params.sport;
-    const league = req.params.league;
-    const response = await fetch(`http://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams`);
-    const data = await response.json();
-    res.render('team_selection', {port: port, sport: sport, league: league, teams: data.sports[0].leagues[0].teams});
-})
+app.use('/:sport/:league/teams', teamRoutes);
+app.use('/:sport/:league/games', gameRoutes);
 
 /**
  * this route is for gathering the overall stats from the entire league. By default, grabs the current stats
@@ -347,3 +197,5 @@ app.get('/', (req: Request, res: Response) => {
 app.listen(port, () => {
     console.log("Started!");
 });
+
+export default port;
