@@ -1,6 +1,8 @@
 import {Router, Request, Response} from 'express';
 import port from '../index';
 
+import { TeamResponse, Team} from '../interfaces/TeamResponse';
+
 const router = Router({ mergeParams: true });
 
 /**
@@ -100,8 +102,9 @@ router.get('/', async function(req: Request, res: Response){
     const sport = req.params.sport;
     const league = req.params.league;
     const response = await fetch(`http://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams`);
-    const data = await response.json();
-    res.render('team_selection', {port: port, sport: sport, league: league, teams: data.sports[0].leagues[0].teams});
+    const data: TeamResponse = await response.json();
+    const teams: Team[] = data.sports[0].leagues[0].teams.map((teamWrapper) => teamWrapper.team);
+    res.render('team_selection', {port: port, sport: sport, league: league.toUpperCase(), teams: teams});
 })
 
 export default router;

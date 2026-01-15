@@ -8,17 +8,17 @@
     <body>
         <%- include ('menu_header') %>
         <div id = "mainLogoContainer">
-            <% if (league.toUpperCase() == "MLB"){ %>
+            <% if (league == "MLB"){ %>
                 <img src = '/images/mlb_logo.png' id = 'mainLogo' alt = 'MLB Logo'>
-            <% } else if (league.toUpperCase() == "NBA"){ %>
+            <% } else if (league == "NBA"){ %>
                 <img src = '/images/nba_logo.png' id = 'mainLogo' alt = 'NBA Logo'>
-            <% } else if (league.toUpperCase() == "NFL"){ %>
+            <% } else if (league == "NFL"){ %>
                 <img src = '/images/nfl_logo.png' id = 'mainLogo' alt = 'NFL Logo'>
             <% } else { %>
                 <img src = '/images/nhl_logo.png' id = 'mainLogo' alt = 'NHL Logo'>
             <% } %>
 
-            <h1><%= league.toUpperCase() %> Teams</h1>
+            <h1><%= league %> Teams</h1>
         </div>
 
         <h3 class="importantHeadline">Click on a Team to Visit their own Page</h3>
@@ -26,9 +26,9 @@
         <div id="teamsContainer">
             <% teams.forEach(team => { %>
                 <div class = 'displayedTeam'>
-                    <a class="teamLink" href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/teams/<%= team.team.abbreviation %>">
-                        <img src = '<%= team.team.logos[0].href %>' class="teamLogo">
-                        <h4><%= team.team.displayName %></h4>
+                    <a class="teamLink" href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/teams/<%= team.abbreviation %>">
+                        <img src = '<%= team.logos[0].href %>' class="teamLogo">
+                        <h4><%= team.displayName %></h4>
                     </a>
                 </div>
             <% }) %>
