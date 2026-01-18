@@ -1,7 +1,12 @@
 import express, {Request, Response} from 'express';
 import path from 'path';
+
 import teamRoutes from './routes/teams';
 import gameRoutes from './routes/games';
+
+import {TeamStats, LeagueStatsResponse} from './interfaces/LeagueStatsResponse';
+
+
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -11,7 +16,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static('public'));
 
-const port = 8000; //the port we will listen on, change this for whatever port you will use
+const port: number = 8000; //the port we will listen on, change this for whatever port you will use
 
 /**
  * These arrays contain every team abbreviation for the 4 major sports leagues. We use these when sending 
@@ -58,25 +63,27 @@ app.get('/:sport/:league/stats', async function(req: Request, res: Response){
 
     const sport = req.params.sport;
     const league = req.params.league;
-    const leagueStats: any[] = [];
+    const leagueStats: TeamStats[] = [];
+
     const queries = (req.query.season !== undefined && req.query.seasonType !== undefined) ? 
         `?season=${req.query.season}&seasontype=${req.query.seasonType}` : "";
     
-    let requestedSeason = 0;
-    let currentType = 0;
+    let requestedSeason: number = 0;
+    let currentType: number = 0;
     
     //set the team array to whichever league we're using
     const teamIDs = (league.toUpperCase() == "NFL") ? nflTeams : (league.toUpperCase() == "NBA") ? nbaTeams :
         (league.toUpperCase() == "MLB") ? mlbTeams : nhlTeams;
 
     //get the current season of the league
-    const currentYearResponse = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
-        `/teams/${teamIDs[0]}/statistics?season=2024`)).json();
+    const currentYearResponse: LeagueStatsResponse = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
+        `/teams/${teamIDs[0]}/statistics`)).json();
 
+    //get the current season year so we can send it to the rendered file for the year selector
     let currentSeason = currentYearResponse.season.year;
 
     //test request to see if available data
-    const checkValidResponse = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
+    const checkValidResponse: LeagueStatsResponse = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
         `/teams/${teamIDs[0]}/statistics${queries}`)).json();
 
     //check if code 404 exists
@@ -87,7 +94,7 @@ app.get('/:sport/:league/stats', async function(req: Request, res: Response){
             let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
             `/teams/${team}/statistics${queries}`;
 
-            const teamData = await (await fetch(endpoint)).json();
+            const teamData: LeagueStatsResponse = await (await fetch(endpoint)).json();
 
             if (requestedSeason == 0){
                 requestedSeason = teamData.requestedSeason.year;
@@ -95,17 +102,21 @@ app.get('/:sport/:league/stats', async function(req: Request, res: Response){
                 currentSeason = teamData.season.year;
             }
 
+            //if we're asking for postseason stats, only add teams that qualified
             if (req.query.seasonType == "3"){
                 if (teamData.requestedSeason.qualifiedPostSeason){
-                    leagueStats.push({teamName: team, categories: teamData.results.stats.categories});
+                    const teamStats: TeamStats = {teamName: team, categories: teamData.results.stats.categories};
+                    leagueStats.push(teamStats);
                 }
+            //else, just add like normal
             } else {
-                leagueStats.push({teamName: team, categories: teamData.results.stats.categories});
+                const teamStats: TeamStats = {teamName: team, categories: teamData.results.stats.categories};
+                leagueStats.push(teamStats);
             }
         }
     }
     
-    res.render('league_stats', {port: port, sport: sport, league: league, requestedSeason: requestedSeason, 
+    res.render('league_stats', {port: port, sport: sport, league: league.toUpperCase(), requestedSeason: requestedSeason, 
         currentSeason: currentSeason, currentType: currentType, leagueStats: leagueStats});
     
 })
@@ -197,5 +208,6 @@ app.get('/', (req: Request, res: Response) => {
 app.listen(port, () => {
     console.log("Started!");
 });
+
 
 export default port;

@@ -29,7 +29,7 @@
 <html>
 
 <head>
-    <title><%= league.toUpperCase() %> Games</title>
+    <title><%= league %> Games</title>
     <link rel="stylesheet" href="/styles/league_schedule.css">
 </head>
 
@@ -40,19 +40,19 @@
     <div class="topSection">
         
         <div class="titleSection">
-            <% if (league.toUpperCase() == "MLB"){ %>
+            <% if (league == "MLB"){ %>
                 <img src = '/images/mlb_logo.png' class='mainLogo' alt = 'MLB Logo'>
-            <% } else if (league.toUpperCase() == "NBA"){ %>
+            <% } else if (league == "NBA"){ %>
                 <img src = '/images/nba_logo.png' class='mainLogo' alt = 'NBA Logo'>
-            <% } else if (league.toUpperCase() == "NFL"){ %>
+            <% } else if (league == "NFL"){ %>
                 <img src = '/images/nfl_logo.png' class='mainLogo' alt = 'NFL Logo'>
             <% } else { %>
                 <img src = '/images/nhl_logo.png' class='mainLogo' alt = 'NHL Logo'>
             <% } %>
-            <h1><%= league.toUpperCase() %> Scheduled Games</h1>
+            <h1><%= league %> Scheduled Games</h1>
         </div>
 
-        <% if (league.toUpperCase() == "NFL"){ %>
+        <% if (league == "NFL"){ %>
 
             <!--This will be what we select for the week, will show all games for the week-->
             <div class="form-container">
@@ -100,7 +100,7 @@
         
         <h1 id="noGamesWarning">No Games Scheduled</h1>
 
-    <% } else if (league.toUpperCase() == "NFL") { %> 
+    <% } else if (league == "NFL") { %> 
         <h2 id="dateHeader">
             <% if (data.season.type == 3){ %>
                 <%= postseasonGames.find(round => round.key == data.week.number).value %>

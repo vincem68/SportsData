@@ -54,7 +54,7 @@ router.get('/', async function(req: Request, res: Response) {
     }
 
     const data = await (await fetch(endpoint)).json();
-    res.render('scheduled_games', { port: port, sport: sport, league: league, data: data, endpoint: endpoint});
+    res.render('scheduled_games', { port: port, sport: sport, league: league.toUpperCase(), data: data, endpoint: endpoint});
 })
 
 export default router;
