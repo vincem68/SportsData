@@ -1,10 +1,14 @@
 import express, {Request, Response} from 'express';
 import path from 'path';
 
+import { checkRequestParams, getCurrentSeasonInfo, checkValidSeason } from './validation_functions';
+
 import teamRoutes from './routes/teams';
 import gameRoutes from './routes/games';
 
+import { SeasonInfo } from './interfaces/SeasonInfo';
 import {TeamStats, LeagueStatsResponse} from './interfaces/LeagueStatsResponse';
+import { TeamStandingsData, TeamRecord } from './interfaces/TeamStandings';
 
 
 
@@ -126,26 +130,47 @@ app.get('/:sport/:league/stats', async function(req: Request, res: Response){
  * This will be the route that gives us the standings for the requested league
  */
 app.get('/:sport/:league/standings', async function(req: Request, res: Response){
+
     const sport = req.params.sport;
     const league = req.params.league;
+    //check request params
+    if (!checkRequestParams(sport, league)){
+        res.status(400).send("Invalid sport or league");
+        return;
+    }
 
-    //array to store the team data
-    const teamStandings: any[] = [];
-
+    const endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/`;
+    //get correct team array
     const teamIDs = (league.toUpperCase() == "NFL") ? nflTeams : (league.toUpperCase() == "NBA") ? nbaTeams :
         (league.toUpperCase() == "MLB") ? mlbTeams : nhlTeams;
 
+    //array to store the team data
+    const teamStandings: TeamRecord[] = [];
+
     //start sending requests for data
     for (const team of teamIDs){
-        const teamData = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}`)).json();
+        const teamData: TeamStandingsData = await (await fetch(endpoint + team)).json();
         if (teamData.team.record.items === undefined){
             break;
         } else {
-            teamStandings.push(teamData);
+            const data: TeamRecord = {
+                abbreviation: teamData.team.abbreviation,
+                logo: teamData.team.logos[0].href,
+                gamesPlayed: teamData.team.record.items[0].stats.find(stat => stat.name === "gamesPlayed")?.value || 0,
+                playoffSeed: teamData.team.record.items[0].stats.find(stat => stat.name === "playoffSeed")?.value || 0,
+                wins: teamData.team.record.items[0].stats.find(stat => stat.name === "wins")?.value || 0,
+                losses: teamData.team.record.items[0].stats.find(stat => stat.name === "losses")?.value || 0,
+                ties: teamData.team.record.items[0].stats.find(stat => stat.name === "ties")?.value,
+                otLosses: teamData.team.record.items[0].stats.find(stat => stat.name === "otLosses")?.value,
+                points: teamData.team.record.items[0].stats.find(stat => stat.name === "points")?.value,
+                winPercent: teamData.team.record.items[0].stats.find(stat => stat.name === "winPercent")?.value,
+                standingSummary: teamData.team.standingSummary
+            };
+            teamStandings.push(data);
         }
     }
 
-    res.render('league_standings', {port: port, sport: sport, league: league, teamStandings: teamStandings});
+    res.render('league_standings', {port: port, sport: sport, league: league.toUpperCase(), teamStandings: teamStandings});
 })
 
 app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
@@ -208,6 +233,5 @@ app.get('/', (req: Request, res: Response) => {
 app.listen(port, () => {
     console.log("Started!");
 });
-
 
 export default port;
