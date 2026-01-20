@@ -67,6 +67,12 @@ app.get('/:sport/:league/stats', async function(req: Request, res: Response){
 
     const sport = req.params.sport;
     const league = req.params.league;
+
+    if (!checkRequestParams(sport, league)){
+        res.status(400).send("Invalid sport or league");
+        return;
+    }
+    
     const leagueStats: TeamStats[] = [];
 
     const queries = (req.query.season !== undefined && req.query.seasonType !== undefined) ? 
@@ -177,7 +183,13 @@ app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
 
     const sport = req.params.sport;
     const league = req.params.league;
-    let leadersEndpoint = `https://sports.core.api.espn.com/v2/sports/${sport}/leagues/${league}/seasons/`;
+
+    if (!checkRequestParams(sport, league)){
+        res.status(400).send("Invalid sport or league");
+        return;
+    }
+
+    let leadersEndpoint = `https://sports.core.api.espn.com/v2/sports/${sport}/leagues/${league}/seasons/` +
     `2025/types/3/leaders`;
 
     const yearAndTypeResponse = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard`)).json();
@@ -207,6 +219,11 @@ app.get('/:sport/:league/player/:playerID', async function(req: Request, res: Re
     const sport = req.params.sport;
     const league = req.params.league;
     const playerID = req.params.playerID;
+
+    if (!checkRequestParams(sport, league)){
+        res.status(400).send("Invalid sport or league");
+        return;
+    }
 
     const endpoint = `https://site.web.api.espn.com/apis/common/v3/sports/${sport}/${league}/athletes/${playerID}`;
 

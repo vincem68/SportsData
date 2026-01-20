@@ -1,6 +1,8 @@
 import {Router, Request, Response} from 'express';
 import port from '../index';
 
+import { checkRequestParams } from '../validation_functions';
+
 import { TeamResponse, Team} from '../interfaces/TeamResponse';
 
 const router = Router({ mergeParams: true });
@@ -13,6 +15,11 @@ router.get('/:team/roster', async function(req: Request, res: Response){
     const sport = req.params.sport;
     const league = req.params.league;
     const team = req.params.team;
+
+    if (!checkRequestParams(sport, league)){
+        res.status(400).send("Bad Request: Invalid sport or league parameter.");
+        return;
+    }
 
     const response = await fetch('https://site.api.espn.com/apis/site/v2/sports/' + 
         `${sport}/${league}/teams/${team}/roster`);
@@ -28,6 +35,11 @@ router.get('/:team/schedule', async function(req: Request, res: Response){
     const sport = req.params.sport;
     const league = req.params.league;
     const team = req.params.team;
+
+    if (!checkRequestParams(sport, league)){
+        res.status(400).send("Bad Request: Invalid sport or league parameter.");
+        return;
+    }
 
     let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/schedule`;
 
@@ -49,9 +61,16 @@ router.get('/:team/schedule', async function(req: Request, res: Response){
  * This route will be for the stats of a team.
  */
 router.get('/:team/stats', async function(req: Request, res: Response){
+
     const sport = req.params.sport;
     const league = req.params.league;
     const team = req.params.team;
+
+    if (!checkRequestParams(sport, league)){
+        res.status(400).send("Bad Request: Invalid sport or league parameter.");
+        return;
+    }
+
     let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/statistics`;
     const requestedType = (req.query.seasonType !== undefined) ? req.query.seasonType : 2;
 
@@ -77,9 +96,15 @@ router.get('/:team/stats', async function(req: Request, res: Response){
  * and the links to the roster, stats or schedule pages
  */
 router.get('/:team', async function(req: Request, res: Response){
+
     const sport = req.params.sport;
     const league = req.params.league;
     const team = req.params.team;
+
+    if (!checkRequestParams(sport, league)){
+        res.status(400).send("Bad Request: Invalid sport or league parameter.");
+        return;
+    }
 
     //get basic team data
     const data = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}`)).json();
@@ -101,6 +126,12 @@ router.get('/', async function(req: Request, res: Response){
 
     const sport = req.params.sport;
     const league = req.params.league;
+
+    if (!checkRequestParams(sport, league)){
+        res.status(400).send("Bad Request: Invalid sport or league parameter.");
+        return;
+    }
+    
     const response = await fetch(`http://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams`);
     const data: TeamResponse = await response.json();
     const teams: Team[] = data.sports[0].leagues[0].teams.map((teamWrapper) => teamWrapper.team);

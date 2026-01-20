@@ -1,6 +1,8 @@
 import {Router, Request, Response} from 'express';
 import port from '../index';
 
+import { checkRequestParams } from '../validation_functions';
+
 const router = Router({ mergeParams: true });
 
 /**
@@ -13,6 +15,11 @@ router.get('/:id', async function(req: Request, res: Response){
     const sport = req.params.sport;
     const league = req.params.league;
     const game_id = req.params.id;
+
+    if (!checkRequestParams(sport, league)){
+        res.status(400).send("Bad Request: Invalid sport or league parameter.");
+        return;
+    }
 
     const overviewEndpoint = `https://site.api.espn.com/apis/site/v2/sports` +
         `/${sport}/${league}/scoreboard/${game_id}`;
@@ -38,6 +45,12 @@ router.get('/', async function(req: Request, res: Response) {
 
     const sport = req.params.sport;
     const league = req.params.league;
+
+    if (!checkRequestParams(sport, league)){
+        res.status(400).send("Bad Request: Invalid sport or league parameter.");
+        return;
+    }
+    
     let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard`;
 
     //gotta take out the hyphons I think
