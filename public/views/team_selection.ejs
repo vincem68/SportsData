@@ -26,7 +26,7 @@
         <div id="teamsContainer">
             <% teams.forEach(team => { %>
                 <div class = 'displayedTeam'>
-                    <a class="teamLink" href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/teams/<%= team.abbreviation %>">
+                    <a class="teamLink" href="http://localhost:<%= port %>/<%= sport %>/<%= league.toLowerCase() %>/teams/<%= team.abbreviation %>">
                         <img src = '<%= team.logos[0].href %>' class="teamLogo">
                         <h4><%= team.displayName %></h4>
                     </a>
