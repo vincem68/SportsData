@@ -2,7 +2,7 @@ interface Logo {
     href: string;
 }
 
- export interface Team {
+export interface Team {
     abbreviation: string;
     displayName: string;
     logos: Logo[];

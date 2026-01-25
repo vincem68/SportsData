@@ -19,6 +19,7 @@ app.set('views', path.join(process.cwd(), 'public', 'views'));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(express.static('public'));
+app.use('/js', express.static(path.join(__dirname, 'public', 'js')));
 
 const port: number = 8000; //the port we will listen on, change this for whatever port you will use
 
@@ -26,28 +27,28 @@ const port: number = 8000; //the port we will listen on, change this for whateve
  * These arrays contain every team abbreviation for the 4 major sports leagues. We use these when sending 
  * requests to the ESPN enpoints
  */
-const nflTeams = [
+export const nflTeams = [
     'ARI', 'ATL', 'BAL', 'BUF', 'CAR', 'CHI', 'CIN', 'CLE',
     'DAL', 'DEN', 'DET', 'GB', 'HOU', 'IND', 'JAX', 'KC',
     'LAC', 'LAR', 'LV', 'MIA', 'MIN', 'NE', 'NO', 'NYG',
     'NYJ', 'PHI', 'PIT', 'SF', 'SEA', 'TB', 'TEN', 'WSH'
 ];
 
-const nbaTeams = [
+export const nbaTeams = [
     'ATL', 'BKN', 'BOS', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 
     'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA',
     'MIL', 'MIN', 'NO', 'NYK', 'OKC', 'ORL', 'PHI', 'PHX', 
     'POR', 'SAC', 'SAS', 'TOR', 'UTAH', 'WAS'
 ];
 
-const mlbTeams = [
+export const mlbTeams = [
     'ARI', 'ATL', 'BAL', 'BOS', 'CHC', 'CHW', 'CIN', 'CLE', 
     'COL', 'DET', 'MIA', 'HOU', 'KC', 'LAA', 'LAD', 'MIL', 
     'MIN', 'NYM', 'NYY', 'ATH', 'PHI', 'PIT', 'SD', 'SF', 
     'SEA', 'STL', 'TB', 'TEX', 'TOR', 'WSH'
 ];
 
-const nhlTeams = [
+export const nhlTeams = [
     'ANA', 'BOS', 'BUF', 'CAR', 'CBJ', 'CGY', 'CHI', 'COL',
     'DAL', 'DET', 'EDM', 'FLA', 'LA', 'MIN', 'MTL', 'NJD', 
     'NSH', 'NYI', 'NYR', 'OTT', 'PHI', 'PIT', 'SEA', 'SJ', 

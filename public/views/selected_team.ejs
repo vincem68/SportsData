@@ -3,7 +3,7 @@
 <html>
 
     <head>
-        <title><%= data.team.displayName %></title>
+        <title><%= data.displayName %></title>
         <link rel="stylesheet" href="/styles/team_page.css">
     </head>
 
@@ -12,10 +12,10 @@
         <%- include ('menu_header') %>
 
         <div id="titleSection">
-            <img id="teamLogo" src="<%= data.team.logos[0].href %>">
-            <h1><%= data.team.displayName %></h1>
-            <% if (data.team.record.items !== undefined) { %>
-                <h4>Current Record: <%= data.team.record.items[0].summary %></h4>
+            <img id="teamLogo" src="<%= data.logoUrl %>">
+            <h1><%= data.displayName %></h1>
+            <% if (data.recordSummary != '') { %>
+                <h4>Current Record: <%= data.recordSummary %></h4>
             <% } %>
         </div>
 
@@ -42,9 +42,9 @@
         </div>
 
         <h3 class="importantHeadline">
-            <% if (game.competitions[0].status.type.state == "pre"){ %>
+            <% if (game.status.state == "pre"){ %>
                 Upcoming Game
-            <% } else if (game.competitions[0].status.type.state == "in") { %>
+            <% } else if (game.status.state == "in") { %>
                 Current Game
             <% } else { %>
                 Latest Game
@@ -53,34 +53,33 @@
         <div class="gamesLayout">
             <div class="gameContainer">
                 <div class="awayTeamDiv">
-                    <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
-                    <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
+                    <img class="teamLogo" src="<%= game.awayTeam.logo %>">
+                    <p><%= game.awayTeam.abbreviation %></p>
                 </div>
 
                 <div class="gameTimeDiv">
-                    <p class="status"><%= game.competitions[0].status.type.shortDetail %></p>
+                    <p class="status"><%= game.status.shortDetail %></p>
                     <p class="mlbCount">
-                        <% if (league.toUpperCase() == "MLB" && game.competitions[0].situation !== undefined){ %>
-                            <%= game.competitions[0].situation.balls + "-" + game.competitions[0].situation.strikes
-                                +  " " + game.competitions[0].situation.outs + " outs" %>
+                        <% if (league == "MLB" && game.situation !== undefined){ %>
+                            <%= game.situation.balls + "-" + game.situation.strikes
+                                +  " " + game.situation.outs + " outs" %>
                         <% } %>
                     </p>
 
                     <img class="arrow_img" src="/images/left_arrow.png">
                     <p class="yardMarker">
-                        <% if (league.toUpperCase() == "NFL" && game.competitions[0].situation !== undefined){ %>
-                            <%= game.competitions[0].situation.downDistanceText %>
+                        <% if (league == "NFL" && game.situation !== undefined){ %>
+                            <%= game.situation.downDistanceText %>
                         <% } %>
                     </p>
                     <p class="score">
-                        <% if (game.competitions[0].status.type.state != "pre"){ %>
-                            <%= game.competitions[0].competitors[1].score %> - 
-                                <%= game.competitions[0].competitors[0].score %>
+                        <% if (game.status.state != "pre"){ %>
+                            <%= game.awayTeam.score %> - <%= game.homeTeam.score %>
                         <% } %>
                     </p>
                     <p class="seriesRecord">
-                        <% if (game.season.type == 3){ %>
-                            <%= game.competitions[0].series.summary %>
+                        <% if (game.seasonType == 3){ %>
+                            <%= game.seriesSummary %>
                         <% } %>
                     </p>
                     <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
@@ -89,8 +88,8 @@
                 </div>
 
                 <div class="homeTeamDiv">
-                    <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
-                    <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
+                    <img class="teamLogo" src="<%= game.homeTeam.logo %>">
+                    <p><%= game.homeTeam.abbreviation %></p>
                 </div>
             </div>
         </div>
@@ -100,23 +99,21 @@
 
             <h6>All Stories Written and Published by ESPN</h6>
 
-            <% const articles = news.articles;
-
-            if (articles.length == 0){ %>
+            <% if (news.length == 0){ %>
 
                 <h3>Nothing to Report. Check Back Later!</h3>
 
             <% } else {
 
-                articles.forEach(article => { %>
+                news.forEach(article => { %>
 
                     <div class="article">
-                        <% if (article.images.length != 0){ %>
-                            <img class="newsImage" src="<%= article.images[0].url %>">
+                        <% if (article.imageUrl){ %>
+                            <img class="newsImage" src="<%= article.imageUrl %>">
                         <% } %>
                         <h3><u><%= article.headline %></u></h3>
                         <p><%= article.description %></p>
-                        <a href=" <%= article.links.web.href %>">Read More</a>
+                        <a href=" <%= article.articleUrl %>">Read More</a>
                     </div>
                 <% })
             } %>
@@ -124,12 +121,13 @@
     </body>
 
     <script>
+        const parseGameOverviewResponse = <%- parseResponse.toString() %>;
         const team = "<%= team %>";
         const sport = "<%= sport %>";
-        const league = "<%= league.toUpperCase() %>";
+        const league = "<%= league %>";
         const game = <%- JSON.stringify(game) %>;
         const gameID = game.id;
-        const state = game.competitions[0].status.type.state;
+        const state = game.status.state;
         const status = document.querySelector('.status');
         const count = document.querySelector('.mlbCount');
         const score = document.querySelector('.score');
@@ -141,54 +139,56 @@
         async function updateEvent(){
             //send the request
             const response = await (await fetch(endpoint)).json();
+            const updatedGameStats = parseGameOverviewResponse(response);
+            console.log("Updating game data for " + gameID);
 
             //if we're not in pregame, we're updating the stuff inside here anyway like score and status
-            if (response.competitions[0].status.type.state != "pre"){
+            if (updatedGameStats.status.state != "pre"){
 
-                seriesRecord.textContent.style.display = "none";
+                seriesRecord.style.display = "none";
                 score.style.display = "flex";
-                score.textContent = response.competitions[0].competitors[1].score + "-"
-                            + response.competitions[0].competitors[0].score;
+                score.textContent = updatedGameStats.awayTeam.score + "-" + updatedGameStats.homeTeam.score;
 
-                status.textContent = response.competitions[0].status.type.shortDetail;
+                status.textContent = updatedGameStats.status.shortDetail;
             }
 
             //if done, clear in game stuff and stop sending requests
-            if (response.competitions[0].status.type.state == "post"){
-                seriesRecord.textContent = (response.season.type == 3) ? response.competitions[0].series.summary : "";
+            if (updatedGameStats.status.state == "post"){
+                seriesRecord.textContent = (updatedGameStats.seasonType == 3) ? updatedGameStats.seriesSummary : "";
                 count.style.display = "none";
                 yardMarker.style.display = "none";
                 arrowImage.style.display = 'none';
                 clearInterval(requests);
 
-            } else if (response.competitions[0].situation !== undefined){
+            } else if (updatedGameStats.situation !== undefined){
                 //update baseball count
                 count.style.display = "flex";
-                count.textContent = (league == "MLB") ? response.competitions[0].situation.balls 
-                    + "-" + response.competitions[0].situation.strikes +  " " + response.competitions[0].situation.outs + " outs" : "";
+                count.textContent = (league == "MLB") ? updatedGameStats.situation.balls 
+                    + "-" + updatedGameStats.situation.strikes +  " " + 
+                        updatedGameStats.situation.outs + " outs" : "";
                 //update football marker
-                arrowImage.style.display = "flex";
-                if (response.competitions[0].situation.possession == 
-                    response.competitions[0].competitors[1].id){
+                arrowImage.style.display = (league == "NFL") ? "flex" : "none";
+                if (updatedGameStats.situation.possession == 
+                    updatedGameStats.awayTeam.id){
                     arrowImage.src = "/images/left_arrow.png";
                 } else {
                     arrowImage.src = "/images/right_arrow.png";
                 }
                 yardMarker.style.display = "flex";
-                yardMarker.textContent = (league == "NFL") ? response.competitions[0].situation.downDistanceText : "";
+                yardMarker.textContent = (league == "NFL") ? updatedGameStats.situation.downDistanceText : "";
             }
         }
 
         //set displays for elements on initial load
-        count.style.display = (league == "MLB" && game.competitions[0].situation !== undefined) ? 'flex' : 'none';
-        yardMarker.style.display = (league == "NFL" && game.competitions[0].situation !== undefined) ? 'flex' : 'none'; 
-        score.style.display = (game.competitions[0].status.type.state != "pre") ? 'flex' : 'none';
-        seriesRecord.style.display = (game.season.type == 3 && game.competitions[0].status.type.state != "pre") ? 'flex' : 'none';
+        count.style.display = (league == "MLB" && game.situation !== undefined) ? 'flex' : 'none';
+        yardMarker.style.display = (league == "NFL" && game.situation !== undefined) ? 'flex' : 'none'; 
+        score.style.display = (game.status.state != "pre") ? 'flex' : 'none';
+        seriesRecord.style.display = (game.seasonType == 3 && game.status.state != "pre") ? 'flex' : 'none';
         //determine image src and display for football possession arrow
-        arrowImage.style.display = (league == "NFL" && game.competitions[0].situation !== undefined) ? 'flex' : 'none';
-        if (league == "NFL" && game.competitions[0].situation !== undefined){
-            arrowImage.src = (game.competitions[0].situation.possession == 
-                game.competitions[0].competitors[1].id) ? "/images/left_arrow.png" : "/images/right_arrow.png";
+        arrowImage.style.display = (league == "NFL" && game.situation !== undefined) ? 'flex' : 'none';
+        if (league == "NFL" && game.situation !== undefined){
+            arrowImage.src = (game.situation.possession == 
+                game.awayTeam.id) ? "/images/left_arrow.png" : "/images/right_arrow.png";
         }
 
         let requests = setInterval(updateEvent, 10000);

@@ -1,4 +1,5 @@
 import { SeasonInfo } from "./interfaces/SeasonInfo";
+import { nflTeams, nbaTeams, mlbTeams, nhlTeams } from "./index";
 
 export async function getCurrentSeasonInfo(endpoint: string): Promise<SeasonInfo>{
     const seasonInfo: SeasonInfo = await (await fetch(endpoint)).json();
@@ -8,10 +9,16 @@ export async function getCurrentSeasonInfo(endpoint: string): Promise<SeasonInfo
     return seasonInfo;
 }
 
-export function checkRequestParams(sport: string, league: string): boolean {
+export function checkRequestParams(sport: string, league: string, team?: string): boolean {
     const validSports = ['football', 'basketball', 'baseball', 'hockey'];
     const validLeagues = ['nfl', 'nba', 'mlb', 'nhl'];
-    return validSports.includes(sport.toLowerCase()) && validLeagues.includes(league.toLowerCase());
+    const teams: string[] = (league === 'nfl') ? nflTeams :
+        (league === 'nba') ? nbaTeams :
+        (league === 'mlb') ? mlbTeams :
+        (league === 'nhl') ? nhlTeams : [];
+    //return true if sport and league are valid, and if team is provided, check that too
+    return validSports.includes(sport.toLowerCase()) && validLeagues.includes(league.toLowerCase()) && 
+        (team === undefined || teams.includes(team.toUpperCase()));
 }
 
 /**
