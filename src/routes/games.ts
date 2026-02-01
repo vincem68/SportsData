@@ -1,7 +1,13 @@
 import {Router, Request, Response} from 'express';
 import port from '../index';
 
-import { checkRequestParams } from '../validation_functions';
+import { checkRequestParams, checkQueryParams } from '../validation_functions';
+
+import type { LeagueScheduleResponse, LeagueSchedule } from '../interfaces/LeagueSchedule.types';
+import type { GameOverview, GameOverviewResponse} from '../interfaces/GameOverview.types';
+import { parseLeagueScheduleResponse } from '../interfaces/LeagueSchedule';
+import {parseGameOverviewResponse} from '../interfaces/GameOverview';
+import { parse } from 'path';
 
 const router = Router({ mergeParams: true });
 
@@ -63,11 +69,16 @@ router.get('/', async function(req: Request, res: Response) {
         const season = req.query.season;
         const week = req.query.week;
         const type = req.query.seasonType;
-        endpoint += `?dates=${season}&week=${week}&seasontype=${type}`;
+        endpoint += (checkQueryParams(Number(season), Number(type), Number(week))) ? 
+            `?dates=${season}&week=${week}&seasontype=${type}` : '';
     }
 
-    const data = await (await fetch(endpoint)).json();
-    res.render('scheduled_games', { port: port, sport: sport, league: league.toUpperCase(), data: data, endpoint: endpoint});
+    const data: LeagueScheduleResponse = await (await fetch(endpoint)).json();
+
+    const leagueSchedule: LeagueSchedule = parseLeagueScheduleResponse(data);
+    //render all the data onto the scheduled games page
+    res.render('scheduled_games', { port: port, sport: sport, league: league.toUpperCase(),
+        leagueSchedule: leagueSchedule, endpoint: endpoint, parseGames: parseGameOverviewResponse});
 })
 
 export default router;

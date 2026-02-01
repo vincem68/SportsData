@@ -1,25 +1,5 @@
 <%
-    //filter the games depending on if finished, active or upcoming to divide them into sections on page
-    const upcomingGames = data.events.filter(game => game.status.type.state == "pre");
-    const activeGames = data.events.filter(game => game.status.type.state == "in");
-    const completedGames = data.events.filter(game => game.status.type.state == "post");
-
-    const today = new Date();
-    const month = (today.getMonth() + 1 < 10) ? "0" + (today.getMonth() + 1).toString() : 
-        (today.getMonth() + 1).toString();
-    const day = today.getDate().toString();
-    const year = today.getFullYear().toString();
-    const fullDate = year + "-" + month + "-" + day;
-
-    const localDate = new Date(data.leagues[0].season.endDate);
-    const year2 = localDate.getFullYear();
-    const month2 = String(localDate.getMonth() + 1).padStart(2, '0');
-    const day2 = String(localDate.getDate()).padStart(2, '0');
-    const endDate = `${year2}-${month2}-${day2}`;
-
-
-    const seasonTypeGames = (data.events.length != 0) ? data.events[0].season.slug.charAt(0).toUpperCase()
-        + data.events[0].season.slug.slice(1) : "";
+    const seasonTypeGames = (leagueSchedule.season.type == 2) ? "Regular Season" : "Postseason";
 
     const postseasonGames = [{key: 1, value: "Wild Card"}, {key: 2, value: "Divisional"},
         {key: 3, value: "Conference"}, {key: 5, value: "Super Bowl"}];
@@ -88,157 +68,96 @@
 
             <div class="date-wrapper">
                 <form id="dateSelection" method="GET">
-                    <input id="date" name="date" type="date" max="<%= endDate %>">
+                    <input id="date" name="date" type="date" max="<%= leagueSchedule.seasonEndDate %>">
                     <button type="submit">Submit</button>
                 </form>
             </div>
         <% } %>
     </div>
 
-
-    <% if (data.events.length == 0){ %>
+    <!--Show No Games Scheduled Statement if our lists are empty-->
+    <% if (leagueSchedule.totalGames == 0){ %>
         
         <h1 id="noGamesWarning">No Games Scheduled</h1>
 
     <% } else if (league == "NFL") { %> 
         <h2 id="dateHeader">
-            <% if (data.season.type == 3){ %>
-                <%= postseasonGames.find(round => round.key == data.week.number).value %>
+            <% if (leagueSchedule.season.type == 3){ %>
+                <%= postseasonGames.find(round => round.key == leagueSchedule.week).value %>
             <% } else { %>
-                <%= "Week " + data.week.number %>
+                <%= "Week " + leagueSchedule.week %>
             <% } %>
         </h2> 
     <% } %>
 
-    <h3 class="sectionHeadline">Active <%= seasonTypeGames %> Games</h3>
-    <div id="activeGames" class="gamesLayout">
 
-        <% activeGames.forEach(game => { %>
+    <!--Go through each list from rendered data, which are active, upcoming and completed games-->
+    <% Object.values(leagueSchedule.schedule).forEach(gameList => { %>
 
-            <div id="<%= game.id %>" class="gameContainer">
-                <div class="awayTeamDiv">
-                    <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
-                    <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
-                </div>
+        <h3 class="sectionHeadline"><%= gameList.name %></h3>
+        <div id="<%= gameList.id %>" class="gamesLayout">
 
-                <div class="gameTimeDiv">
-                    <p class="status"><%= game.competitions[0].status.type.shortDetail %></p>
-                    <p class="mlbCount">
-                        <% if (league.toUpperCase() == "MLB"){ %>
-                            <%= game.competitions[0].situation.balls + "-" + game.competitions[0].situation.strikes
-                                +  " " + game.competitions[0].situation.outs + " outs" %>
-                        <% } %>
-                    </p>
-                    <img class="arrow_img" src="/images/left_arrow.png">
-                    <p class="yardMarker">
-                        <% if (league.toUpperCase() == "NFL" && game.competitions[0].situation !== undefined){ %>
-                            <%= game.competitions[0].situation.downDistanceText %>
-                        <% } %>
-                    </p>
-                    <p class="score"><%= game.competitions[0].competitors[1].score %> - 
-                        <%= game.competitions[0].competitors[0].score %></p>
-                    <p class="seriesRecord" style="display:none"></p>
-                    <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
-                        Game Stats
-                    </a>
-                </div>
+            <% gameList.games.forEach(game => { %>
 
-                <div class="homeTeamDiv">
-                    <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
-                    <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
-                </div>
-            </div>
-        <% }) %>
-    </div>
-        
-    <h3 class="sectionHeadline">Upcoming <%= seasonTypeGames %> Games</h3>
-    <div id="upcomingGames" class="gamesLayout">
+                <div id="<%= game.id %>" class="gameContainer">
 
-        <% upcomingGames.forEach(game => { %>
+                    <div class="awayTeamDiv">
+                        <img class="teamLogo" src="<%= game.awayTeam.logo %>">
+                        <p><%= game.awayTeam.abbreviation %></p>
+                    </div>
 
-            <div id="<%= game.id %>" class="gameContainer">
-                <div class="awayTeamDiv">
-                    <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
-                    <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
-                </div>
+                    <div class="gameTimeDiv">
 
-                <div class="gameTimeDiv">
-                    <p class="status">
-                        <% if (data.day !== undefined && fullDate != data.day.date){ %>
-                            <%= game.competitions[0].status.type.shortDetail %>
-                        <% } else { %>
-                            <%= game.competitions[0].status.type.shortDetail.substring(
-                                game.competitions[0].status.type.shortDetail.indexOf("-") + 2); %>
-                        <% } %>
-                    </p>
-                    <p class="mlbCount" style="display:none"></p>
-                    <img class="arrow_img" src="/images/left_arrow.png">
-                    <p class="yardMarker"></p>
-                    <p class="score"></p>
-                    <p class="seriesRecord">
-                        <% if (data.leagues[0].season.type.type == 3 && league.toUpperCase() != "NFL"){ %>
-                            <%= game.competitions[0].series.summary %>
-                        <% } %>
-                    </p>
-                    <% if (game.competitions[0].status.type.shortDetail != "TBD"){ %>
-                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                        <p class="status"><%= game.status.shortDetail %></p>
+
+                        <p class="mlbCount">
+                            <% if (league == "MLB" && game.situation !== undefined){ %>
+                                <%= game.situation.balls + "-" + game.situation.strikes
+                                    +  " " + game.situation.outs + " outs" %>
+                            <% } %>
+                        </p>
+
+                        <img class="arrow_img" src="/images/left_arrow.png">
+
+                        <p class="yardMarker">
+                            <% if (league == "NFL" && game.situation !== undefined){ %>
+                                <%= game.situation.downDistanceText %>
+                            <% } %>
+                        </p>
+
+                        <p class="score">
+                            <% if (game.status.state != "pre"){ %>
+                                <%= game.awayTeam.score %> - <%= game.homeTeam.score %>
+                            <% } %>
+                        </p>
+
+                        <p class="seriesRecord" style="display:none">
+                            <!--If its the postseason and its not football-->
+                            <% if (leagueSchedule.season.type == 3 && league != "NFL"){ %>
+                                <%= game.seriesSummary %>
+                            <% } %>
+                        </p>
+
+                        <!--game link-->
+                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league.toLowerCase() %>/games/<%= game.id %>">
                             Game Stats
                         </a>
-                    <% } %>
+                    </div>
+
+                    <div class="homeTeamDiv">
+                        <img class="teamLogo" src="<%= game.homeTeam.logo %>">
+                        <p><%= game.homeTeam.abbreviation %></p>
+                    </div>
                 </div>
+            <% }) %>
+        </div>
+    <% }) %>
 
-                <div class="homeTeamDiv">
-                    <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
-                    <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
-                </div>
-            </div>
-
-        <% }) %>
-    </div>
-        
-    <h3 class="sectionHeadline">Completed <%= seasonTypeGames %> Games</h3>
-    <div id="completedGames" class="gamesLayout">
-        
-        <% completedGames.forEach(game => { %>
-
-            <div id="<%= game.id %>" class="gameContainer">
-                <div class="awayTeamDiv">
-                    <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logo %>">
-                    <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
-                </div>
-
-                <div class="gameTimeDiv">
-                    <p class="status"><%= game.competitions[0].status.type.detail %></p>
-                    <p class="mlbCount"></p>
-                    <img class="arrow_img" src="/images/left_arrow.png">
-                    <p class="yardMarker"></p>
-                    <p class="score">
-                        <%= game.competitions[0].competitors[1].score %> - 
-                        <%= game.competitions[0].competitors[0].score %>
-                    </p>
-                    <p class="seriesRecord">
-                        <% if (game.competitions[0].series !== undefined){ %>
-                            <%= game.competitions[0].series.summary %>
-                        <% } %>
-                    </p>
-                    <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
-                        Game Stats
-                    </a>
-                </div>
-
-                <div class="homeTeamDiv">
-                    <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logo %>">
-                    <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
-                </div>
-            </div>
-
-        <% }) %>
-    </div>
-
-    <% if (league.toUpperCase() == "NFL" && data.week.teamsOnBye !== undefined){ %>
+    <!--This section will display any teams on a bye week at the requested week-->
+    <% if (league == "NFL" && leagueSchedule.week.teamsOnBye !== undefined){ %>
         <h3 id="byeWeekHeadline" class="importantHeadline">Teams on Bye Week</h3>
         <div id="byeWeekSection">
-            <% data.week.teamsOnBye.forEach(team => { %>
+            <% leagueSchedule.week.teamsOnBye.forEach(team => { %>
                 <div class="byeTeamsDiv">
                     <img class="teamLogo" src="<%= team.logo %>">
                     <p><%= team.abbreviation %></p>
@@ -263,9 +182,9 @@
         const headlines = document.querySelectorAll('.sectionHeadline');
         const upcoming = document.getElementById('upcomingHeadline');
 
-        //endpoint to send requests to
-        const endpoint = <%- JSON.stringify(endpoint) %>;
-        const league = <%- JSON.stringify(league) %>;
+        const endpoint = "<%= endpoint %>";
+        const league = "<%= league %>";
+        const parseGames = <%- parseGames.toString() %>;
 
         //hide game active sections within the games yet to start
         upcomingGames.querySelectorAll('.gameContainer').forEach(game => {
@@ -283,25 +202,19 @@
         });
 
         activeGames.querySelectorAll('.gameContainer').forEach(game => {
-            if (league.toUpperCase() != "MLB"){
+            if (league != "MLB"){
                 game.querySelector('.mlbCount').style.display = 'none';
             }
-            if (league.toUpperCase() != "NFL"){
+            if (league != "NFL"){
                 game.querySelector('.arrow_img').style.display = 'none';
                 game.querySelector('.yardMarker').style.display = 'none';
             }
         });
 
-
-        if (activeGames.children.length == 0){
-            headlines[0].style.display = 'none';
-        }
-        if (upcomingGames.children.length == 0){ 
-            headlines[1].style.display = 'none';
-        }
-        if (completedGames.children.length == 0){ 
-            headlines[2].style.display = 'none';
-        }
+        //hide the headlines if the divs containing these games have none
+        headlines[0].style.display = (activeGames.children.length == 0) ? 'none' : 'flex';
+        headlines[1].style.display = (upcomingGames.children.length == 0) ? 'none' : 'flex';
+        headlines[2].style.display = (completedGames.children.length == 0) ? 'none' : 'flex';
 
         //this is the function to get the week options for football games
         function getOptions(){
@@ -350,44 +263,58 @@
             });
         }
 
+
+        /**
+         * Function to update all games on the page
+         * Check on both active and upcoming games for status changes and to move gameDivs to proper
+         * container divs 
+         */
         async function updateGames(){
 
             console.log("hello");
 
             //get the data from the response
-            const update = await (await fetch(endpoint)).json();
+            const response = await (await fetch(endpoint)).json();
+            const updatedGames = parseGames(response);
+
 
             //first go through upcoming games to see if any have started
             upcomingGames.querySelectorAll('.gameContainer').forEach(gameDiv => {
-                const gameID = gameDiv.id;
-                const gameData = update.events.find(event => event.id == gameID);
 
-                const status = gameDiv.querySelector('.status');
-                const score = gameDiv.querySelector('.score');
-                const mlbCount = gameDiv.querySelector('.mlbCount');
-                const yardMarker = gameDiv.querySelector('.yardMarker');
-                const arrowImage = gameDiv.querySelector('.arrow_img');
-                const seriesRecord = gameDiv.querySelector('.seriesRecord');
+                const gameID = gameDiv.id;
+                //find the specific game in the upcomingGames portion of response
+                const gameData = updatedGames.upcomingGames.find(event => event.id == gameID);
 
                 //if the game has started, move it to active games
-                if (gameData.status.type.state != "pre"){
+                if (gameData.status.state != "pre"){
+                    //get the game elements 
+                    const status = gameDiv.querySelector('.status');
+                    const score = gameDiv.querySelector('.score');
+                    const mlbCount = gameDiv.querySelector('.mlbCount');
+                    const yardMarker = gameDiv.querySelector('.yardMarker');
+                    const arrowImage = gameDiv.querySelector('.arrow_img');
+                    const seriesRecord = gameDiv.querySelector('.seriesRecord');
 
+                    //hide series record for active games
                     seriesRecord.style.display = "none";
 
                     //update the status of the game
-                    status.textContent = gameData.status.type.shortDetail;
+                    status.textContent = gameData.status.shortDetail;
 
                     //update baseball count if in MLB game
-                    mlbCount.style.display = (league.toUpperCase() == "MLB" && gameData.competitions[0].situation !== undefined) ? "flex" : "none";
-                    mlbCount.textContent = (league.toUpperCase() == "MLB" && gameData.competitions[0].situation !== undefined) ? 
-                        gameData.competitions[0].situation.balls + "-" + gameData.competitions[0].situation.strikes +  " " + 
-                            gameData.competitions[0].situation.outs + " outs" : "";
+                    mlbCount.style.display = (league == "MLB" && gameData.situation !== undefined) ? "flex" : "none";
+                    mlbCount.textContent = (league == "MLB" && gameData.situation !== undefined) ? 
+                        gameData.situation.balls + "-" + gameData.situation.strikes +  " " + 
+                            gameData.situation.outs + " outs" : "";
 
-                    //update football marker if in NFL game
-                    arrowImage.style.display = (league.toUpperCase() == "NFL" && gameData.competitions[0].situation !== undefined) ? "flex" : "none";
-                    if (league.toUpperCase() == "NFL" && gameData.competitions[0].situation !== undefined){
-                        if (gameData.competitions[0].situation.possession == 
-                            gameData.competitions[0].competitors[1].id){
+                    //update football marker if an NFL game
+                    if (league == "NFL" && gameData.situation !== undefined){
+                        //display the yard marker and possession arrow
+                        arrowImage.style.display = "flex";
+                        yardMarker.style.display = "flex";
+                        yardMarker.textContent = gameData.situation.downDistanceText;
+                        //set the image arrow to face the correct team based on possession
+                        if (gameData.situation.possession == gameData.awayTeam.id){
                             arrowImage.src = "/images/left_arrow.png";
                         } else {
                             arrowImage.src = "/images/right_arrow.png";
@@ -396,8 +323,7 @@
 
                     //get score of game
                     score.style.display = "flex";
-                    score.textContent = gameData.competitions[0].competitors[1].score + " - "
-                        + gameData.competitions[0].competitors[0].score;
+                    score.textContent = gameData.awayTeam.score + " - " + gameData.homeTeam.score;
 
                     gameDiv.parentNode.removeChild(gameDiv); //remove from upcoming
 
@@ -413,8 +339,9 @@
             });
 
             activeGames.querySelectorAll('.gameContainer').forEach(gameDiv => {
+
                 const gameID = gameDiv.id;
-                const gameData = update.events.find(event => event.id == gameID);
+                const gameData = updatedGames.activeGames.find(event => event.id == gameID);
 
                 const status = gameDiv.querySelector('.status');
                 const score = gameDiv.querySelector('.score');
@@ -424,14 +351,13 @@
                 const seriesRecord = gameDiv.querySelector('.seriesRecord');
 
                 //update the status of the game
-                status.textContent = gameData.status.type.shortDetail;
+                status.textContent = gameData.status.shortDetail;
 
                 //get score of game
-                score.textContent = gameData.competitions[0].competitors[1].score + " - "
-                    + gameData.competitions[0].competitors[0].score;
+                score.textContent = gameData.awayTeam.score + " - " + gameData.homeTeam.score;
 
                 //if the game is now finished, move it to completed games
-                if (gameData.status.type.state == "post"){
+                if (gameData.status.state == "post"){
 
                     //hide any baseball and football in game details
                     mlbCount.style.display = "none";
@@ -439,9 +365,9 @@
                     arrowImage.style.display = "none";
 
                     //for series score updates on final games
-                    if (gameData.competitions[0].series !== undefined){
+                    if (gameData.seriesSummary !== undefined){
                         seriesRecord.style.display = "flex";
-                        seriesRecord.textContent = gameData.competitions[0].series.summary;
+                        seriesRecord.textContent = gameData.seriesSummary;
                     } else {
                         seriesRecord.style.display = "none";
                     }
@@ -469,6 +395,16 @@
         //immediately clear it if all games are already final upon initial page load or user refresh
         if (activeGames.children.length == 0 && upcomingGames.children.length == 0){
             clearInterval(requests);
+        }
+
+        //helper function from the LeageSchedule.ts file, not sure why but I can't pass it from the TS route
+        async function parseLeagueScheduleResponse(data) {
+            const parsedGames = data.events.map(event => parseGameOverviewResponse(event));
+            return {
+                activeGames: parsedGames.filter(game => game.status.state === "in"),
+                upcomingGames: parsedGames.filter(game => game.status.state === "pre"),
+                completedGames: parsedGames.filter(game => game.status.state === "post")
+            }
         }
   </script>
 </body>

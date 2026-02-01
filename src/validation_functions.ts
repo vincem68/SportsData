@@ -21,6 +21,19 @@ export function checkRequestParams(sport: string, league: string, team?: string)
         (team === undefined || teams.includes(team.toUpperCase()));
 }
 
+export function checkQueryParams(year: number, type: number, week?: number): boolean {
+    if (type > 4 || type < 1){
+        return false;
+    }
+    if (year < 2000 || year > new Date().getFullYear()){
+        return false;
+    }
+    if (week !== undefined && (week < 1 || week > 18)){
+        return false;
+    }
+    return true;
+}
+
 /**
  * Use this to check if the requested season info is valid
  * @param seasonInfo - interface that will contain season year and type

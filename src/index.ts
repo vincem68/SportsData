@@ -6,9 +6,9 @@ import { checkRequestParams, getCurrentSeasonInfo, checkValidSeason } from './va
 import teamRoutes from './routes/teams';
 import gameRoutes from './routes/games';
 
-import { SeasonInfo } from './interfaces/SeasonInfo';
-import {TeamStats, LeagueStatsResponse} from './interfaces/LeagueStatsResponse';
-import { TeamStandingsData, TeamRecord } from './interfaces/TeamStandings';
+import type { SeasonInfo } from './interfaces/SeasonInfo';
+import type {TeamStats, LeagueStatsResponse} from './interfaces/LeagueStatsResponse';
+import type { TeamStandingsData, TeamRecord } from './interfaces/TeamStandings';
 
 
 
@@ -37,7 +37,7 @@ export const nflTeams = [
 export const nbaTeams = [
     'ATL', 'BKN', 'BOS', 'CHA', 'CHI', 'CLE', 'DAL', 'DEN', 
     'DET', 'GSW', 'HOU', 'IND', 'LAC', 'LAL', 'MEM', 'MIA',
-    'MIL', 'MIN', 'NO', 'NYK', 'OKC', 'ORL', 'PHI', 'PHX', 
+    'MIL', 'MIN', 'NO', 'NY', 'OKC', 'ORL', 'PHI', 'PHX', 
     'POR', 'SAC', 'SAS', 'TOR', 'UTAH', 'WAS'
 ];
 
@@ -50,7 +50,7 @@ export const mlbTeams = [
 
 export const nhlTeams = [
     'ANA', 'BOS', 'BUF', 'CAR', 'CBJ', 'CGY', 'CHI', 'COL',
-    'DAL', 'DET', 'EDM', 'FLA', 'LA', 'MIN', 'MTL', 'NJD', 
+    'DAL', 'DET', 'EDM', 'FLA', 'LA', 'MIN', 'MTL', 'NJ', 
     'NSH', 'NYI', 'NYR', 'OTT', 'PHI', 'PIT', 'SEA', 'SJ', 
     'STL', 'TB', 'TOR', 'UTA', 'VAN', 'VGK', 'WPG', 'WSH'
 ];

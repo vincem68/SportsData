@@ -3,10 +3,11 @@ import port from '../index';
 
 import { checkRequestParams } from '../validation_functions';
 
-import { TeamResponse, Team} from '../interfaces/Team';
-import { TeamInfoResponse, TeamInfo } from '../interfaces/TeamInfo';
-import { TeamNews, TeamNewsResponse } from '../interfaces/TeamNews';
-import { GameOverview, GameOverviewResponse, parseGameOverviewResponse} from '../interfaces/GameOverview';
+import type { TeamResponse, Team} from '../interfaces/Team';
+import type { TeamInfoResponse, TeamInfo } from '../interfaces/TeamInfo';
+import type { TeamNews, TeamNewsResponse } from '../interfaces/TeamNews';
+import type { GameOverview, GameOverviewResponse} from '../interfaces/GameOverview.types';
+import * as GameOverviewModule from '../interfaces/GameOverview';
 
 const router = Router({ mergeParams: true });
 
@@ -19,7 +20,7 @@ router.get('/:team/roster', async function(req: Request, res: Response){
     const league = req.params.league;
     const team = req.params.team;
 
-    if (!checkRequestParams(sport, league)){
+    if (!checkRequestParams(sport, league, team)){
         res.status(400).send("Bad Request: Invalid sport or league parameter.");
         return;
     }
@@ -135,10 +136,10 @@ router.get('/:team', async function(req: Request, res: Response){
     const gameID = data.team.nextEvent[0].id;
     const nextGameEndpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard/${gameID}`;
     const gameResponse: GameOverviewResponse = await (await fetch(nextGameEndpoint)).json();
-    const game: GameOverview = parseGameOverviewResponse(gameResponse);
+    const game: GameOverview = GameOverviewModule.parseGameOverviewResponse(gameResponse);
 
     res.render('selected_team', {port: port, sport: sport, league: league.toUpperCase(), 
-        team: team, data: teamData, news: newsArticles, game: game, parseResponse: parseGameOverviewResponse});
+        team: team, data: teamData, news: newsArticles, game: game, parseResponse: GameOverviewModule.parseGameOverviewResponse});
 })
 
 /**
