@@ -1,6 +1,6 @@
-import type { GameOverview} from "./GameOverview.types"
+import type { GameOverview } from "../types/GameOverview.types";
 import { parseGameOverviewResponse } from "./GameOverview"
-import type { LeagueScheduleResponse, LeagueSchedule } from "./LeagueSchedule.types"
+import type { LeagueScheduleResponse, LeagueSchedule } from "../types/LeagueSchedule.types"
 
 
 /**

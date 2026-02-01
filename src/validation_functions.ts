@@ -1,4 +1,4 @@
-import { SeasonInfo } from "./interfaces/SeasonInfo";
+import { SeasonInfo } from "./interfaces/types/SeasonInfo.types";
 import { nflTeams, nbaTeams, mlbTeams, nhlTeams } from "./index";
 
 export async function getCurrentSeasonInfo(endpoint: string): Promise<SeasonInfo>{

@@ -3,11 +3,11 @@ import port from '../index';
 
 import { checkRequestParams } from '../validation_functions';
 
-import type { TeamResponse, Team} from '../interfaces/Team';
-import type { TeamInfoResponse, TeamInfo } from '../interfaces/TeamInfo';
-import type { TeamNews, TeamNewsResponse } from '../interfaces/TeamNews';
-import type { GameOverview, GameOverviewResponse} from '../interfaces/GameOverview.types';
-import * as GameOverviewModule from '../interfaces/GameOverview';
+import type { TeamResponse, Team} from '../interfaces/types/Team.types';
+import type { TeamInfoResponse, TeamInfo } from '../interfaces/types/TeamInfo.types';
+import type { TeamNews, TeamNewsResponse } from '../interfaces/types/TeamNews.types';
+import type { GameOverview, GameOverviewResponse} from '../interfaces/types/GameOverview.types';
+import * as GameOverviewModule from '../interfaces/transformations/GameOverview';
 
 const router = Router({ mergeParams: true });
 

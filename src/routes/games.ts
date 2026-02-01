@@ -3,10 +3,10 @@ import port from '../index';
 
 import { checkRequestParams, checkQueryParams } from '../validation_functions';
 
-import type { LeagueScheduleResponse, LeagueSchedule } from '../interfaces/LeagueSchedule.types';
-import type { GameOverview, GameOverviewResponse} from '../interfaces/GameOverview.types';
-import { parseLeagueScheduleResponse } from '../interfaces/LeagueSchedule';
-import {parseGameOverviewResponse} from '../interfaces/GameOverview';
+import type { LeagueScheduleResponse, LeagueSchedule } from '../interfaces/types/LeagueSchedule.types';
+import type { GameOverview, GameOverviewResponse} from '../interfaces/types/GameOverview.types';
+import { parseLeagueScheduleResponse } from '../interfaces/transformations/LeagueSchedule';
+import {parseGameOverviewResponse} from '../interfaces/transformations/GameOverview';
 import { parse } from 'path';
 
 const router = Router({ mergeParams: true });

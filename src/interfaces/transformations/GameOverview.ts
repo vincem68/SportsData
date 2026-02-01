@@ -1,4 +1,4 @@
-import type { GameOverviewResponse, GameOverview } from "./GameOverview.types";
+import type { GameOverviewResponse, GameOverview } from "../types/GameOverview.types";
 /**
  * Function to parse the GameOverviewResponse from ESPN into a more manageable GameOverview object
  * @param response JSON response from ESPN containing game info

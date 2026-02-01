@@ -6,10 +6,9 @@ import { checkRequestParams, getCurrentSeasonInfo, checkValidSeason } from './va
 import teamRoutes from './routes/teams';
 import gameRoutes from './routes/games';
 
-import type { SeasonInfo } from './interfaces/SeasonInfo';
-import type {TeamStats, LeagueStatsResponse} from './interfaces/LeagueStatsResponse';
-import type { TeamStandingsData, TeamRecord } from './interfaces/TeamStandings';
-
+import type { SeasonInfo } from './interfaces/types/SeasonInfo.types';
+import type {TeamStats, LeagueStatsResponse} from './interfaces/types/LeagueStats.types';
+import type { TeamStandingsData, TeamRecord } from './interfaces/types/TeamStandings.types';
 
 
 const app = express();
