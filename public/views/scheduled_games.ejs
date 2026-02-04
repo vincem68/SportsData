@@ -184,7 +184,7 @@
 
         const endpoint = "<%= endpoint %>";
         const league = "<%= league %>";
-        const parseGames = <%- parseGames.toString() %>;
+        const parseGame = <%- parseGame.toString() %>;
 
         //hide game active sections within the games yet to start
         upcomingGames.querySelectorAll('.gameContainer').forEach(game => {
@@ -216,7 +216,12 @@
         headlines[1].style.display = (upcomingGames.children.length == 0) ? 'none' : 'flex';
         headlines[2].style.display = (completedGames.children.length == 0) ? 'none' : 'flex';
 
-        //this is the function to get the week options for football games
+
+        /**
+         * Function to get the proper week options based on season type selected
+         * This is used mainly for football games, set up regular season weeks from weeks 1-18, 
+         * and for the postseason, match the round names to the correspendonding week values
+         */
         function getOptions(){
 
             const type = typeSelector.value;
@@ -275,7 +280,7 @@
 
             //get the data from the response
             const response = await (await fetch(endpoint)).json();
-            const updatedGames = parseGames(response);
+            const updatedGames = parseLeagueScheduleResponse(response);
 
 
             //first go through upcoming games to see if any have started
@@ -399,7 +404,7 @@
 
         //helper function from the LeageSchedule.ts file, not sure why but I can't pass it from the TS route
         async function parseLeagueScheduleResponse(data) {
-            const parsedGames = data.events.map(event => parseGameOverviewResponse(event));
+            const parsedGames = data.events.map(event => parseGame(event));
             return {
                 activeGames: parsedGames.filter(game => game.status.state === "in"),
                 upcomingGames: parsedGames.filter(game => game.status.state === "pre"),

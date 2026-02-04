@@ -57,15 +57,15 @@
             <div id="statsSection">
 
                 <!--This will be used to get the right page-->
-                <% if (league.toUpperCase() == "NFL"){ %>
+                <% if (league == "NFL"){ %>
 
                     <%- include ('nfl_team_stats') %>
 
-                <% } else if (league.toUpperCase() == "MLB"){ %>
+                <% } else if (league == "MLB"){ %>
 
                     <%- include ('mlb_team_stats') %>
 
-                <% } else if (league.toUpperCase() == "NBA"){ %>
+                <% } else if (league == "NBA"){ %>
 
                     <%- include ('nba_team_stats') %>
 

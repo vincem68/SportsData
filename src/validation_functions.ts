@@ -10,18 +10,19 @@ export async function getCurrentSeasonInfo(endpoint: string): Promise<SeasonInfo
 }
 
 export function checkRequestParams(sport: string, league: string, team?: string): boolean {
+    console.log("Checking request params:", sport, league, team);
     const validSports = ['football', 'basketball', 'baseball', 'hockey'];
     const validLeagues = ['nfl', 'nba', 'mlb', 'nhl'];
-    const teams: string[] = (league === 'nfl') ? nflTeams :
-        (league === 'nba') ? nbaTeams :
-        (league === 'mlb') ? mlbTeams :
-        (league === 'nhl') ? nhlTeams : [];
+    const teams: string[] = (league.toLowerCase() === 'nfl') ? nflTeams :
+        (league.toLowerCase() === 'nba') ? nbaTeams :
+        (league.toLowerCase() === 'mlb') ? mlbTeams :
+        (league.toLowerCase() === 'nhl') ? nhlTeams : [];
     //return true if sport and league are valid, and if team is provided, check that too
     return validSports.includes(sport.toLowerCase()) && validLeagues.includes(league.toLowerCase()) && 
         (team === undefined || teams.includes(team.toUpperCase()));
 }
 
-export function checkQueryParams(year: number, type: number, week?: number): boolean {
+export function checkQueryParams(year: number, type: number, week?: number, date?: string): boolean {
     if (type > 4 || type < 1){
         return false;
     }
@@ -30,6 +31,12 @@ export function checkQueryParams(year: number, type: number, week?: number): boo
     }
     if (week !== undefined && (week < 1 || week > 18)){
         return false;
+    }
+    if (date !== undefined){
+        const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+        if (!dateRegex.test(date)){
+            return false;
+        }
     }
     return true;
 }

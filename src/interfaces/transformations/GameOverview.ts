@@ -4,7 +4,7 @@ import type { GameOverviewResponse, GameOverview } from "../types/GameOverview.t
  * @param response JSON response from ESPN containing game info
  * @returns a variable of type GameOverview to have needed JSON info much more organized and readable
  */
-export const parseGameOverviewResponse = (response: GameOverviewResponse): GameOverview => {
+export const parseGame = (response: GameOverviewResponse): GameOverview => {
     const competition = response.competitions[0];
     const awayCompetitor = competition.competitors[1];
     const homeCompetitor = competition.competitors[0];

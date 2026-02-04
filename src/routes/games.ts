@@ -6,7 +6,7 @@ import { checkRequestParams, checkQueryParams } from '../validation_functions';
 import type { LeagueScheduleResponse, LeagueSchedule } from '../interfaces/types/LeagueSchedule.types';
 import type { GameOverview, GameOverviewResponse} from '../interfaces/types/GameOverview.types';
 import { parseLeagueScheduleResponse } from '../interfaces/transformations/LeagueSchedule';
-import {parseGameOverviewResponse} from '../interfaces/transformations/GameOverview';
+import {parseGame} from '../interfaces/transformations/GameOverview';
 import { parse } from 'path';
 
 const router = Router({ mergeParams: true });
@@ -52,6 +52,7 @@ router.get('/', async function(req: Request, res: Response) {
     const sport = req.params.sport;
     const league = req.params.league;
 
+    //check the params in URL
     if (!checkRequestParams(sport, league)){
         res.status(400).send("Bad Request: Invalid sport or league parameter.");
         return;
@@ -78,7 +79,7 @@ router.get('/', async function(req: Request, res: Response) {
     const leagueSchedule: LeagueSchedule = parseLeagueScheduleResponse(data);
     //render all the data onto the scheduled games page
     res.render('scheduled_games', { port: port, sport: sport, league: league.toUpperCase(),
-        leagueSchedule: leagueSchedule, endpoint: endpoint, parseGames: parseGameOverviewResponse});
+        leagueSchedule: leagueSchedule, endpoint: endpoint, parseGame: parseGame});
 })
 
 export default router;

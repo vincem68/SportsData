@@ -1,13 +1,17 @@
 import {Router, Request, Response} from 'express';
 import port from '../index';
 
-import { checkRequestParams } from '../validation_functions';
+import { checkRequestParams, checkQueryParams } from '../validation_functions';
 
 import type { TeamResponse, Team} from '../interfaces/types/Team.types';
 import type { TeamInfoResponse, TeamInfo } from '../interfaces/types/TeamInfo.types';
 import type { TeamNews, TeamNewsResponse } from '../interfaces/types/TeamNews.types';
 import type { GameOverview, GameOverviewResponse} from '../interfaces/types/GameOverview.types';
-import * as GameOverviewModule from '../interfaces/transformations/GameOverview';
+import type { TeamStatsResponse, TeamStats } from '../interfaces/types/TeamStats.types';
+
+import { parseGame } from '../interfaces/transformations/GameOverview';
+import { parseTeamStatsResponse } from '../interfaces/transformations/TeamStats';
+import { parse } from 'path';
 
 const router = Router({ mergeParams: true });
 
@@ -66,33 +70,32 @@ router.get('/:team/schedule', async function(req: Request, res: Response){
  */
 router.get('/:team/stats', async function(req: Request, res: Response){
 
+    //url params
     const sport = req.params.sport;
     const league = req.params.league;
     const team = req.params.team;
 
-    if (!checkRequestParams(sport, league)){
+    //check the params in URL
+    if (!checkRequestParams(sport, league, team)){
         res.status(400).send("Bad Request: Invalid sport or league parameter.");
         return;
     }
 
+    //base endpoint
     let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/statistics`;
-    const requestedType = (req.query.seasonType !== undefined) ? req.query.seasonType : 2;
 
+    //check query params, add on to base endpoint if queries check out
     if (req.query.season !== undefined && req.query.seasonType !== undefined){
-        endpoint += `?season=${req.query.season}&seasontype=${req.query.seasonType}`;
+        if (checkQueryParams(Number(req.query.season), Number(req.query.seasonType))){
+            endpoint += `?season=${req.query.season}&seasontype=${req.query.seasonType}`;
+        }
     }
 
-    //check to get team name and season if requested endpoint has code 404, get required data
-    const checkData = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/` +
-        `${league}/teams/${team}/statistics`)).json();
-    const year = (checkData.season.type != 1) ? checkData.season.year : checkData.season.year - 1;
-    const teamName = checkData.team.displayName;
-    const logo = checkData.team.logo;
+    const teamData: TeamStatsResponse = await (await fetch(endpoint)).json();
+    const teamStats: TeamStats = parseTeamStatsResponse(teamData, league);
+    
 
-    const data = await (await fetch(endpoint)).json();
-
-    res.render('team_stats/overview', {port: port, league: league, year: year, teamName: teamName, logo: logo, 
-        requestedType: requestedType, data: data});
+    res.render('team_stats', {port: port, league: league.toUpperCase(), teamStats: teamStats });
 })
 
 /**
@@ -117,10 +120,11 @@ router.get('/:team', async function(req: Request, res: Response){
     const data: TeamInfoResponse = await (await fetch(dataEndpoint)).json();
     const teamData: TeamInfo = {
         displayName: data.team.displayName,
-        recordSummary: data.team.record.items.length > 0 ? data.team.record.items[0].summary : '',
+        recordSummary: data.team.record.items !== undefined ? data.team.record.items[0].summary : '',
         logoUrl: data.team.logos[0].href,
         gameID: data.team.nextEvent.length > 0 ? data.team.nextEvent[0].id : ''
     };
+    
     //get news on team
     const news: TeamNewsResponse = await (await fetch(newsEndpoint)).json();
     const newsArticles: TeamNews[] = news.articles.map((article) => {{
@@ -133,13 +137,20 @@ router.get('/:team', async function(req: Request, res: Response){
     }});
 
     //get details for previous or next scheduled game
+    if (teamData.gameID === '') { //if there is no available data for a next game
+        res.render('selected_team', {port: port, sport: sport, league: league.toUpperCase(), 
+            team: team, data: teamData, news: newsArticles, game: null, parseResponse: parseGame});
+        return;
+    }
+
+    //otherwise, fetch the next game data
     const gameID = data.team.nextEvent[0].id;
     const nextGameEndpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard/${gameID}`;
     const gameResponse: GameOverviewResponse = await (await fetch(nextGameEndpoint)).json();
-    const game: GameOverview = GameOverviewModule.parseGameOverviewResponse(gameResponse);
+    const game: GameOverview = parseGame(gameResponse);
 
     res.render('selected_team', {port: port, sport: sport, league: league.toUpperCase(), 
-        team: team, data: teamData, news: newsArticles, game: game, parseResponse: GameOverviewModule.parseGameOverviewResponse});
+        team: team, data: teamData, news: newsArticles, game: game, parseResponse: parseGame});
 })
 
 /**

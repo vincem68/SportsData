@@ -1,5 +1,5 @@
 import type { GameOverview } from "../types/GameOverview.types";
-import { parseGameOverviewResponse } from "./GameOverview"
+import { parseGame } from "./GameOverview"
 import type { LeagueScheduleResponse, LeagueSchedule } from "../types/LeagueSchedule.types"
 
 
@@ -11,7 +11,7 @@ import type { LeagueScheduleResponse, LeagueSchedule } from "../types/LeagueSche
  * the respone's date or week
  */
 export const parseLeagueScheduleResponse = (data: LeagueScheduleResponse): LeagueSchedule => {
-    const parsedGames: GameOverview[] = data.events.map(event => parseGameOverviewResponse(event));
+    const parsedGames: GameOverview[] = data.events.map(event => parseGame(event));
     return {
         season: data.season,
         totalGames: parsedGames.length,
