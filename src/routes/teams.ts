@@ -86,7 +86,7 @@ router.get('/:team/stats', async function(req: Request, res: Response){
 
     //check query params, add on to base endpoint if queries check out
     if (req.query.season !== undefined && req.query.seasonType !== undefined){
-        if (checkQueryParams(Number(req.query.season), Number(req.query.seasonType))){
+        if (checkQueryParams(league, Number(req.query.season), Number(req.query.seasonType))){
             endpoint += `?season=${req.query.season}&seasontype=${req.query.seasonType}`;
         }
     }
@@ -124,7 +124,6 @@ router.get('/:team', async function(req: Request, res: Response){
         logoUrl: data.team.logos[0].href,
         gameID: data.team.nextEvent.length > 0 ? data.team.nextEvent[0].id : ''
     };
-    
     //get news on team
     const news: TeamNewsResponse = await (await fetch(newsEndpoint)).json();
     const newsArticles: TeamNews[] = news.articles.map((article) => {{
@@ -143,7 +142,7 @@ router.get('/:team', async function(req: Request, res: Response){
         return;
     }
 
-    //otherwise, fetch the next game data
+    //otherwise, 
     const gameID = data.team.nextEvent[0].id;
     const nextGameEndpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard/${gameID}`;
     const gameResponse: GameOverviewResponse = await (await fetch(nextGameEndpoint)).json();

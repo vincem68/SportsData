@@ -40,6 +40,12 @@
             </div>
         </div>
 
+        <div id="seasonDescDiv">
+            <p>Showing Stats for the <%= teamStats.requestedYearText %> <%= teamStats.requestedTypeText %></p>
+            <p>Season Record: <%= teamStats.recordSummary %></p>
+            <p>Standings: <%= teamStats.standingSummary %></p>
+        </div>
+
         <!--If no data is available for the requested team/season, show this message-->
         <% if (!teamStats){ %>
 
@@ -47,9 +53,9 @@
         
         <!--If team did not qualify for postseason, show this message-->
         <% } else if (
-            (teamStats.requestedSeason < teamStats.seasonYear && teamStats.qualifiedPostSeason == false)
-            || (teamStats.requestedSeason == teamStats.seasonYear && teamStats.seasonType >= 3 
-                && teamStats.qualifiedPostSeason == false)) { %>
+            (teamStats.requestedSeason < teamStats.seasonYear && teamStats.qualifiedPostSeason == false && teamStats.requestedType == 3)
+            || (teamStats.requestedSeason == teamStats.seasonYear && teamStats.seasonType == 3 &&
+                teamStats.requestedType == 3 && teamStats.qualifiedPostSeason == false)) { %>
 
             <h1>Team Did Not Make the Postseason for the Requested Season.</h1>
 
@@ -57,16 +63,10 @@
         <% } else if (teamStats.requestedSeason == teamStats.seasonYear 
             && teamStats.requestedType > teamStats.seasonType){ %>
 
-            <h1>The Requested Season Type Has Not Occurred Yet This Season.</h1>
+            <h1>Data Not Yet Available. The Requested Season Has Not Yet Occurred.</h1>
 
         <!--if everything checks out-->
         <% } else { %>
-
-            <div id="seasonDescDiv">
-                <p>Showing Stats for the <%= teamStats.requestedYearText %> <%= teamStats.requestedTypeText %></p>
-                <p>Season Record: <%= teamStats.recordSummary %></p>
-                <p>Standings: <%= teamStats.standingSummary %></p>
-            </div>
 
             <div id="statsSection"> <!--The main section for categories-->
 

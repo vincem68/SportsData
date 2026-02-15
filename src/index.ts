@@ -1,7 +1,7 @@
 import express, {Request, Response} from 'express';
 import path from 'path';
 
-import { checkRequestParams, getCurrentSeasonInfo, checkValidSeason } from './validation_functions';
+import { checkRequestParams, checkValidSeason } from './validation_functions';
 
 import teamRoutes from './routes/teams';
 import gameRoutes from './routes/games';
@@ -9,6 +9,11 @@ import gameRoutes from './routes/games';
 import type { SeasonInfo } from './interfaces/types/SeasonInfo.types';
 import type {TeamStats, LeagueStatsResponse} from './interfaces/types/LeagueStats.types';
 import type { TeamStandingsData, TeamRecord } from './interfaces/types/TeamStandings.types';
+import type { BasicPlayerStatsResponse, BasicPlayerStats, PlayerSplits, 
+    PlayerSplitsResponse, PlayerStatsOverview, PlayerStatsOverviewResponse
+} from './interfaces/types/PlayerStats.types';
+
+import { parseBasicPlayerStats, parseMainPlayerStats, parsePlayerSplits } from './interfaces/transformations/PlayerStats';
 
 
 const app = express();
@@ -225,19 +230,35 @@ app.get('/:sport/:league/player/:playerID', async function(req: Request, res: Re
         return;
     }
 
-    const endpoint = `https://site.web.api.espn.com/apis/common/v3/sports/${sport}/${league}/athletes/${playerID}`;
+    //make sure playerID param is actually a number
+    if (isNaN(Number(playerID))){
+        res.status(400).send("Invalid player ID");
+        return;
+    }
+
+    const endpoint = `https://site.web.api.espn.com/apis/common/v3/sports/${sport}/${league.toLowerCase()}/athletes/${playerID}`;
 
     //get the basic info of player like name, position, team, etc
-    const basicPlayerInfo = await (await fetch(endpoint)).json();
+    const basicPlayerInfo: BasicPlayerStatsResponse = await (await fetch(endpoint)).json();
+    const playerInfo: BasicPlayerStats = parseBasicPlayerStats(basicPlayerInfo);
 
     //get the basic stats of player, like regular season stats, career, postseason
-    const mainPlayerStats = await (await fetch(endpoint + "/overview")).json();
+    const mainPlayerStats: PlayerStatsOverviewResponse = await (await fetch(endpoint + "/overview")).json();
+    const playerOverview: PlayerStatsOverview | null = parseMainPlayerStats(mainPlayerStats);
+
+    //if the main stats aren't available, neither will the splits, so just render the basic stats
+    if (playerOverview === null){
+        res.render('player_stats', {port: port, sport: sport, league: league, playerInfo: playerInfo, 
+            playerOverview: null, playerSplits: null});
+        return;
+    }
 
     //get advanced splits of a player
-    const advancedPlayerStats = await (await fetch(endpoint + "/splits")).json();
+    const advancedPlayerStats: PlayerSplitsResponse = await (await fetch(endpoint + "/splits")).json();
+    const playerSplits: PlayerSplits = parsePlayerSplits(advancedPlayerStats);
 
-    res.render('player_stats', {port: port, sport: sport, league: league, generalInfo: basicPlayerInfo, 
-        playerOverview: mainPlayerStats, playerSplits: advancedPlayerStats});
+    res.render('player_stats', {port: port, sport: sport, league: league, playerInfo: playerInfo, 
+        playerOverview: playerOverview, playerSplits: playerSplits});
 })
 
 /**

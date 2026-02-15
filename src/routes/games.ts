@@ -70,7 +70,7 @@ router.get('/', async function(req: Request, res: Response) {
         const season = req.query.season;
         const week = req.query.week;
         const type = req.query.seasonType;
-        endpoint += (checkQueryParams(Number(season), Number(type), Number(week))) ? 
+        endpoint += (checkQueryParams(league, Number(season), Number(type), Number(week))) ? 
             `?dates=${season}&week=${week}&seasontype=${type}` : '';
     }
 

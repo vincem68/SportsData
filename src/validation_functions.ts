@@ -1,16 +1,32 @@
 import { SeasonInfo } from "./interfaces/types/SeasonInfo.types";
 import { nflTeams, nbaTeams, mlbTeams, nhlTeams } from "./index";
+import { BasicTeamInfo, DataResponse } from "./interfaces/types/BasicTeamInfo.types";
 
-export async function getCurrentSeasonInfo(endpoint: string): Promise<SeasonInfo>{
-    const seasonInfo: SeasonInfo = await (await fetch(endpoint)).json();
-    if (seasonInfo.code !== undefined){
-        throw new Error("Invalid request");
+
+/**
+ * This function will be used to get basic info from requests in case of 404 responses
+ * We need this basic info to render some files, so in case responses for specific requests don't get 
+ * fulfilled, we use this to make sure we get it. Only used for base endpoints. 
+ * @param endpoint string that will respresent the data endpoint where we send requests to
+ * @returns a simple object that will contain the current season year and type of what data we're looking at
+ */
+export async function getBasicResponseInfo<T extends DataResponse>(endpoint: string): Promise<BasicTeamInfo>{
+
+    const response: T = await (await fetch(endpoint)).json();
+
+    const data: BasicTeamInfo = {
+        seasonYear: response.season.year,
+        seasonType: response.season.type,
+        teamName: (response.team) ? response.team.displayName : undefined,
+        teamLogo: (response.team) ? response.team.logo : undefined
     }
-    return seasonInfo;
+
+    return data;
+
 }
 
 export function checkRequestParams(sport: string, league: string, team?: string): boolean {
-    console.log("Checking request params:", sport, league, team);
+    //console.log("Checking request params:", sport, league, team);
     const validSports = ['football', 'basketball', 'baseball', 'hockey'];
     const validLeagues = ['nfl', 'nba', 'mlb', 'nhl'];
     const teams: string[] = (league.toLowerCase() === 'nfl') ? nflTeams :
@@ -22,11 +38,17 @@ export function checkRequestParams(sport: string, league: string, team?: string)
         (team === undefined || teams.includes(team.toUpperCase()));
 }
 
-export function checkQueryParams(year: number, type: number, week?: number, date?: string): boolean {
+export function checkQueryParams(league: string, year: number, type: number, week?: number, date?: string): boolean {
     if (type > 4 || type < 1){
         return false;
     }
-    if (year < 2000 || year > new Date().getFullYear()){
+    if (year < 2000){
+        return false;
+    }
+    if ((league.toLowerCase() == 'nfl' || league.toLowerCase() == 'mlb') && new Date().getFullYear() < year){
+        return false;
+    }
+    if ((league.toLowerCase() == 'nba' || league.toLowerCase() == 'nhl') && new Date().getFullYear() < year + 1){
         return false;
     }
     if (week !== undefined && (week < 1 || week > 18)){
