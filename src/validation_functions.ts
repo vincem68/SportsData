@@ -10,18 +10,25 @@ import { BasicTeamInfo, DataResponse } from "./interfaces/types/BasicTeamInfo.ty
  * @param endpoint string that will respresent the data endpoint where we send requests to
  * @returns a simple object that will contain the current season year and type of what data we're looking at
  */
-export async function getBasicResponseInfo<T extends DataResponse>(endpoint: string): Promise<BasicTeamInfo>{
+export async function getBasicResponseInfo(endpoint: string): Promise<BasicTeamInfo>{
 
-    const response: T = await (await fetch(endpoint)).json();
+    const response = await fetch(endpoint)
+        .then(res => res.json())
+        .then((data: DataResponse) => {
+            const basicInfo: BasicTeamInfo = {
+                seasonYear: data.season.year,
+                seasonType: data.season.type,
+                teamName: data.team ? data.team.displayName : undefined,
+                teamLogo: data.team ? data.team.logo : undefined
+            }
+            return basicInfo;
+        })
+        .catch(err => {
+            console.error("Error fetching basic response info:", err);
+            throw err;
+        });
 
-    const data: BasicTeamInfo = {
-        seasonYear: response.season.year,
-        seasonType: response.season.type,
-        teamName: (response.team) ? response.team.displayName : undefined,
-        teamLogo: (response.team) ? response.team.logo : undefined
-    }
-
-    return data;
+    return response;
 
 }
 

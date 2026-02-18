@@ -1,6 +1,6 @@
 <html>
     <head>
-        <title><%= league.toUpperCase() %> Leaders</title>
+        <title><%= league %> Leaders</title>
         <link rel="stylesheet" href="/styles/league_leaders.css">
     </head>
 
@@ -10,16 +10,16 @@
 
         <div class="topSection">
             <div class="titleSection">
-                <% if (league.toUpperCase() == "MLB"){ %>
+                <% if (league == "MLB"){ %>
                     <img src = '/images/mlb_logo.png' class= 'mainLogo' alt = 'MLB Logo'>
-                <% } else if (league.toUpperCase() == "NBA"){ %>
+                <% } else if (league == "NBA"){ %>
                     <img src = '/images/nba_logo.png' class= 'mainLogo' alt = 'NBA Logo'>
-                <% } else if (league.toUpperCase() == "NFL"){ %>
+                <% } else if (league == "NFL"){ %>
                     <img src = '/images/nfl_logo.png' class= 'mainLogo' alt = 'NFL Logo'>
                 <% } else { %>
                     <img src = '/images/nhl_logo.png' class= 'mainLogo' alt = 'NHL Logo'>
                 <% } %>
-                <h1><%= league.toUpperCase() %> Stat Leaders</h1>
+                <h1><%= league %> Stat Leaders</h1>
             </div>
 
             <div class="form-container">
@@ -53,15 +53,15 @@
             <div class="select-wrapper">
                 <select id="catSelect">
                     <% data.categories.forEach(cat => { %>
-                        <option value="<%= cat.name %>"><%= cat.displayName %></option>
+                        <option value="<%= cat.id %>"><%= cat.name %></option>
                     <% }) %>
                 </select>
             </div>
             
             <% data.categories.forEach(cat => { %>
 
-                <div id="<%= cat.name %>" class="catDiv">
-                    <h2 class="categoryHeadline"><%= cat.displayName %></h2>
+                <div id="<%= cat.id %>" class="catDiv">
+                    <h2 class="categoryHeadline"><%= cat.name %></h2>
                     <table>
                         <tr>
                             <th>Rank</th>
@@ -70,16 +70,14 @@
                             <th>Total</th>
                             <th>More Stats</th>
                         </tr>
-                        <% let rank = 1; %>
                         <% cat.leaders.forEach(leader => { %>
-                            <tr>
-                                <td><%= rank %></td>
+                            <tr id="<%= cat.id %>-row-<%= leader.playerID %>">
+                                <td><%= leader.rank %></td>
                                 <td class="playerName"></td>
                                 <td class="playerTeamLogo"></td>
-                                <td><%= Math.round(leader.value * 1000) / 1000 %></td>
+                                <td><%= leader.value %></td>
                                 <td class="playerLink"></td>
                             </tr>
-                            <% rank++; %>
                         <% }) %>
                         
                     </table>
@@ -93,59 +91,40 @@
         const catSelect = document.getElementById("catSelect");
         const catDivs = document.querySelectorAll(".catDiv");
 
-        const leaderData = <%- JSON.stringify(data.categories) %>;
+        const leaderData = <%- JSON.stringify(data) %>;
         const sport = "<%= sport %>";
         const league = "<%= league %>";
 
-        //hide every div element 
-        function hideAllCatDivs(){
-            for (let i = 0; i < catDivs.length; i++){
-                catDivs[i].style.display = "none";
-            }
-        }
-
         //since the JSON data doesn't contain needed info, send requests to fill up names, teams and link tds
-        async function getAthletes(category){
+        async function getAthletes(){
+            //hide all the divs when we make a change
+            catDivs.forEach(div => div.style.display = "none");
             //get the div element
-            const div = document.getElementById(category);
+            const div = document.getElementById(catSelect.value);
             //check to see if names are already filled, if not continue with function
-            if (div.querySelector(".playerName").textContent == "") {
-                //get the leaders for the category
-                const leaders = leaderData.find(cat => cat.name === category).leaders;
-                //get the row elements under the selected div
-                const rows = div.querySelectorAll("tr"); //get the rows of the div
-                for (let i = 0; i < leaders.length; i++){
-                    const leader = leaders[i];
-                    const row = rows[i + 1]; //skip header row
-                    //fetch athlete data
-                    const playerData = await (await fetch(leader.athlete.$ref)).json();
-                    //fill in name
-                    const nameTd = row.querySelector(".playerName");
-                    nameTd.innerHTML =`<img class="headshot" src="${playerData.headshot.href}">` + playerData.displayName;
-                    //fill in team logo
-                    const teamData = await (await fetch(leader.team.$ref)).json();
-                    const teamTd = row.querySelector(".playerTeamLogo");
-                    teamTd.innerHTML = `<img class="teamLogo" src="${teamData.logos[0].href}">${teamData.abbreviation}`;
-                    //fill in player link
-                    const playerID = leader.athlete.$ref.substring(leader.athlete.$ref.lastIndexOf("/") + 1, leader.athlete.$ref.indexOf("?"));
-                    const linkTd = row.querySelector(".playerLink");
-                    linkTd.innerHTML = `<a href="http://localhost:<%= port %>/${sport}/${league}/player/${playerID}">Player Stats</a>`;
-                }
+            if (!div.classList.contains("dataFilled")){
+                //get the leaders array of the selected category
+                leaderData.categories.find(cat => cat.id === catSelect.value).leaders.forEach(async leader => {
+                    const athlete = await (await fetch(leader.athleteEndpoint)).json();
+                    const team = await (await fetch(leader.teamEndpoint)).json();
+                    //fill in the name, team logo and link tds for the current leader
+                    const row = document.getElementById(`${catSelect.value}-row-${leader.playerID}`);
+                    row.querySelector(".playerName").innerHTML = `<img class="headshot" src="${athlete.headshot.href}">` + athlete.displayName;;
+                    row.querySelector(".playerTeamLogo").innerHTML = `<img class="teamLogo" src="${team.logos[0].href}">${team.abbreviation}`;
+                    row.querySelector(".playerLink").innerHTML = `<a href="http://localhost:<%= port %>/${sport}/${league}/player/${leader.playerID}">Player Stats</a>`;
+                });
+                //add class to show that we've filled in the data for this category, so we don't have to send requests again
+                div.classList.add("dataFilled");
             }
+            //display the div after filling in the data
+            document.getElementById(catSelect.value).style.display = "flex";
         }
 
         //event listener for drowpdown, switches table display
-        catSelect.addEventListener("change", function(){
-            hideAllCatDivs();
-            const selectedCat = catSelect.value;
-            getAthletes(selectedCat); //send request to data before displaying
-            document.getElementById(selectedCat).style.display = "flex";
-        });
-
+        catSelect.addEventListener("change", getAthletes);
         // Initialize - hide all except first
-        hideAllCatDivs();
-        getAthletes(catSelect.value); //send request to data before displaying
-        document.getElementById(catSelect.value).style.display = "flex";
+        getAthletes(); //send request to data before displaying
+
     </script>
 
 </html>
