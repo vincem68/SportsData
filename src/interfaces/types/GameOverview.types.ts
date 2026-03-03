@@ -79,14 +79,14 @@ export interface GameOverview {
     awayTeam: {
         id: string
         abbreviation: string
-        displayName: string
+        name: string
         logo: string
         score: string
     }
     homeTeam: {
         id: string
         abbreviation: string
-        displayName: string
+        name: string
         logo: string
         score: string
     }

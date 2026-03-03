@@ -15,14 +15,14 @@ export const parseGame = (response: GameOverviewResponse): GameOverview => {
         awayTeam: {
             id: awayCompetitor.id,
             abbreviation: awayCompetitor.team.abbreviation,
-            displayName: awayCompetitor.team.displayName,
+            name: awayCompetitor.team.displayName,
             logo: awayCompetitor.team.logo,
             score: awayCompetitor.score
         },
         homeTeam: {
             id: homeCompetitor.id,
             abbreviation: homeCompetitor.team.abbreviation,
-            displayName: homeCompetitor.team.displayName,
+            name: homeCompetitor.team.displayName,
             logo: homeCompetitor.team.logo,
             score: homeCompetitor.score
         },

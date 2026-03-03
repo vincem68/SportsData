@@ -1,42 +1,3 @@
-<%
-    if (league.toUpperCase() == "NBA" && overview.status.type.state != "pre"){
-        summary.boxscore.teams[0].statistics[18].abbreviation = "PCOT";
-        summary.boxscore.teams[1].statistics[18].abbreviation = "PCOT";
-    }
-
-    //get the length of a sports game linescore
-    const intervals = [1,2,3,4,5,6,7,8,9].filter(interval => 
-        interval <= overview.competitions[0].format.regulation.periods);
-
-    //add in OT or extra innings of game has gone farther than regulation
-    if (overview.status.type.state != "pre"){
-        for (let i = intervals[intervals.length - 1] + 1; i <= overview.competitions[0].competitors[1].linescores.length; i++){
-            //if its an NHL game, a reg season game, and went to shootout
-            if (league.toUpperCase() == "NHL" && overview.season.type == 2 && i == 5){
-                intervals.push("SO");
-
-            } else if (league.toUpperCase() != "MLB"){
-                intervals.push(((i - intervals[intervals.length - 1]) + "OT").replace("1O", "O"));
-            } else {
-                intervals.push(i);
-            }
-        }
-    }
-
-    const homeLeaders = (overview.status.type.state != "in" && league.toUpperCase() == "NFL") ? 
-        summary.leaders[1].leaders.filter(cat => cat.leaders !== undefined) :
-        (overview.status.type.state != "in" &&  overview.competitions[0].competitors[0].leaders !== undefined) ?
-        overview.competitions[0].competitors[0].leaders.filter(leader => !leader.displayName.includes("Rating"))
-        : [];
-
-    const awayLeaders = (overview.status.type.state != "in" && league.toUpperCase() == "NFL") ? 
-        summary.leaders[0].leaders.filter(cat => cat.leaders !== undefined) :
-        (overview.status.type.state != "in" &&  overview.competitions[0].competitors[1].leaders !== undefined) ?
-        overview.competitions[0].competitors[1].leaders.filter(leader => !leader.displayName.includes("Rating"))
-        : [];
-%>
- 
-
 <!DOCTYPE html>
 <html>
 
@@ -49,213 +10,169 @@
 
         <%- include ('menu_header') %>
 
-
-
-        <!--GAME OVERVIEW SECTION-->
+        <!-------------------------------GAME OVERVIEW SECTION---------------------------->
 
         <!--This section will be about the general info about the game. Score, team logos
             and names, and the clock/inning info. Add season series stuff here-->
         <div id="overview">
 
-            <!--This section is for the away team-->
+            <!--This section is for the away team, with logo, name and record-->
             <div class="teamOverview">
-                <img class="teamLogo" src="<%= overview.competitions[0].competitors[1].team.logo %>">
-                <h1><%= overview.competitions[0].competitors[1].team.displayName %></h1>
-                <h3><%= overview.competitions[0].competitors[1].records[0].summary %></h3>
+                <img class="teamLogo" src="<%= overview.awayTeam.logo %>">
+                <h1><%= overview.awayTeam.name %></h1>
+                <h3><%= overview.awayTeam.record %></h3>
             </div>
 
             <!--This is the middle section for clock/inning info-->
             <div id="gameInfoOverview"> <!--Put status of game here-->
                 <img id="live_status_img" src="/images/live_status.gif">
-                <p id="status"><%= overview.competitions[0].status.type.detail %></p>
-                <p id="seriesStatus">
-                    <% if (overview.season.type == 3 && league.toUpperCase() != "NFL"){ %>
-                        <%= overview.competitions[0].series.summary %>
+                <p id="status"><%= overview.status.shortDetail %></p>
+                <p id="seriesStatus"> <!--series score if in postseason and not NFL-->
+                    <% if (overview.seasonType == 3 && league != "NFL"){ %>
+                        <%= overview.seriesSummary %>
                     <% } %>
                 </p>
-                <p id="score"><!--game score-->
-                    <% if (overview.status.type.state != "pre"){ %>
-                        <%= overview.competitions[0].competitors[1].score %> - 
-                        <%= overview.competitions[0].competitors[0].score %>
+
+                <p id="score"><!--game score if in/post game-->
+                    <% if (overview.status.state != "pre"){ %>
+                        <%= overview.awayTeam.score %> - <%= overview.homeTeam.score %>
                     <% } %>
                 </p>
+
                 <div id="footballInfo"> <!--have this dive for football specific info-->
                     <img id="footballPossessionArrow" src="/images/left_arrow.png">
                     <p id="footballMarker"><!--shows what down and yard marker football game is at-->
-                        <% if (league.toUpperCase() == "NFL" && overview.competitions[0].situation !== undefined){ %>
-                            <%= overview.competitions[0].situation.downDistanceText %>
+                        <% if (league == "NFL" && overview.situation !== undefined){ %>
+                            <%= overview.situation.downDistanceText %>
                         <% } %>
                     </p>
                 </div>
-                <div id="atBat">
+
+                <div id="atBat"> <!--for baseball, shows count, outs, and pitcher/batter-->
                     <div>
                         <img id="pitcherHeadshot" src="">
                         <p id="pitcherName">
-                            <% if (league.toUpperCase() == "MLB" && overview.competitions[0].situation !== undefined){ %>
-                                <%= overview.competitions[0].situation.pitcher.athlete.fullName %>
+                            <% if (league == "MLB" && overview.situation !== undefined){ %>
+                                <%= overview.situation.pitcher.name %>
                             <% } %>
                         </p>
                     </div>
                     <div>
-                        <p id="count"><!--Keeps track of balls and strikes for at bat in baseball-->
-                            <% if (league.toUpperCase() == "MLB" && overview.status.type.state == "in"){ %>
-                                <%= overview.competitions[0].situation.balls %> - <%= overview.competitions[0].situation.strikes %>
+                        <p id="count"><!--Keeps track of ball and strike count in baseball game-->
+                            <% if (league == "MLB" && overview.situation){ %>
+                                <%= overview.situation.count %>
                             <% } %>
                         </p>
                         <p id="outs"><!--Keeps track of outs in baseball game-->
-                           <% if (league.toUpperCase() == "MLB" && overview.status.type.state == "in"){ %>
-                                <%= overview.competitions[0].situation.outs %> outs
+                           <% if (league == "MLB" && overview.situation){ %>
+                                <%= overview.situation.outs %> outs
                             <% } %>
                         </p>
                     </div>
                     <div>
                         <img id="batterHeadshot" src="">
                         <p id="batterName">
-                            <% if (league.toUpperCase() == "MLB" && overview.competitions[0].situation !== undefined){ %>
-                                <%= overview.competitions[0].situation.batter.athlete.fullName %>
+                            <% if (league == "MLB" && overview.situation){ %>
+                                <%= overview.situation.batter.name %>
                             <% } %>
                         </p>
                     </div>
                 </div>      
             </div>
 
-            <!--home team overview-->
+            <!--home team overview, with name, logo and record-->
             <div class="teamOverview">
-                <img class="teamLogo" src="<%= overview.competitions[0].competitors[0].team.logo %>">
-                <h1><%= overview.competitions[0].competitors[0].team.displayName %></h1>
-                <h3><%= overview.competitions[0].competitors[0].records[0].summary %></h3>
+                <img class="teamLogo" src="<%= overview.homeTeam.logo %>">
+                <h1><%= overview.homeTeam.name %></h1>
+                <h3><%= overview.homeTeam.record %></h3>
             </div>
         </div>
 
-
         
-        <!--LINESCORE-->
-        <!--(this shows the points for both teams in every interval)-->
+        <!---------------------------------LINESCORE------------------------------------->
+        <!--(this shows the points for both teams in every quarter/period/inning)-->
         <div id="linescoreDiv">
             <h2>Linescores</h2>
             <table id="linescores">
                 <tr>
                     <th>Team</th>
-                    <% intervals.forEach(interval => { %>
-                        <th class="linescoreInterval"><%= interval %></th>
+                    <% overview.linescore.intervals.forEach(interval => { %> 
+                        <th class="linescoreInterval"><%= interval %></th> 
                     <% }) %>
-                    <% if (league.toUpperCase() == "MLB"){ %>
-                        <th>R</th><th>H</th><th>E</th>
-                    <% } %>
+                    <% if (league == "MLB"){ %> <th>R</th> <th>H</th> <th>E</th> <% } %>
                 </tr>
                 <tr id="awayTeamLinescoreRow">
-                    <th class="name"><%= overview.competitions[0].competitors[1].team.abbreviation %></th>
-                    <% for (let i = 0; i < intervals.length; i++){ %>
-                        <td>
-                            <% if (overview.status.type.state != "pre"){
-                                if (i < overview.competitions[0].competitors[1].linescores.length){ %>
-                                    <%= overview.competitions[0].competitors[1].linescores[i].displayValue %>
-                                <% }
-                            } %>
-                        </td>
-                    <% }
-                    if (league.toUpperCase() == "MLB"){ %>
-                        <td class="mlbLinescores"><%= overview.competitions[0].competitors[1].statistics[1].displayValue %></td>
-                        <td class="mlbLinescores"><%= overview.competitions[0].competitors[1].statistics[0].displayValue %></td>
-                        <td class="mlbLinescores"><%= overview.competitions[0].competitors[1].statistics[7].displayValue %></td>
+                    <th class="name"><%= overview.awayTeam.abbreviation %></th>
+                    <% overview.linescore.awayLinescore.forEach(score => { %> <td><%= score %></td> <% }) %>
+                    <% if (league == "MLB"){ %>
+                        <td class="mlbLinescores"><%= overview.linescores.awayRuns %></td>
+                        <td class="mlbLinescores"><%= overview.linescores.awayHits %></td>
+                        <td class="mlbLinescores"><%= overview.linescores.awayErrors %></td>
                     <% } %>
                 </tr>
                 <tr id="homeTeamLinescoreRow">
-                    <th class="name"><%= overview.competitions[0].competitors[0].team.abbreviation %></th>
-                    <% for (let i = 0; i < intervals.length; i++){ %>
-                        <td>
-                            <% if (overview.status.type.state != "pre"){
-                                if (i < overview.competitions[0].competitors[0].linescores.length){ %>
-                                    <%= overview.competitions[0].competitors[0].linescores[i].displayValue %>
-                                <% }
-                            } %>
-                        </td>
-                    <% }
-                    if (league.toUpperCase() == "MLB"){ %>
-                        <td class="mlbLinescores"><%= overview.competitions[0].competitors[0].statistics[1].displayValue %></td>
-                        <td class="mlbLinescores"><%= overview.competitions[0].competitors[0].statistics[0].displayValue %></td>
-                        <td class="mlbLinescores"><%= overview.competitions[0].competitors[0].statistics[7].displayValue %></td>
+                    <th class="name"><%= overview.homeTeam.abbreviation %></th>
+                    <% overview.linescore.homeLinescore.forEach(score => { %> <td><%= score %></td> <% }) %>
+                    <% if (league == "MLB"){ %>
+                        <td class="mlbLinescores"><%= overview.linescore.homeRuns %></td>
+                        <td class="mlbLinescores"><%= overview.linescore.homeHits %></td>
+                        <td class="mlbLinescores"><%= overview.linescore.homeErrors %></td>
                     <% } %>
                 </tr>
             </table>
         </div>
 
 
-
-        <!--BOX SCORE-->
+        <!---------------------------------BOX SCORE--------------------------------------->
         <!--This will display the overall team stats info-->
-        <h3 id="boxHeadline">
-            <% if (overview.status.type.state == "pre"){ %>
-                Season Stats
-            <% } else { %>
-                Box Score
-            <% } %>
-        </h3>
+        <h3 id="boxHeadline"><% overview.status.state == "pre" ? "Season Stats" : "Box Score" %></h3>
         <div id="boxscore">
             <table>
-                <% if (league.toUpperCase() != "MLB") { %>
+                <% if (league != "MLB") { %>
                     <tr>
                         <th>Team</th>
-                        <% summary.boxscore.teams[0].statistics.forEach(stat => {
-                            if (stat.abbreviation !== undefined){ %>
-                                <th><%= stat.abbreviation %></th>
-                            <% } else { %>
-                                <th><%= stat.label %></th>
-                            <% }
-                        }) %>
+                        <% summary.awayTeamStats.forEach(stat => { %> <th><%= stat.label %></th> <% }) %>
                     </tr>
                     <tr id="awayTeamBoxscore">
-                        <th><%= summary.boxscore.teams[0].team.abbreviation %></th>
-                        <% summary.boxscore.teams[0].statistics.forEach(stat => { %>
-                            <td><%= stat.displayValue %></td>
-                        <% }) %>
+                        <th><%= summary.awayTeamAbbr %></th>
+                        <% summary.awayTeamStats.forEach(stat => { %> <td><%= stat.value %></td> <% }) %>
                     </tr>
                     <tr id="homeTeamBoxscore">
-                        <th><%= summary.boxscore.teams[1].team.abbreviation %></th>
-                        <% summary.boxscore.teams[1].statistics.forEach(stat => { %>
-                            <td><%= stat.displayValue %></td>
-                        <% }) %>
+                        <th><%= summary.homeTeamAbbr %></th>
+                        <% summary.homeTeamStats.forEach(stat => { %> <td><%= stat.value %></td> <% }) %>
                     </tr>
                 <% } %>
             </table>
         </div>
 
 
-        <!--LEADER SECTION-->
+        <!-----------------------------LEADER SECTION------------------------------>
+
         <!--This will display the leaders of the game from both teams-->
         <div id="leaderSection">
-            <h2 class="leaderHeadline"><%= summary.boxscore.teams[0].team.abbreviation %> Leaders</h2>
+            <h2 class="leaderHeadline"><%= summary.awayTeamAbbr %> Leaders</h2>
             <div id="awayTeamLeaders">
-                <% if (overview.status.type.state != "in"){
-                    awayLeaders.forEach(leader => { %>
+                <% if (summary.leaders !== undefined){
+                    summary.leaders.awayLeaders.forEach(leader => { %>
                         <div class="leaderDiv">
-                            <h3><%= leader.displayName %></h3>
-                            <% if (league.toUpperCase() == "NFL"){ %>
-                                <img class="headshot" src="<%= leader.leaders[0].athlete.headshot.href %>">
-                                
-                            <% } else { %>
-                                <img class="headshot" src="<%= leader.leaders[0].athlete.headshot %>">
-                            <% } %>
-                            <h4 class="leaderName"><%= leader.leaders[0].athlete.shortName %></h5>
-                            <p class="leaderDesc"><%= leader.leaders[0].displayValue %></p>
+                            <h3><%= leader.category %></h3>    
+                            <img class="headshot" src="<%= leader.athleteHeadshot %>">
+                            <h4 class="leaderName"><%= leader.athleteName %></h5>
+                            <p class="leaderDesc"><%= leader.value %></p>
                         </div>
                     <% })
                 } %>
             </div>
 
-            <h2 class="leaderHeadline"><%= summary.boxscore.teams[1].team.abbreviation %> Leaders</h2>
+            <h2 class="leaderHeadline"><%= summary.homeTeamAbbr %> Leaders</h2>
             <div id="homeTeamLeaders">
-                <% if (overview.status.type.state != "in"){
-                    homeLeaders.forEach(leader => { %>
+                <% if (summary.leaders !== undefined){
+                    summary.leaders.homeLeaders.forEach(leader => { %>
                         <div class="leaderDiv">
-                            <h3><%= leader.displayName %></h3>
-                            <% if (league.toUpperCase() == "NFL"){ %>
-                                <img class="headshot" src="<%= leader.leaders[0].athlete.headshot.href %>">
-                            <% } else { %>
-                                <img class="headshot" src="<%= leader.leaders[0].athlete.headshot %>">
-                            <% } %>
-                            <h4 class="leaderName"><%= leader.leaders[0].athlete.shortName %></h5>
-                            <p class="leaderDesc"><%= leader.leaders[0].displayValue %></p>
+                            <h3><%= leader.category %></h3>
+                            <img class="headshot" src="<%= leader.athleteHeadshot %>">
+                            <h4 class="leaderName"><%= leader.athleteName %></h5>
+                            <p class="leaderDesc"><%= leader.value %></p>
                         </div>
                     <% })
                 } %>
@@ -263,69 +180,47 @@
         </div>
 
 
-        <!--BUTTON SECTION-->
+        <!--------------------------------BUTTON SECTION----------------------------------->
         <!--This will be where we have two big divs that act as buttons. Clicking on them will show the player 
         stats for the corresponding team-->
         <div id="buttonSection">
-            <div id="awayTeamButton">
-                <%= overview.competitions[0].competitors[1].team.displayName %>
-            </div>
-            <div id="homeTeamButton">
-                <%= overview.competitions[0].competitors[0].team.displayName %>
-            </div>
+            <div id="awayTeamButton"><%= overview.awayTeam.name %></div>
+            <div id="homeTeamButton"><%= overview.homeTeam.name %></div>
         </div>
 
 
-        <!--PLAYER STATS SECTION-->
+        <!--------------------------------PLAYER STATS SECTION------------------------------>
         <!--This will be where we have the tables for the player stats on both teams-->
         <div id="playerStats">
 
             <div id="awayTeamPlayerStats">
-                <% if (summary.meta.gameState != "pre"){ %>
+                <% if (summary.gameState != "pre"){ %>
 
-                    <% summary.boxscore.players[0].statistics.forEach(cat => { %>
-                        <h2>
-                            <% if (cat.name !== undefined){ %>
-                                <%= cat.name.split(/(?=[A-Z])/).map(word => word.toUpperCase()).join(" ") %>
-                            <% } %>
-                        </h2>
-                        <% const tableID = (cat.name !== undefined) ? cat.name : ((cat.type !== undefined) ? cat.type : "overall"); %>
+                    <% summary.awayPlayerStats.forEach(cat => { %>
+                        <h2><%= cat.categoryName %></h2>
                         <div class="tableDiv">
-                            <table id="<%= summary.boxscore.players[0].team.abbreviation + tableID %>"> <!--Every table will have ID matching category name-->
+                            <table id="<%= cat.tableID %>"> <!--Every table will have ID matching category name-->
                                 <tr>
-                                    <% if (league.toUpperCase() == "MLB" && cat.type == "batting"){ %>
-                                        <th>Position</th>
-                                    <% } %>
+                                    <% if (cat.tableID == "batting"){ %> <th>Position</th> <% } %>
                                     <th>Player</th>
-                                    <% const cols = (cat.labels !== undefined) ? cat.labels : cat.names; %>
-                                    <% for (let i = 0; i < cols.length; i++){ %>
+                                    <% cat.catLabelsAndDescs.forEach(info => { %>
                                         <th>
                                             <div class="tooltip">
-                                                <%= cols[i] %>
+                                                <%= info.label %>
                                                 <span class="tooltip-text">
-                                                    <%= cat.descriptions[i] %>
+                                                    <%= info.desc %>
                                                 </span>
                                             </div>
                                         </th>
-                                    <% } %>
+                                    <% }) %>
                                 </tr>
-                                <% cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { %>
-                                    <% const rowID = "row-" + athlete.athlete.id; %>
-                                    <tr class="<%= rowID %>">
-                                        <% if (league.toUpperCase() == "MLB" && cat.type == "batting"){ %>
-                                            <th><%= athlete.position.abbreviation %></th>
+                                <% cat.players.forEach(player => { %>
+                                    <tr class="<%= player.rowID %>">
+                                        <% if (cat.categoryName == "batting"){ %>
+                                            <th><%= player.position %></th>
                                         <% } %>
-                                        <th class="name">
-                                            <% if (athlete.athlete.shortName !== undefined){ %>
-                                                <%= athlete.athlete.shortName %>
-                                            <% } else { %>
-                                                <%= athlete.athlete.firstName.substring(0, 1) + ". " + 
-                                                athlete.athlete.lastName %>
-                                            <% } %>
-                                        </th>
-                                        <% athlete.stats.forEach(stat => { %>
-                                            <td><%= stat %></td>
-                                        <% }) %>
+                                        <th class="name"><%= player.athleteName %></th>
+                                        <% player.stats.forEach(stat => { %> <td><%= stat %></td> <% }) %>
                                     </tr>
                                 <% }) %>
                             </table>
@@ -335,51 +230,33 @@
             </div>
 
             <div id="homeTeamPlayerStats">
-                <% if (summary.meta.gameState != "pre"){ %>
+                <% if (summary.gameState != "pre"){ %>
 
-                    <% summary.boxscore.players[1].statistics.forEach(cat => { %>
-                        <h2>
-                            <% if (cat.name !== undefined){ %>
-                                <%= cat.name.split(/(?=[A-Z])/).map(word => word.toUpperCase()).join(" ") %>
-                            <% } %>
-                        </h2>
-                        <% const tableID = (cat.name !== undefined) ? cat.name : ((cat.type !== undefined) ? cat.type : "overall"); %>
+                    <% summary.homePlayerStats.forEach(cat => { %>
+                        <h2><%= cat.categoryName %></h2>
                         <div class="tableDiv">
-                            <table id="<%= summary.boxscore.players[1].team.abbreviation + tableID %>"> <!--Every table will have ID matching category name-->
+                            <table id="<%= cat.tableID %>"> <!--Every table will have ID matching category name-->
                                 <tr>
-                                    <% if (league.toUpperCase() == "MLB" && cat.type == "batting"){ %>
-                                        <th>Position</th>
-                                    <% } %>
+                                    <% if (cat.tableID.includes("batting")){ %> <th>Position</th> <% } %>
                                     <th>Player</th>
-                                    <% const cols = (cat.labels !== undefined) ? cat.labels : cat.names; %>
-                                    <% for (let i = 0; i < cols.length; i++){ %>
+                                    <% cat.catLabelsAndDescs.forEach(info => { %>
                                         <th>
                                             <div class="tooltip">
-                                                <%= cols[i] %>
+                                                <%= info.label %>
                                                 <span class="tooltip-text">
-                                                    <%= cat.descriptions[i] %>
+                                                    <%= info.desc %>
                                                 </span>
                                             </div>
                                         </th>
-                                    <% } %>
+                                    <% }) %>
                                 </tr>
-                                <% cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { %>
-                                    <% const rowID = "row-" + athlete.athlete.id; %>
-                                    <tr class="<%= rowID %>">
-                                        <% if (league.toUpperCase() == "MLB" && cat.type == "batting"){ %>
-                                            <th><%= athlete.position.abbreviation %></th>
+                                <% cat.players.forEach(player => { %>
+                                    <tr class="<%= player.rowID %>">
+                                        <% if (cat.categoryName == "batting"){ %>
+                                            <th><%= player.position %></th>
                                         <% } %>
-                                        <th class="name">
-                                            <% if (athlete.athlete.shortName !== undefined){ %>
-                                                <%= athlete.athlete.shortName %>
-                                            <% } else { %>
-                                                <%= athlete.athlete.firstName.substring(0, 1) + ". " + 
-                                                athlete.athlete.lastName %>
-                                            <% } %>
-                                        </th>
-                                        <% athlete.stats.forEach(stat => { %>
-                                            <td><%= stat %></td>
-                                        <% }) %>
+                                        <th class="name"><%= player.athleteName %></th>
+                                        <% player.stats.forEach(stat => { %> <td><%= stat %></td> <% }) %>
                                     </tr>
                                 <% }) %>
                             </table>
@@ -393,14 +270,14 @@
         <script>
             //get the divs throughout the page
             const statsDiv = document.getElementById('playerStats');
-            const homePlayerStats = document.getElementById('homeTeamPlayerStats');
-            const awayPlayerStats = document.getElementById('awayTeamPlayerStats');
+            const homePlayerStatsDiv = document.getElementById('homeTeamPlayerStats');
+            const awayPlayerStatsDiv = document.getElementById('awayTeamPlayerStats');
             const linescoreDiv = document.getElementById('linescoreDiv');
             const leaderSection = document.getElementById('leaderSection');
             const atBatSection = document.getElementById('atBat');
             const footballSection = document.getElementById('footballInfo');
-            const awayTeamLeaders = document.getElementById('awayTeamLeaders');
-            const homeTeamLeaders = document.getElementById('homeTeamLeaders');
+            const awayTeamLeadersDiv = document.getElementById('awayTeamLeaders');
+            const homeTeamLeadersDiv = document.getElementById('homeTeamLeaders');
 
             //specific stat keepers
             const score = document.getElementById('score');
@@ -416,6 +293,8 @@
             const awayTeamBoxscore = document.getElementById('awayTeamBoxscore');
             const homeTeamBoxscore = document.getElementById('homeTeamBoxscore');
             const footballPosArrow = document.getElementById('footballPossessionArrow');
+            const awayLinescoreRow = document.getElementById('awayTeamLinescoreRow');
+            const homeLinescoreRow = document.getElementById('homeTeamLinescoreRow');
 
             //the divs for the buttons of player scoresheets
             const homeButton = document.getElementById("homeTeamButton");
@@ -425,7 +304,7 @@
             //use the JSON data from the rendered data of initial page load
             const summaryEndpoint = <%- JSON.stringify(summaryEndpoint) %>;
             const overviewEndpoint = <%- JSON.stringify(overviewEndpoint) %>;
-            const gameState = "<%= summary.meta.gameState %>";
+            const gameState = "<%= summary.gameState %>";
             const overview = <%- JSON.stringify(overview) %>;
             const league = "<%= league %>";
 
@@ -433,21 +312,21 @@
             homePlayerStats.style.display = "none";
 
             //hide any stat divs if the game has not started yet
-            live_image.style.display = (gameState != "in") ? 'none' : 'flex';
-            buttonSection.style.display = (gameState == "pre") ? 'none' : 'flex';
-            linescoreDiv.style.display = (gameState == "pre") ? 'none' : 'flex';
-            atBatSection.style.display = (league.toUpperCase() == "MLB" && gameState == "in") ? 'flex' : 'none';
-            footballSection.style.display = (league.toUpperCase() == "NFL" && gameState == "in") ? 'flex' : 'none';
-            leaderSection.style.display = (gameState == "in") ? 'none' : 'flex';
-            document.getElementById('boxscore').style.display = (league.toUpperCase() == "MLB") ? 'none' : 'flex';
-            document.querySelectorAll('.leaderHeadline')[0].style.display = (awayTeamLeaders.children.length > 0) ? 'block' : 'none';
-            document.querySelectorAll('.leaderHeadline')[1].style.display = (homeTeamLeaders.children.length > 0) ? 'block' : 'none';
+            live_image.style.display = gameState != "in" ? 'none' : 'flex';
+            buttonSection.style.display = gameState == "pre" ? 'none' : 'flex';
+            linescoreDiv.style.display = gameState == "pre" ? 'none' : 'flex';
+            atBatSection.style.display = league == "MLB" && gameState == "in" ? 'flex' : 'none';
+            footballSection.style.display = league == "NFL" && gameState == "in" ? 'flex' : 'none';
+            leaderSection.style.display = gameState == "in" ? 'none' : 'flex';
+            document.getElementById('boxscore').style.display = league == "MLB" ? 'none' : 'flex';
+            document.querySelectorAll('.leaderHeadline')[0].style.display = (awayTeamLeadersDiv.children.length > 0) ? 'block' : 'none';
+            document.querySelectorAll('.leaderHeadline')[1].style.display = (homeTeamLeadersDiv.children.length > 0) ? 'block' : 'none';
 
 
             //put in football possession arrow if the game is active
-            if (league.toUpperCase() == "NFL" && gameState == "in"){ //set arrow to correct side
-                footballPosArrow.src = (overview.competitions[0].situation.possession == 
-                    overview.competitions[0].competitors[1].id) ? '/images/left_arrow.png' : '/images/right_arrow.png';
+            if (league == "NFL" && gameState == "in"){ //set arrow to correct side
+                footballPosArrow.src = (overview.situation.possession == overview.awayTeam.id) 
+                    ? '/images/left_arrow.png' : '/images/right_arrow.png';
                 footballPosArrow.style.display = 'flex';
             } else {
                 footballPosArrow.style.display = 'none';
@@ -455,15 +334,15 @@
 
             //when home team buttin div is clicked, hide away player stats and show home player ones
             function toggleHomeStats(){
-                awayPlayerStats.style.display = "none";
-                homePlayerStats.style.display = "flex";
+                awayPlayerStatsDiv.style.display = "none";
+                homePlayerStatsDiv.style.display = "flex";
                 statsDiv.style.backgroundColor = 'lightgreen';
             }
 
             //same as the previous function but in reverse
             function toggleAwayStats(){
-                homePlayerStats.style.display = "none";
-                awayPlayerStats.style.display = "flex";
+                homePlayerStatsDiv.style.display = "none";
+                awayPlayerStatsDiv.style.display = "flex";
                 statsDiv.style.backgroundColor = 'lightsalmon';
             }
 
@@ -478,54 +357,54 @@
              * happens when the page is loaded pregame but the game starts while the page is open, creates the 
              * tables for the player stats for both teams
              * */
-            function createPlayerBoxscores(players, divID, teamAbbr){
+            function createPlayerBoxscores(playerStats, divID, teamAbbr){
 
-                players.statistics.forEach(cat => {
-                    //create a headline for the category name if it exists in JSON
-                    const tableName = document.createElement('h2');
-                    tableName.textContent = (cat.name !== undefined) ? cat.name.split(/(?=[A-Z])/)
-                        .map(word => word.toUpperCase()).join(" ") : "";
-                    awayPlayerStats.appendChild(tableName);
+                //go by category when making each table (like passing, rushing, batting, etc)
+                playerStats.forEach(category => {
                     //create the table for the player category (like rushing, passing, forwards, etc)
                     const table = document.createElement('table');
-                    const tableID = (cat.name !== undefined) ? cat.name : ((cat.type !== undefined) ? cat.type : "overall");
-                    table.id = teamAbbr + tableID;
+                    const tableID = category.tableID;
+                    //create a headline for the category name if it exists in JSON
+                    const tableName = document.createElement('h2');
+                    tableName.textContent = category.categoryName;
                     //create first row that contains the names of the stats in category
                     const titleRow = document.createElement('tr');
-                    if (league.toUpperCase() == "MLB" && cat.type == "batting"){
+                    //for baseball games, add in a position column for the batter's position (DH, 1B, 2B, etc)
+                    if (league == "MLB" && category.categoryName == "BATTING"){
                         const positionCol = document.createElement('th');
                         positionCol.textContent = "Position";
                         titleRow.appendChild(positionCol);
                     }
+                    //add in player name column
                     const playerNameHeader = document.createElement('th');
                     playerNameHeader.textContent = "Player";
                     titleRow.appendChild(playerNameHeader);
-                    const cols = (cat.labels !== undefined) ? cat.labels : cat.names;
                     //create the column names and give them the stat descriptions when hovered over
-                    for (let i = 0; i < cols.length; i++){
-                        const head = document.createElement('th');
-                        const div = document.createElement('div'); div.textContent = cols[i];
-                        const span = document.createElement('span'); span.textContent = cat.descriptions[i];
-                        span.classList.add('tooltip-text'); div.classList.add('tooltip');
-                        div.appendChild(span); head.appendChild(div); titleRow.appendChild(head);
-                    }
+                    category.catLabelsAndDescs.forEach(info => {
+                         const head = document.createElement('th');
+                         const div = document.createElement('div'); div.textContent = info.label;
+                         const span = document.createElement('span'); span.textContent = info.desc;
+                         span.classList.add('tooltip-text'); div.classList.add('tooltip');
+                         div.appendChild(span); head.appendChild(div); titleRow.appendChild(head);
+                    });
                     table.appendChild(titleRow); //add row to table
 
-                    //now make rows for each player
-                    cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => {
+                    //this part will focus on making a row for each player in said table
+                    category.players.forEach(player => {
                         //give each player row their API ID as the HTML ID for easier lookup
                         const playerRow = document.createElement('tr');
-                        playerRow.classList.add("row-" + athlete.athlete.id);
+                        playerRow.classList.add(player.rowID);
                         const playerName = document.createElement('th'); //put player name in front of row
+
+                        //FIX THIS
                         if (athlete.starter !== undefined){ //differentiate between starters and bench
                             playerName.classList.add((athlete.starter == true) ? "name" : "nonstarter");
                         } else { playerName.classList.add("name"); }
-                        //with diff JSON fields, get first initial and last name
-                        playerName.textContent = (athlete.athlete.shortName !== undefined) ? 
-                            athlete.athlete.shortName : athlete.athlete.firstName.substring(0, 1) + ". " 
-                                + athlete.athlete.lastName;
+
+                        //add in player name
+                        playerName.textContent = player.athleteName;
                         playerRow.appendChild(playerName); //add name to row
-                        athlete.stats.forEach(stat => { //add stat value to corresponding row cells
+                        player.stats.forEach(stat => { //add stat value to corresponding row cells
                             const statCell = document.createElement('td');
                             statCell.textContent = stat;
                             playerRow.appendChild(statCell);
@@ -534,6 +413,52 @@
                     });
                     divID.appendChild(table); //add the table to the div
                 });
+            }
+
+
+            function updatePlayerBoxscores(playersArray) {
+                //go through every category/table
+                playersArray.forEach(category => {
+                    //all the rows in the current table
+                    const tableRows = document.getElementById(category.tableID).querySelectorAll('tr');
+                    //go through the players array that represents each player/each row of the table/category 
+                    category.players.forEach(player => {
+                        //query select the player row of the table
+                        const playerRow = document.getElementById(category.tableID).querySelector(player.rowID);
+                        if (playerRow){ //if the row exists
+                            playerStatCells = playerRow.querySelectorAll('td'); //get all the stat cells of row
+                            //update each stat cell
+                            playerStatCells.forEach((cell, index) => cell.textContent = player.stats[index]);
+
+                        } else { //else, we need to add a new row to table if JSON update has new player
+                            const newRow = document.createElement('tr'); //create row
+                            newRow.classList.add(player.rowID); //set ID
+                            const playerName = document.createElement('th'); //create th for name
+                            if (athlete.starter !== undefined){ //give bench/nonstarters visual difference
+                                playerName.classList.add((athlete.starter == true) ? "name" : "nonstarter");
+                            } else { playerName.classList.add("name"); }
+                            //get player name
+                            playerName.textContent = player.athleteName;
+                            newRow.appendChild(playerName); //add name to row
+                            athlete.stats.forEach(stat => { //add new stat cells to row
+                                const statTD = document.createElement('td'); 
+                                statTD.textContent = stat;
+                                newRow.appendChild(statTD);
+                            });
+
+                            //if adding batter to baseball game, add that batter in order of lineup.
+                            const arrayIndex = category.players.indexOf(player);
+                            //if the game is baseball, and we're in the batters table, add in player in order of lineup
+                            if (category.categoryName == "BATTING" && arrayIndex != category.players.length - 1){
+                                document.getElementById(category.tableID).insertBefore(tableRows[arrayIndex + 1], newRow);                                   
+                            } else { //for other sports/cateogries just add player to end
+                                document.getElementById(category.tableID).appendChild(newRow);
+                            }
+                            nextPlayerRow = newRow.nextSibling; //set nextPlayerRow to the next row
+                            newRow.classList.add('nonstarter'); //give non starter class
+                        }
+                    }) 
+                })
             }
 
 
@@ -546,18 +471,24 @@
             function createLeaders(leaders, divID){
 
                 leaders.forEach(leader => {
+                    //create the div
                     const leaderDiv = document.createElement('div');
+                    //create headline for leader's category
                     const leaderHeadline = document.createElement('h3');
-                    leaderHeadline.textContent = leader.displayName;
+                    leaderHeadline.textContent = leader.category;
+                    //create athlete image
                     const headshot = document.createElement('img');
-                    headshot.src = (league.toUpperCase() == "NFL") ? leader.leaders[0].athlete.headshot.href
-                        : leader.leaders[0].athlete.headshot;
+                    headshot.src = leader.athleteHeadshot;
                     headshot.classList.add('headshot');
+                    //create headline for athlete name
                     const leaderName = document.createElement('h4');
-                    leaderName.textContent = leader.leaders[0].athlete.shortName;
+                    leaderName.textContent = leader.athleteName;
                     leaderName.classList.add('leaderName');
-                    const desc = document.createElement('p'); desc.textContent = leader.leaders[0].displayValue;
+                    //add in a p element for the leader's value of the game
+                    const desc = document.createElement('p'); 
+                    desc.textContent = leader.value;
                     desc.classList.add('leaderDesc');
+                    //append everything to the leaderDiv and add it to the leader section div
                     leaderDiv.appendChild(leaderHeadline); leaderDiv.appendChild(headshot);
                     leaderDiv.appendChild(leaderName); leaderDiv.appendChild(desc);
                     divID.appendChild(leaderDiv);
@@ -570,54 +501,48 @@
             async function initializeStats() {
 
                 //send the requests 
-                const updateSummary = await (await fetch(summaryEndpoint)).json();
-                const updateOverview = await (await fetch(overviewEndpoint)).json();
+                const updateSummary = parseSummary();
+                const updateOverview = parseOverview();
 
-                if (updateSummary.meta.gameState == "in"){ //when game starts, start setting everything up
+                 //remove any previous leaders if they are hidden
+                awayTeamLeadersDiv.replaceChildren();
+                homeTeamLeadersDiv.replaceChildren();
 
-                    //make things visible or invisible
+                if (updateSummary.gameState == "in"){ //when game starts, start setting everything up
+
+                    //make player buttons, linescore and live imgae visible. Hide leaders div
                     buttonSection.style.display = 'flex';
                     leaderSection.style.display = 'none';
-                    linescoreDiv.style.display = 'flex'; //make div appear
+                    linescoreDiv.style.display = 'flex';
                     live_image.style.display = 'flex';
-                    //change boxscore headline
+                    //change boxscore headline from season stats to Box Score
                     document.getElementById('boxHeadline').textContent = "Box Score";
-
-                    //set up the details in the gameInfoDiv. This includes the score, timer/status, and setting up
-                    //the baseball count and football markers 
-                    gameStatus.textContent = updateOverview.competitions[0].status.type.detail;
-                    score.textContent = updateOverview.competitions[0].competitors[1].score
-                        + " - " + updateOverview.competitions[0].competitors[0].score;
-
-                    if (league.toUpperCase() == "MLB"){ //get balls, strikes and outs
-                        count.textContent = updateOverview.competitions[0].situation.balls + " - " + 
-                            updateOverview.competitions[0].situation.strikes;
-                        outs.textContent = updateOverview.competitions[0].situation.outs + " outs";
-                        atBatSection.style.display = 'flex';
-                    }
-                    if (league.toUpperCase() == "NFL"){ //get yard marker and down
-                        footballSection.style.display = 'flex';
-                        footballMarker.textContent = updateOverview.competitions[0].situation.downDistanceText;
-                    }
-                    
-                    //set up the boxscore if not an MLB game
-                    if (league.toUpperCase() != "MLB"){
+                    //update the game status, and show the score as 0-0
+                    gameStatus.textContent = updateOverview.status.shortDetail;
+                    score.style.display = 'flex';
+                    score.textContent = "0 - 0";
+                    //if its a baseball game
+                    atBatSection.style.display = league == "MLB" ? 'flex' : 'none';
+                    //get yard marker and down
+                    footballSection.style.display = league == "NFL" ? 'flex' : 'none';
+            
+                    //reset the season stats of teams to 0 for the game specific stats
+                    if (league != "MLB"){
                         awayTeamBoxscore.querySelectorAll('td').forEach(cell => cell.textContent = '0');
                         homeTeamBoxscore.querySelectorAll('td').forEach(cell => cell.textContent = '0');
                     }
 
                     //set first interval of linescore to 0
-                    document.getElementById('awayTeamLinescoreRow').querySelectorAll('td')[0].textContent = '0';
-                    document.getElementById('homeTeamLinescoreRow').querySelectorAll('td')[0].textContent = '0';
-                    if (league.toUpperCase() == "MLB"){
-                        document.querySelectorAll('.mlbLinescore').forEach(cell => cell.textContent = '0');
+                    awayLinescoreRow.querySelectorAll('td')[0].textContent = '0';
+                    homeLinescoreRow.querySelectorAll('td')[0].textContent = '0';
+
+                    if (league == "MLB"){
+                        document.querySelectorAll('.mlbLinescores').forEach(cell => cell.textContent = '0');
                     }
 
                     //create player boxscore
-                    createPlayerBoxscores(updateSummary.boxscore.players[0], awayPlayerStats, 
-                        updateSummary.boxscore.players[0].team.abbreviation);
-                    createPlayerBoxscores(updateSummary.boxscore.players[1], homePlayerStats,
-                        updateSummary.boxscore.players[1].team.abbreviation);
+                    createPlayerBoxscores(updateSummary.awayPlayerStats, awayPlayerStats, updateSummary.awayTeamAbbr);
+                    createPlayerBoxscores(updateSummary.homePlayerStats, homePlayerStats, updateSummary.homeTeamAbbr);
 
                     //after we finish initialization, switch function to now get updates instead
                     clearInterval(request);
@@ -627,162 +552,100 @@
 
             }
 
-            //this will be used when the game is currently active, and stop when finished
+            //this function will update all the stats within the page while the game is active
             async function updateGameStats(){
 
                 //basically use this as to know the requests are going
                 console.log("Hello");
 
                 //send requests for updated data
-                const updateSummary = await (await fetch(summaryEndpoint)).json();
-                const updateOverview = await (await fetch(overviewEndpoint)).json();
+                const updateSummary = parseSummary();
+                const updateOverview = parseOverview();
     
-                //update the score and status/time
-                gameStatus.textContent = updateOverview.competitions[0].status.type.detail;
-                score.textContent = updateOverview.competitions[0].competitors[1].score 
-                    + " - " + updateOverview.competitions[0].competitors[0].score;
+                //update the status of the game
+                gameStatus.textContent = updateOverview.status.shortDetail;
+                //update the score
+                score.textContent = updateOverview.awayTeam.score + " - " + updateOverview.homeTeam.score;
                 
                 //if its a baseball game, update the strike and out count
-                if (league.toUpperCase() == "MLB" && updateSummary.meta.gameStatus == "in"){
-                    count.textContent = updateOverview.competitions[0].situation.balls 
-                        + " - " + updateOverview.competitions[0].situation.strikes;
-                    outs.textContent = updateOverview.competitions[0].situation.outs + " outs";
+                if (league == "MLB" && updateOverview.situation){
+                    count.textContent = updateOverview.situation.count;
+                    outs.textContent = updateOverview.situation.outs + " outs";
                 }
-                //update the at bat pitcher and batter if available
-                if (league.toUpperCase() == "MLB" && updateOverview.competitions[0].situation !== undefined &&
-                    updateOverview.competitions[0].situation.pitcher !== undefined){
-                    pitcherHeadshot.src = updateOverview.competitions[0].situation.pitcher.athlete.headshot;
-                    batterHeadshot.src = updateOverview.competitions[0].situation.batter.athlete.headshot;
-                    batterName.textContent = updateOverview.competitions[0].situation.batter.athlete.fullName;
-                    pitcherName.textContent = updateOverview.competitions[0].situation.pitcher.athlete.fullName;
+
+                //update the at bat pitcher and batter if available, show their names and headshots
+                if (league == "MLB" && updateOverview.situation && updateOverview.situation.pitcher){
+
+                    pitcherHeadshot.src = updateOverview.situation.pitcher.headshot;
+                    batterHeadshot.src = updateOverview.situation.batter.headshot;
+                    batterName.textContent = updateOverview.situation.batter.name;
+                    pitcherName.textContent = updateOverview.situation.pitcher.name;
                     
                 }
                 //update football marker if football game and the possession arrow image
-                if (league.toUpperCase() == "NFL" && updateOverview.status.type.state == "in"){
-                    footballMarker.textContent = updateOverview.competitions[0].situation.downDistanceText;
-                    footballPosArrow.src = (updateOverview.competitions[0].situation.possession == 
-                        updateOverview.competitions[0].competitors[1].id) ? '/images/left_arrow.png' : '/images/right_arrow.png';
+                if (league == "NFL" && updateOverview.situation){
+                    //get the current down and yard line info and update the marker text
+                    footballMarker.textContent = updateOverview.situation.downDistanceText;
+                    //update the possession arrow based on who has possession
+                    footballPosArrow.src = (updateOverview.situation.possession == updateOverview.awayTeam.id) 
+                        ? '/images/left_arrow.png' : '/images/right_arrow.png';
                 }
 
                 //update the linescores
-                const currentInterval = updateOverview.competitions[0].competitors[1].linescores.length - 1;
-                // do something here to add linescore columns if we get new intervals
-                document.getElementById('awayTeamLinescoreRow').querySelectorAll('td')[currentInterval].textContent = 
-                     updateOverview.competitions[0].competitors[1].linescores[currentInterval].displayValue;
-                //for baseball games, home team may not have linescore ready if away team is batting
-                if (league.toUpperCase() == "MLB"){
-                    if (updateOverview.competitions[0].competitors[0].linescores.length == currentInterval + 1){
-                        document.getElementById('homeTeamLinescoreRow').querySelectorAll('td')[currentInterval].textContent = 
-                        updateOverview.competitions[0].competitors[0].linescores[currentInterval].displayValue;
-                    }
-                } else { //otherwise update home team linescore regularly
-                    
-                    document.getElementById('homeTeamLinescoreRow').querySelectorAll('td')[currentInterval].textContent = 
-                        updateOverview.competitions[0].competitors[0].linescores[currentInterval].displayValue;
-                }
+                awayLinescoreRow.querySelectorAll('td')[currentAwayLinescoreInterval].textContent = 
+                     updateOverview.currentAwayLinescoreValue;
+
+                homeLinescoreRow.querySelectorAll('td')[currentHomeLinescoreInterval].textContent = 
+                     updateOverview.currentHomeLinescoreValue;
+                
                 //for baseball games, update the Runs, Hits and Errors counters
-                if (league.toUpperCase() == "MLB"){
+                if (league == "MLB"){
                     const mlbLinescores = document.querySelectorAll('.mlbLinescores');
-                    mlbLinescores[0].textContent = updateOverview.competitions[0].competitors[1].statistics[1].displayValue;
-                    mlbLinescores[1].textContent = updateOverview.competitions[0].competitors[1].statistics[0].displayValue;
-                    mlbLinescores[2].textContent = updateOverview.competitions[0].competitors[1].statistics[7].displayValue;
-                    mlbLinescores[3].textContent = updateOverview.competitions[0].competitors[0].statistics[1].displayValue;
-                    mlbLinescores[4].textContent = updateOverview.competitions[0].competitors[0].statistics[0].displayValue;
-                    mlbLinescores[5].textContent = updateOverview.competitions[0].competitors[0].statistics[7].displayValue;
+                    mlbLinescores[0].textContent = updateOverview.linescore.awayRuns;
+                    mlbLinescores[1].textContent = updateOverview.linescore.awayHits;
+                    mlbLinescores[2].textContent = updateOverview.linescore.awayErrors;
+                    mlbLinescores[3].textContent = updateOverview.linescore.homeRuns;
+                    mlbLinescores[4].textContent = updateOverview.linescore.homeHits;
+                    mlbLinescores[5].textContent = updateOverview.linescore.homeErrors;
                 }
 
                 //update the overall boxscores if we have an NFL, NBA or NHL game
-                if (league.toUpperCase() != "MLB"){
-                    const homeTeamStats = homeTeamBoxscore.querySelectorAll('td');
-                    const awayTeamStats = awayTeamBoxscore.querySelectorAll('td');
-                    for (let i = 0; i < updateSummary.boxscore.teams[0].statistics.length; i++){
-                        awayTeamStats[i].textContent = updateSummary.boxscore.teams[0].statistics[i].displayValue;
-                        homeTeamStats[i].textContent = updateSummary.boxscore.teams[1].statistics[i].displayValue;
-                    }
+                if (league != "MLB"){
+                    const homeTeamStatsCells = homeTeamBoxscore.querySelectorAll('td');
+                    const awayTeamStatsCells = awayTeamBoxscore.querySelectorAll('td');
+                    homeTeamStatsCells.forEach((cell, index) => cell.textContent = updateSummary.homeTeamStats[index].value);
+                    awayTeamStatsCells.forEach((cell, index) => cell.textContent = updateSummary.awayTeamStats[index].value);
                 }
 
                 //update player stats
-                let nextPlayerRow = null; //this will be a dummy node, use to help insert a new player row
-                updateSummary.boxscore.players.forEach(team => { //for every team
-                    team.statistics.forEach(cat => { // for each category
-                        cat.athletes.filter(athlete => athlete.stats.length != 0).forEach(athlete => { //for every athlete in category
-                            //get athlete row
-                            const tableID = (cat.name !== undefined) ? team.team.abbreviation + cat.name : 
-                                ((cat.type !== undefined) ? team.team.abbreviation + cat.type : team.team.abbreviation +  "overall");
-                            const playerRow = document.getElementById(tableID).querySelector(".row-" + athlete.athlete.id);
-                            //if we have new athlete in JSON (bench player or new player) add him to table
-                            if (playerRow == null){
-                                const newRow = document.createElement('tr'); //create row
-                                newRow.classList.add("row-" + athlete.athlete.id); //set ID
-                                const playerName = document.createElement('th'); //create th for name
-                                if (athlete.starter !== undefined){ //give bench/nonstarters visual difference
-                                    playerName.classList.add((athlete.starter == true) ? "name" : "nonstarter");
-                                } else { playerName.classList.add("name"); }
-                                //get player name
-                                playerName.textContent = (athlete.athlete.shortName !== undefined) ? 
-                                    athlete.athlete.shortName : athlete.athlete.firstName.substring(0, 1) + ". " 
-                                        + athlete.athlete.lastName;
-                                newRow.appendChild(playerName); //add name to row
-                                athlete.stats.forEach(stat => { //add new stat cells to row
-                                    const statTD = document.createElement('td'); 
-                                    statTD.textContent = stat;
-                                    newRow.appendChild(statTD);
-                                });
-                                //if adding batter to baseball game, add that batter in order of lineup.
-                                if (cat.name == "hitting" && nextPlayerRow != null){
-                                    document.getElementById(tableID).insertBefore(nextPlayerRow, newRow);                                   
-                                } else { //for other sports/cateogries just add player to end
-                                    document.getElementById(tableID).appendChild(newRow);
-                                }
-                                nextPlayerRow = newRow.nextSibling; //set nextPlayerRow to the next row
-                                newRow.classList.add('nonstarter'); //give non starter class
-                            } else { //update the player's stats
-                                const playerStatCells = playerRow.querySelectorAll('td');
-                                for (let i = 0; i < athlete.stats.length; i++){ //change stat cells in the row
-                                    playerStatCells[i].textContent = athlete.stats[i];
-                                }
-                                nextPlayerRow = playerRow.nextSibling;
-                            }
-                        });
-                    });
-                });
+                updatePlayerBoxscores(updateSummary.awayPlayerStats);
+                updatePlayerBoxscores(updateSummary.homePlayerStats);
 
                 //if game is final, stop sending requests and clear out live game status stuff
-                if (updateOverview.status.type.state == "post"){
+                if (updateOverview.status.state == "post"){
                     //update the overall records of the teams when game ends
                     document.querySelectorAll('.teamOverview')[0].querySelector('h3').textContent = 
-                        updateOverview.competitions[0].competitors[1].records[0].summary;
+                        updateOverview.awayTeam.record;
                     document.querySelectorAll('.teamOverview')[1].querySelector('h3').textContent = 
-                        updateOverview.competitions[0].competitors[0].records[0].summary;
-                    if (updateOverview.season.type == 3 && league.toUpperCase() != "NFL"){
-                        document.getElementById('seriesStatus').textContent = updateOverview.competitions[0].series.summary;
+                        updateOverview.homeTeam.record;
+
+                    //if its a playoff game, show the series status
+                    if (updateOverview.seasonType == 3 && league != "NFL"){
+                        document.getElementById('seriesStatus').style.display = 'flex';
+                        document.getElementById('seriesStatus').textContent = updateOverview.seriesSummary;
                     }
+
+                    //hide these
                     footballSection.style.display = 'none';
                     atBatSection.style.display = 'none';
                     live_image.style.display = 'none';
 
-                    //remove any previous leaders if they are hidden
-                    awayTeamLeaders.replaceChildren();
-                    homeTeamLeaders.replaceChildren();
-                    //get new leaders
-                    const homeLeaders = (updateOverview.status.type.state != "in" && league.toUpperCase() == "NFL") ? 
-                        updateSummary.leaders[1].leaders.filter(cat => cat.leaders !== undefined) :
-                        (updateOverview.status.type.state != "in" &&  updateOverview.competitions[0].competitors[0].leaders !== undefined) ?
-                        updateOverview.competitions[0].competitors[0].leaders.filter(leader => !leader.displayName.includes("Rating"))
-                        : [];
-
-                    const awayLeaders = (updateOverview.status.type.state != "in" && league.toUpperCase() == "NFL") ? 
-                        updateSummary.leaders[0].leaders.filter(cat => cat.leaders !== undefined) :
-                        (updateOverview.status.type.state != "in" &&  updateOverview.competitions[0].competitors[1].leaders !== undefined) ?
-                        updateOverview.competitions[0].competitors[1].leaders.filter(leader => !leader.displayName.includes("Rating"))
-                        : [];
-
-                    document.querySelectorAll('.leaderHeadline')[0].style.display = (awayLeaders) ? 'block' : 'none';
-                    document.querySelectorAll('.leaderHeadline')[1].style.display = (homeLeaders) ? 'block' : 'none';
+                    //make the leader headlines visible again
+                    document.querySelectorAll('.leaderHeadline').forEach(headline => headline.style.display = 'flex');
 
                     //now go through new postgame leaders and populate the section
-                    createLeaders(awayLeaders, awayTeamLeaders);
-                    createLeaders(homeLeaders, homeTeamLeaders);
+                    createLeaders(updateSummary.awayLeaders, awayTeamLeadersDiv);
+                    createLeaders(updateSummary.homeLeaders, homeTeamLeadersDiv);
                     leaderSection.style.display = 'flex';
 
                     //stop requests
@@ -794,6 +657,211 @@
             //otherwise, set to updateGameStats if game is active/final
             let request = (gameState == "pre") ? setInterval(initializeStats, 10000) : 
                 ((gameState == "in") ? setInterval(updateGameStats, 10000) : null);
+
+            
+            /**
+             * Helper function for the overview JSON responses. This aims for more readable structure of the
+             * response and therefore the code in the updating functions.
+             */
+            async function parseOverview() {
+
+                const response = await (await fetch(overviewEndpoint)).json();
+
+                const competition = response.competitions[0];
+                const awayCompetitor = competition.competitors[1];
+                const homeCompetitor = competition.competitors[0];
+
+                return {
+                    id: response.id,
+                    date: response.date,
+                    seasonType: response.season.type,
+
+                    awayTeam: {
+                        id: awayCompetitor.id,
+                        score: awayCompetitor.score,
+                        record: awayCompetitor.records[0].summary
+                    },
+
+                    homeTeam: {
+                        id: homeCompetitor.id,
+                        score: homeCompetitor.score,
+                        record: homeCompetitor.records[0].summary
+                    },
+
+                    status: {
+                        state: competition.status.type.state,
+                        shortDetail: competition.status.type.shortDetail,
+                        period: competition.status.period,
+                        displayClock: competition.status.displayClock
+                    },
+
+                    situation: competition.situation ? {
+                        downDistanceText: league == "NFL" ? competition.situation.downDistanceText : undefined,
+                        possession: league == "NFL" ? competition.situation.possession : undefined,
+                        count: league == "MLB" ? competition.situation.batter!.summary : undefined,
+                        outs: league == "MLB" ? competition.situation.outs : undefined,
+                        pitcher: league == "MLB" && competition.situation.pitcher ? {
+                            name: competition.situation.pitcher.athlete.shortName,
+                            headshot: competition.situation.pitcher.athlete.headshot
+                        } : undefined,
+                        batter: league == "MLB" && competition.situation.batter ? {
+                            name: competition.situation.batter.athlete.shortName,
+                            headshot: competition.situation.batter.athlete.headshot
+                        } : undefined
+
+                    } : undefined,
+
+                    seriesSummary: competition.series ? competition.series.summary : undefined,
+
+                    linescore: {
+
+                        intervalLength: competition.format.regulation.periods,
+
+                        //just get the current linescore for both teams, and the runs, hits and errors if MLB
+                        currentAwayLinescoreInterval: competition.competitors[1].linescores.length - 1,
+                        currentHomeLinescoreInterval: competition.competitors[0].linescores.length - 1,
+                        currentAwayLinescoreValue: competition.competitors[1].linescores[competition.competitors[1].linescores.length - 1].displayValue,
+                        currentHomeLinescoreValue: competition.competitors[0].linescores[competition.competitors[0].linescores.length - 1].displayValue,
+                        awayRuns: league == "MLB" ? competition.competitors[1].statistics[1].displayValue : undefined,
+                        awayHits: league == "MLB" ? competition.competitors[1].statistics[0].displayValue : undefined,
+                        awayErrors: league == "MLB" ? competition.competitors[1].statistics[7].displayValue : undefined,
+                        homeRuns: league == "MLB" ? competition.competitors[0].statistics[1].displayValue : undefined,
+                        homeHits: league == "MLB" ? competition.competitors[0].statistics[0].displayValue : undefined,
+                        homeErrors: league == "MLB" ? competition.competitors[0].statistics[7].displayValue : undefined
+                    }
+
+                }
+            }
+
+            async function parseSummary() {
+                //get the JSON response
+                const response = await (await fetch(summaryEndpoint)).json();
+
+                //if its a hockey game, filter out skaters category
+                if (response.boxscore.players && league == "NHL") {
+                    response.boxscore.players[0].statistics = 
+                        response.boxscore.players[0].statistics.filter(cat => cat.name != "skaters");
+                    
+                    response.boxscore.players[1].statistics = 
+                        response.boxscore.players[1].statistics.filter(cat => cat.name != "skaters");
+                }
+
+                //for NBA games, filter out the players that have no stats
+                if (league == "NBA" && response.boxscore.players) { //if its an NBA game, filter out the overall category since it is redundant with the team stats
+                    response.boxscore.players[0].statistics[0].athletes = 
+                        response.boxscore.players[0].statistics[0].athletes.filter(athlete => !athlete.didNotPlay);
+
+                    response.boxscore.players[0].statistics[0].athletes = 
+                        response.boxscore.players[0].statistics[0].athletes.filter(athlete => !athlete.didNotPlay);
+                    //shorten the abbreviation here
+                    response.boxscore.teams[0].statistics[18].abbreviation = "PCOT";
+                    response.boxscore.teams[1].statistics[18].abbreviation = "PCOT";
+                }
+
+                return {
+
+                    //the abbreviations of the teams
+                    awayTeamAbbr: response.boxscore.teams[0].team.abbreviation,
+                    homeTeamAbbr: response.boxscore.teams[1].team.abbreviation,
+
+                    gameState: response.meta.gameState, //the state of the game
+
+                    //here's the season/game stats of the overall teams
+                    awayTeamStats: response.boxscore.teams[0].statistics.map(stat => ({
+                        //if abbreviation doesn't exist, should be label
+                        label: stat.abbreviation ? stat.abbreviation : stat.label!,
+                        value: stat.displayValue
+                    })),
+
+                    homeTeamStats: response.boxscore.teams[1].statistics.map(stat => ({
+                        //same as above comment
+                        label: stat.abbreviation ? stat.abbreviation : stat.label!,
+                        value: stat.displayValue
+                    })),
+
+                    awayLeaders: response.leaders ? response.leaders[0].leaders.map(leader => ({
+
+                        category: leader.displayName,
+                        athleteName: leader.leaders[0].athlete.shortName,
+
+                        //NFL response data will have a different JSON structure
+                        athleteHeadshot: (typeof leader.leaders[0].athlete.headshot === "string") ? 
+                            leader.leaders[0].athlete.headshot : leader.leaders[0].athlete.headshot.href ?? "",
+
+                        value: leader.leaders[0].displayValue
+
+                    })) : undefined,
+                    
+                    homeLeaders: response.leaders ? response.leaders[1].leaders.map(leader => ({
+
+                        category: leader.displayName,
+                        athleteName: leader.leaders[0].athlete.shortName,
+
+                        athleteHeadshot: (typeof leader.leaders[0].athlete.headshot === "string") ?
+                            leader.leaders[0].athlete.headshot : leader.leaders[0].athlete.headshot.href ?? "",
+
+                        value: leader.leaders[0].displayValue
+
+                    })) : undefined,
+
+                    awayPlayerStats: response.boxscore.players ?
+                    
+                        response.boxscore.players[0].statistics.map(category => ({
+
+                            categoryName: league == "NBA" ? "OVERALL" 
+                                : category.name ? category.name.split(/(?=[A-Z])/).map(word => word.toUpperCase()).join(" ") 
+                                : category.type!.toUpperCase(),
+
+                            tableID: category.name ? response.boxscore.teams[0].team.abbreviation + category.name :
+                                category.type ? response.boxscore.teams[0].team.abbreviation + category.type :
+                                response.boxscore.teams[0].team.abbreviation + "overall",
+
+                            catLabelsAndDescs: category.labels.map((label, index) => ({
+                                label: label,
+                                desc: category.descriptions[index]
+                            })),
+
+                            players: category.athletes.map(player => ({
+                                rowID: "athlete-" + player.athlete.id,
+                                athleteName: player.athlete.shortName ? player.athlete.shortName : 
+                                    player.athlete.firstName![0] + ". " + player.athlete.lastName!,
+                                position: (league == "MLB") ? player.athlete.position!.abbreviation : undefined,
+                                starter: player.starter !== undefined ? player.starter : undefined,
+                                batOrder: (league == "MLB") ? player.batOrder : undefined,
+                                stats: player.stats
+                            }))
+                        })) : undefined,
+
+                    homePlayerStats: response.boxscore.players ?
+                
+                        response.boxscore.players[1].statistics.map(category => ({
+
+                            categoryName: league == "NBA" ? "OVERALL" 
+                            : category.name ? category.name.split(/(?=[A-Z])/).map(word => word.toUpperCase()).join(" ") 
+                            : category.type!.toUpperCase(),
+
+                            tableID: category.name ? response.boxscore.teams[1].team.abbreviation + category.name :
+                                category.type ? response.boxscore.teams[1].team.abbreviation + category.type :
+                                response.boxscore.teams[0].team.abbreviation + "overall",
+
+                            catLabelsAndDescs: category.labels.map((label, index) => ({
+                                label: label,
+                                desc: category.descriptions[index]
+                            })),
+
+                            players: category.athletes.map(player => ({
+                                rowID: "athlete-" + player.athlete.id,
+                                athleteName: player.athlete.shortName ? player.athlete.shortName : 
+                                    player.athlete.firstName![0] + ". " + player.athlete.lastName!,
+                                position: (league == "MLB") ? player.athlete.position!.abbreviation : undefined,
+                                starter: player.starter !== undefined ? player.starter : undefined,
+                                batOrder: (league == "MLB") ? player.batOrder : undefined,
+                                stats: player.stats
+                            }))
+                        })) : undefined
+                }
+            }
+
 
         </script>
 

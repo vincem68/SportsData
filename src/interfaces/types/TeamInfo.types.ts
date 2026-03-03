@@ -1,28 +1,18 @@
 export interface TeamInfoResponse {
-  team: Team
-}
-
-interface Team {
-  displayName: string
-  record: Record
-  nextEvent: NextEvent[]
-  logos: Logo[]
-}
-
-interface Record {
-  items: Item[]
-}
-
-interface Item {
-  summary: string
-}
-
-interface Logo {
-  href: string
-}
-
-interface NextEvent {
-  id: string
+  team: {
+    displayName: string
+    record: {
+      items: {
+        summary: string
+      }[]
+    }
+    nextEvent: {
+      id: string
+    }[]
+    logos: {
+      href: string
+    }[]
+  }
 }
 
 export interface TeamInfo {
