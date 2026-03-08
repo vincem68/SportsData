@@ -1,5 +1,4 @@
 <%
-    const seasonTypeGames = (leagueSchedule.season.type == 2) ? "Regular Season" : "Postseason";
 
     const postseasonGames = [{key: 1, value: "Wild Card"}, {key: 2, value: "Divisional"},
         {key: 3, value: "Conference"}, {key: 5, value: "Super Bowl"}];
@@ -80,14 +79,18 @@
         
         <h1 id="noGamesWarning">No Games Scheduled</h1>
 
-    <% } else if (league == "NFL") { %> 
+    <% } else { %>
         <h2 id="dateHeader">
-            <% if (leagueSchedule.season.type == 3){ %>
-                <%= postseasonGames.find(round => round.key == leagueSchedule.week).value %>
+            <% if (league == "NFL") { %>
+                <% if (leagueSchedule.seasonType == 3){ %>
+                    <%= postseasonGames.find(round => round.key == leagueSchedule.week).value %>
+                <% } else { %>
+                    <%= "Week " + leagueSchedule.week %>
+                <% } %>
             <% } else { %>
-                <%= "Week " + leagueSchedule.week %>
+                <%= leagueSchedule.seasonTypeName %>
             <% } %>
-        </h2> 
+        </h2>
     <% } %>
 
 

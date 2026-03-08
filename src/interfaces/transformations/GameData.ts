@@ -145,7 +145,7 @@ export const parseSummary = (response: GameSpecificSummaryResponse, league: stri
             value: stat.displayValue
         })),
 
-        awayLeaders: response.leaders ? response.leaders[0].leaders.map(leader => ({
+        awayLeaders: response.meta.gameState != "in" && league != "MLB" ? response.leaders[0].leaders.map(leader => ({
 
             category: leader.displayName,
             athleteName: leader.leaders[0].athlete.shortName,
@@ -158,7 +158,7 @@ export const parseSummary = (response: GameSpecificSummaryResponse, league: stri
 
         })) : undefined,
         
-        homeLeaders: response.leaders ? response.leaders[1].leaders.map(leader => ({
+        homeLeaders: response.meta.gameState != "in" && league != "MLB" ? response.leaders[1].leaders.map(leader => ({
 
             category: leader.displayName,
             athleteName: leader.leaders[0].athlete.shortName,

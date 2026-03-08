@@ -13,7 +13,9 @@ import type { LeagueScheduleResponse, LeagueSchedule } from "../types/LeagueSche
 export const parseLeagueScheduleResponse = (data: LeagueScheduleResponse): LeagueSchedule => {
     const parsedGames: GameOverview[] = data.events.map(event => parseGame(event));
     return {
-        season: data.season,
+        season: data.leagues[0].season.year,
+        seasonType: data.leagues[0].season.type.type,
+        seasonTypeName: data.leagues[0].season.type.name,
         totalGames: parsedGames.length,
         seasonEndDate: parseDate(data.leagues[0].calendarEndDate || ""),
         schedule: {

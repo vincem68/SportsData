@@ -2,7 +2,6 @@ import type { GameOverviewResponse, GameOverview } from "./GameOverview.types"
 
 export interface LeagueScheduleResponse {
     leagues: League[]
-    season: Season
     events: GameOverviewResponse[]
     day?: Day
     week?: Week
@@ -10,6 +9,13 @@ export interface LeagueScheduleResponse {
 
 interface League {
     calendarEndDate?: string
+    season: {
+        year: number
+        type: {
+            type: number
+            name: string
+        }
+    }
 }
 
 interface Day {
@@ -26,17 +32,14 @@ export interface TeamOnBye {
     abbreviation: string
 }
 
-export interface Season {
-    type: number
-    year: number
-}
-
 /**
  * The exported interface we'll use for the scoreboard response
  * Will contain all the data of the current requested games
  */
 export interface LeagueSchedule {
-    season: Season //season year and type
+    season: number //season year and type
+    seasonType: number
+    seasonTypeName: string //the name of the season type (ex: regular, preseason, etc)
     totalGames: number //the total games of the request
     seasonEndDate: string //if needed, the season end date
     schedule: {
