@@ -152,8 +152,8 @@
         <div id="leaderSection">
             <h2 class="leaderHeadline"><%= summary.awayTeamAbbr %> Leaders</h2>
             <div id="awayTeamLeaders">
-                <% if (summary.leaders !== undefined){
-                    summary.leaders.awayLeaders.forEach(leader => { %>
+                <% if (summary.awayLeaders !== undefined){
+                    summary.awayLeaders.forEach(leader => { %>
                         <div class="leaderDiv">
                             <h3><%= leader.category %></h3>    
                             <img class="headshot" src="<%= leader.athleteHeadshot %>">
@@ -166,8 +166,8 @@
 
             <h2 class="leaderHeadline"><%= summary.homeTeamAbbr %> Leaders</h2>
             <div id="homeTeamLeaders">
-                <% if (summary.leaders !== undefined){
-                    summary.leaders.homeLeaders.forEach(leader => { %>
+                <% if (summary.homeLeaders !== undefined){
+                    summary.homeLeaders.forEach(leader => { %>
                         <div class="leaderDiv">
                             <h3><%= leader.category %></h3>
                             <img class="headshot" src="<%= leader.athleteHeadshot %>">

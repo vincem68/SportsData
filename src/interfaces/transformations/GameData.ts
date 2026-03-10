@@ -11,8 +11,6 @@ export const parseOverview = (response: GameSpecificOverviewResponse, league: st
     const awayCompetitor = competition.competitors[1];
     const homeCompetitor = competition.competitors[0];
 
-    console.log(league);
-
     return {
         id: response.id,
         date: response.date,
@@ -67,7 +65,7 @@ export const parseOverview = (response: GameSpecificOverviewResponse, league: st
             intervals: getIntervalLabels(
                 competition.format.regulation.periods, 
                 league, 
-                competition.competitors[0].linescores ? competition.competitors[0].linescores.length : 0, 
+                competition.competitors[0].linescores ? competition.competitors[1].linescores.length : 0, 
                 response.season.type == 3
             ),
 
@@ -124,6 +122,9 @@ export const parseSummary = (response: GameSpecificSummaryResponse, league: stri
         response.boxscore.teams[1].statistics[18].abbreviation = "PCOT";
     }
 
+    //filter out leaders stats that don't have any leaders, like if a team gets shutout, there might not be anything
+    response.leaders.forEach(team => team.leaders = team.leaders.filter(leader => leader.leaders !== undefined));
+
     return {
 
         //the abbreviations of the teams
@@ -145,7 +146,7 @@ export const parseSummary = (response: GameSpecificSummaryResponse, league: stri
             value: stat.displayValue
         })),
 
-        awayLeaders: response.meta.gameState != "in" && league != "MLB" ? response.leaders[0].leaders.map(leader => ({
+        awayLeaders: response.meta.gameState != "in" && league != "MLB" ? response.leaders[1].leaders.map(leader => ({
 
             category: leader.displayName,
             athleteName: leader.leaders[0].athlete.shortName,
@@ -158,7 +159,7 @@ export const parseSummary = (response: GameSpecificSummaryResponse, league: stri
 
         })) : undefined,
         
-        homeLeaders: response.meta.gameState != "in" && league != "MLB" ? response.leaders[1].leaders.map(leader => ({
+        homeLeaders: response.meta.gameState != "in" && league != "MLB" ? response.leaders[0].leaders.map(leader => ({
 
             category: leader.displayName,
             athleteName: leader.leaders[0].athlete.shortName,
@@ -239,10 +240,10 @@ export const parseSummary = (response: GameSpecificSummaryResponse, league: stri
  * OT, 2OT, SO, etc.
  */
 function getIntervalLabels(regFormat: number, league: string, linescoreLength: number, postseason: boolean): string[] {
-    const intervals = Array.from({ length: regFormat }, (_, i) => (i + 1).toString());
-    console.log(intervals);
 
-    if (intervals.length > regFormat) { //if we have more intervals then the regulation amount
+    const intervals = Array.from({ length: regFormat }, (_, i) => (i + 1).toString());
+
+    if (linescoreLength > regFormat) { //if we have more intervals then the regulation amount
 
         if (league == "NHL" && !postseason) { //if NHL and not postseason, just OT and maybe SO
 
@@ -251,6 +252,9 @@ function getIntervalLabels(regFormat: number, league: string, linescoreLength: n
 
         } else if (league != "MLB") { //otherwise, for everything but baseball, make it OT, 2OT, etc
             const extraIntervals = Array.from({ length: linescoreLength - regFormat }, (_, i) => `${i + 1}OT`);
+            intervals.push(...extraIntervals);
+        } else {
+            const extraIntervals = Array.from({ length: linescoreLength - regFormat }, (_, i) => (i + 1).toString());
             intervals.push(...extraIntervals);
         }
     }

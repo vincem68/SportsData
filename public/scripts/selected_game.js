@@ -83,11 +83,11 @@ async function initializeStats() {
     const updateSummary = parseSummary();
     const updateOverview = parseOverview();
 
-        //remove any previous leaders if they are hidden
-    awayTeamLeadersDiv.replaceChildren();
-    homeTeamLeadersDiv.replaceChildren();
-
     if (updateSummary.gameState == "in"){ //when game starts, start setting everything up
+
+        //remove any previous leaders if they are hidden
+        awayTeamLeadersDiv.replaceChildren();
+        homeTeamLeadersDiv.replaceChildren();
 
         //make player buttons, linescore and live imgae visible. Hide leaders div
         buttonSection.style.display = 'flex';
@@ -135,7 +135,7 @@ async function initializeStats() {
  * happens when the page is loaded pregame but the game starts while the page is open, creates the 
  * tables for the player stats for both teams
  * */
-function createPlayerBoxscores(playerStats, divID, teamAbbr){
+function createPlayerBoxscores(playerStats, divID){
 
     //go by category when making each table (like passing, rushing, batting, etc)
     playerStats.forEach(category => {
@@ -457,7 +457,7 @@ async function parseOverview() {
 
         seriesSummary: competition.series ? competition.series.summary : undefined,
 
-        linescore: {
+        linescore: competition.linescores ? {
 
             intervalLength: competition.format.regulation.periods,
 
@@ -472,7 +472,7 @@ async function parseOverview() {
             homeRuns: league == "MLB" ? competition.competitors[0].statistics[1].displayValue : undefined,
             homeHits: league == "MLB" ? competition.competitors[0].statistics[0].displayValue : undefined,
             homeErrors: league == "MLB" ? competition.competitors[0].statistics[7].displayValue : undefined
-        }
+        } : undefined
     }
 }
 
