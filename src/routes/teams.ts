@@ -11,6 +11,7 @@ import type { TeamStatsResponse, TeamStats } from '../interfaces/types/TeamStats
 
 import { parseGame } from '../interfaces/transformations/LeagueSchedule';
 import { parseTeamStatsResponse } from '../interfaces/transformations/TeamStats';
+import { parseTeamResponse } from '../interfaces/transformations/Team';
 import { parse } from 'path';
 
 const router = Router({ mergeParams: true });
@@ -165,10 +166,9 @@ router.get('/', async function(req: Request, res: Response){
         res.status(400).send("Bad Request: Invalid sport or league parameter.");
         return;
     }
+    //get the teams for the league
+    const teams: Team[] = await parseTeamResponse(`http://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams`);
     
-    const response = await fetch(`http://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams`);
-    const data: TeamResponse = await response.json();
-    const teams: Team[] = data.sports[0].leagues[0].teams.map((teamWrapper) => teamWrapper.team);
     res.render('team_selection', {port: port, sport: sport, league: league.toUpperCase(), teams: teams});
 })
 
