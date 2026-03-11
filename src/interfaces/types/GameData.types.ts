@@ -67,6 +67,8 @@ interface Competitor {
     statistics: {
       displayValue: string
     }[]
+    hits?: number; //only for baseball
+    errors?: number; //only for baseball
 }
 
 interface Linescore {
@@ -149,12 +151,12 @@ export interface GameSpecificOverview {
       intervals: string[] // the numebred labels of intervals, such as 1, 2, 3, ... OT, SO, etc
       awayLinescore: string[]
       awayRuns?: string;
-      awayHits?: string;
-      awayErrors?: string;
+      awayHits?: number;
+      awayErrors?: number;
       homeLinescore: string[]
       homeRuns?: string;
-      homeHits?: string;
-      homeErrors?: string;
+      homeHits?: number;
+      homeErrors?: number;
     }
 }
 

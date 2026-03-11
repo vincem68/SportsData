@@ -113,14 +113,15 @@ async function updateGames(){
 
         const gameID = gameDiv.id;
         //find the specific game in the upcomingGames portion of response
-        const gameData = updatedGames.upcomingGames.find(event => event.id == gameID);
+        const gameData = updatedGames.find(event => event.id == gameID);
 
-        //if the game has started, move it to active games
+        //if null, the game has started. Move to Active Games Div
         if (gameData.status.state != "pre"){
             //get the game elements 
             const status = gameDiv.querySelector('.status');
             const score = gameDiv.querySelector('.score');
             const mlbCount = gameDiv.querySelector('.mlbCount');
+            const mlbOuts = gameDiv.querySelector('.mlbOuts');
             const yardMarker = gameDiv.querySelector('.yardMarker');
             const arrowImage = gameDiv.querySelector('.arrow_img');
             const seriesRecord = gameDiv.querySelector('.seriesRecord');
@@ -133,9 +134,9 @@ async function updateGames(){
 
             //update baseball count if in MLB game
             mlbCount.style.display = (league == "MLB" && gameData.situation !== undefined) ? "flex" : "none";
-            mlbCount.textContent = (league == "MLB" && gameData.situation !== undefined) ? 
-                gameData.situation.balls + "-" + gameData.situation.strikes +  " " + 
-                    gameData.situation.outs + " outs" : "";
+            mlbCount.textContent = (league == "MLB" && gameData.situation !== undefined) ? gameData.situation.count : "";
+            mlbOuts.style.display = (league == "MLB" && gameData.situation !== undefined) ? "flex" : "none";
+            mlbOuts.textContent = (league == "MLB" && gameData.situation !== undefined) ? gameData.situation.outs + " Outs" : "";
 
             //update football marker if an NFL game
             if (league == "NFL" && gameData.situation !== undefined){
@@ -170,21 +171,28 @@ async function updateGames(){
 
     activeGames.querySelectorAll('.gameContainer').forEach(gameDiv => {
 
+        //get the related game data from response and game div
         const gameID = gameDiv.id;
-        const gameData = updatedGames.activeGames.find(event => event.id == gameID);
+        const gameData = updatedGames.find(event => event.id == gameID);
 
         const status = gameDiv.querySelector('.status');
         const score = gameDiv.querySelector('.score');
         const mlbCount = gameDiv.querySelector('.mlbCount');
+        const mlbOuts = gameDiv.querySelector('.mlbOuts');
         const yardMarker = gameDiv.querySelector('.yardMarker');
         const arrowImage = gameDiv.querySelector('.arrow_img');
         const seriesRecord = gameDiv.querySelector('.seriesRecord');
 
         //update the status of the game
         status.textContent = gameData.status.shortDetail;
-
         //get score of game
         score.textContent = gameData.awayTeam.score + " - " + gameData.homeTeam.score;
+
+        //update baseball count if in MLB game
+        mlbCount.style.display = (league == "MLB" && gameData.situation !== undefined) ? "flex" : "none";
+        mlbCount.textContent = (league == "MLB" && gameData.situation !== undefined) ? gameData.situation.count : "";
+        mlbOuts.style.display = (league == "MLB" && gameData.situation !== undefined) ? "flex" : "none";
+        mlbOuts.textContent = (league == "MLB" && gameData.situation !== undefined) ? gameData.situation.outs + " Outs" : "";
 
         //if the game is now finished, move it to completed games
         if (gameData.status.state == "post"){
@@ -193,6 +201,7 @@ async function updateGames(){
             mlbCount.style.display = "none";
             yardMarker.style.display = "none";
             arrowImage.style.display = "none";
+            mlbOuts.style.display = "none";
 
             //for series score updates on final games
             if (gameData.seriesSummary !== undefined){
@@ -231,46 +240,37 @@ if (activeGames.children.length == 0 && upcomingGames.children.length == 0){
 async function parseLeagueScheduleResponse() {
 
     const response = await (await fetch(endpoint)).json();
-    const parsedGames = response.events.map(event => parseGame(event));
-    console.log(parsedGames);
 
-    return {
-        activeGames: parsedGames.filter(game => game.status.state === "in"),
-        upcomingGames: parsedGames.filter(game => game.status.state === "pre"),
-        completedGames: parsedGames.filter(game => game.status.state === "post")
-    }
-}
+    return response.events.map(game => {
 
-function parseGame(game) {
+        const competition = game.competitions[0];
+        const awayCompetitor = game.competitions[0].competitors[1];
+        const homeCompetitor = game.competitions[0].competitors[0];
 
-    const competition = game.competitions[0];
-    const awayCompetitor = game.competitions[0].competitors[1];
-    const homeCompetitor = game.competitions[0].competitors[0];
-
-    return {
-        id: game.id,
-        seasonType: game.season.type,
-        awayTeam: {
-            id: awayCompetitor.id,
-            score: awayCompetitor.score
-        },
-        homeTeam: {
-            id: homeCompetitor.id,
-            score: homeCompetitor.score
-        },
-        status: {
-            state: competition.status.type.state,
-            shortDetail: competition.status.type.shortDetail,
-            period: competition.status.period,
-            displayClock: competition.status.displayClock
-        },
-        situation: competition.situation ? {
-            downDistanceText: competition.situation.downDistanceText,
-            possession: competition.situation.possession,
-            balls: competition.situation.balls,
-            strikes: competition.situation.strikes,
-            outs: competition.situation.outs
-        } : undefined,
-        seriesSummary: competition.series?.summary || ''
-    };
+        return {
+            id: game.id,
+            seasonType: game.season.type,
+            awayTeam: {
+                id: awayCompetitor.id,
+                score: awayCompetitor.score
+            },
+            homeTeam: {
+                id: homeCompetitor.id,
+                score: homeCompetitor.score
+            },
+            status: {
+                state: competition.status.type.state,
+                shortDetail: competition.status.type.shortDetail,
+                period: competition.status.period,
+                displayClock: competition.status.displayClock
+            },
+            situation: competition.situation ? {
+                downDistanceText: competition.situation.downDistanceText,
+                possession: competition.situation.possession,
+                count: `${competition.situation.balls}-${competition.situation.strikes}`,
+                outs: competition.situation.outs
+            } : undefined,
+            seriesSummary: competition.series?.summary || ''
+        };
+    });
 }

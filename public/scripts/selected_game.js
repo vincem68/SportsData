@@ -141,7 +141,6 @@ function createPlayerBoxscores(playerStats, divID){
     playerStats.forEach(category => {
         //create the table for the player category (like rushing, passing, forwards, etc)
         const table = document.createElement('table');
-        const tableID = category.tableID;
         //create a headline for the category name if it exists in JSON
         const tableName = document.createElement('h2');
         tableName.textContent = category.categoryName;
@@ -215,15 +214,14 @@ async function updateGameStats(){
         outs.textContent = updateOverview.situation.outs + " outs";
     }
 
-    //update the at bat pitcher and batter if available, show their names and headshots
-    if (league == "MLB" && updateOverview.situation && updateOverview.situation.pitcher){
-
+    //update the at bat pitcher/batter if available, show name and headshot
+    if (updateOverview.situation && updateOverview.situation.pitcher){
         pitcherHeadshot.src = updateOverview.situation.pitcher.headshot;
+        pitcherName.textContent = updateOverview.situation.pitcher.name;
         batterHeadshot.src = updateOverview.situation.batter.headshot;
         batterName.textContent = updateOverview.situation.batter.name;
-        pitcherName.textContent = updateOverview.situation.pitcher.name;
-        
     }
+
     //update football marker if football game and the possession arrow image
     if (league == "NFL" && updateOverview.situation){
         //get the current down and yard line info and update the marker text
@@ -330,10 +328,9 @@ function updatePlayerBoxscores(playersArray) {
                 const newRow = document.createElement('tr'); //create row
                 newRow.classList.add(player.rowID); //set ID
                 const playerName = document.createElement('th'); //create th for name
-                if (player.starter !== undefined){ //give bench/nonstarters visual difference
-                    playerName.classList.add((player.starter == true) ? "name" : "nonstarter");
-                } else { playerName.classList.add("name"); }
-                //get player name
+                //give bench/nonstarters visual difference
+                playerName.classList.add((player.starter !== undefined && player.starter == true) ? "name" : "nonstarter");
+                //player name
                 playerName.textContent = player.athleteName;
                 newRow.appendChild(playerName); //add name to row
                 player.stats.forEach(stat => { //add new stat cells to row
@@ -346,11 +343,10 @@ function updatePlayerBoxscores(playersArray) {
                 const arrayIndex = category.players.indexOf(player);
                 //if the game is baseball, and we're in the batters table, add in player in order of lineup
                 if (category.categoryName == "BATTING" && arrayIndex != category.players.length - 1){
-                    document.getElementById(category.tableID).insertBefore(tableRows[arrayIndex + 1], newRow);                                   
+                    document.getElementById(category.tableID).insertBefore(newRow, tableRows[arrayIndex + 1]);                                   
                 } else { //for other sports/cateogries just add player to end
                     document.getElementById(category.tableID).appendChild(newRow);
                 }
-                nextPlayerRow = newRow.nextSibling; //set nextPlayerRow to the next row
                 newRow.classList.add('nonstarter'); //give non starter class
             }
         }) 
@@ -439,12 +435,12 @@ async function parseOverview() {
             
             downDistanceText: league == "NFL" ? competition.situation.downDistanceText : undefined,
             possession: league == "NFL" ? competition.situation.possession : undefined,
-            count: league == "MLB" ? competition.situation.batter.summary : undefined,
-            outs: league == "MLB" ? competition.situation.outs : undefined,
+            count: competition.situation.batter ? competition.situation.batter : "--",
+            outs: league == "MLB" && competition.situation ? competition.situation.outs : undefined,
 
             pitcher: league == "MLB" && competition.situation.pitcher ? {
                 name: competition.situation.pitcher.athlete.shortName,
-                headshot: competition.situation.pitcher.athlete.headshot
+                id: competition.situation.pitcher.athlete.id,
             } : undefined,
 
             batter: league == "MLB" && competition.situation.batter ? {
@@ -457,7 +453,7 @@ async function parseOverview() {
 
         seriesSummary: competition.series ? competition.series.summary : undefined,
 
-        linescore: competition.linescores ? {
+        linescore: awayCompetitor.linescores ? {
 
             intervalLength: competition.format.regulation.periods,
 

@@ -113,11 +113,21 @@
 
                         <p class="status"><%= game.status.shortDetail %></p>
 
+                        <p class="score">
+                            <% if (game.status.state != "pre"){ %>
+                                <%= game.awayTeam.score %> - <%= game.homeTeam.score %>
+                            <% } %>
+                        </p>
+
                         <p class="mlbCount">
                             <% if (league == "MLB" && game.situation !== undefined){ %>
-                                <%= game.situation.balls + "-" + game.situation.strikes
-                                    +  " " + game.situation.outs + " outs" %>
+                                <%= game.situation.count %>
                             <% } %>
+                        </p>
+                        <p class="mlbOuts">
+                            <% if (league == "MLB" && game.situation !== undefined){ %>
+                                <%= game.situation.outs %> Outs
+                            <% } %> 
                         </p>
 
                         <img class="arrow_img" src="/images/left_arrow.png">
@@ -125,12 +135,6 @@
                         <p class="yardMarker">
                             <% if (league == "NFL" && game.situation !== undefined){ %>
                                 <%= game.situation.downDistanceText %>
-                            <% } %>
-                        </p>
-
-                        <p class="score">
-                            <% if (game.status.state != "pre"){ %>
-                                <%= game.awayTeam.score %> - <%= game.homeTeam.score %>
                             <% } %>
                         </p>
 

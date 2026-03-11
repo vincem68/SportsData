@@ -5,14 +5,14 @@ import { checkRequestParams, checkQueryParams } from '../validation_functions';
 
 
 import type { LeagueScheduleResponse, LeagueSchedule } from '../interfaces/types/LeagueSchedule.types';
-import type { GameOverview, GameOverviewResponse} from '../interfaces/types/GameOverview.types';
+import type { GameOverview, GameOverviewResponse} from '../interfaces/types/LeagueSchedule.types';
 import type { GameSpecificOverview, GameSpecificOverviewResponse,
     GameSpecificSummary, GameSpecificSummaryResponse
 } from '../interfaces/types/GameData.types';
 
 
 import { parseLeagueScheduleResponse } from '../interfaces/transformations/LeagueSchedule';
-import {parseGame} from '../interfaces/transformations/GameOverview';
+import {parseGame} from '../interfaces/transformations/LeagueSchedule';
 import { parse } from 'path';
 import { parseOverview, parseSummary} from '../interfaces/transformations/GameData';
 

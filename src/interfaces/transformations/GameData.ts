@@ -44,7 +44,7 @@ export const parseOverview = (response: GameSpecificOverviewResponse, league: st
         situation: competition.situation ? {
             downDistanceText: league == "NFL" ? competition.situation.downDistanceText : undefined,
             possession: league == "NFL" ? competition.situation.possession : undefined,
-            count: league == "MLB" ? competition.situation.batter!.summary : undefined,
+            count: competition.situation && competition.situation.batter ? competition.situation.batter.summary : undefined,
             outs: league == "MLB" ? competition.situation.outs : undefined,
             pitcher: league == "MLB" && competition.situation.pitcher ? {
                 name: competition.situation.pitcher.athlete.shortName,
@@ -83,11 +83,11 @@ export const parseOverview = (response: GameSpecificOverviewResponse, league: st
                 ): league == "MLB" ? ['','','','','','','','',''] : league == "NHL" ? ['','',''] : ['','','',''],
 
             awayRuns: league == "MLB" ? competition.competitors[1].statistics[1].displayValue : undefined,
-            awayHits: league == "MLB" ? competition.competitors[1].statistics[0].displayValue : undefined,
-            awayErrors: league == "MLB" ? competition.competitors[1].statistics[7].displayValue : undefined,
+            awayHits: league == "MLB" ? competition.competitors[1].hits : undefined,
+            awayErrors: league == "MLB" ? competition.competitors[1].errors : undefined,
             homeRuns: league == "MLB" ? competition.competitors[0].statistics[1].displayValue : undefined,
-            homeHits: league == "MLB" ? competition.competitors[0].statistics[0].displayValue : undefined,
-            homeErrors: league == "MLB" ? competition.competitors[0].statistics[7].displayValue : undefined
+            homeHits: league == "MLB" ? competition.competitors[0].hits : undefined,
+            homeErrors: league == "MLB" ? competition.competitors[0].errors : undefined
         }
     };
 }
@@ -123,7 +123,9 @@ export const parseSummary = (response: GameSpecificSummaryResponse, league: stri
     }
 
     //filter out leaders stats that don't have any leaders, like if a team gets shutout, there might not be anything
-    response.leaders.forEach(team => team.leaders = team.leaders.filter(leader => leader.leaders !== undefined));
+    if (response.meta.gameState != "in" && response.leaders && league != "MLB") {
+        response.leaders.forEach(team => team.leaders = team.leaders.filter(leader => leader.leaders !== undefined));
+    }
 
     return {
 

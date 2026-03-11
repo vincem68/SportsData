@@ -6,10 +6,10 @@ import { checkRequestParams, checkQueryParams } from '../validation_functions';
 import type { TeamResponse, Team} from '../interfaces/types/Team.types';
 import type { TeamInfoResponse, TeamInfo } from '../interfaces/types/TeamInfo.types';
 import type { TeamNews, TeamNewsResponse } from '../interfaces/types/TeamNews.types';
-import type { GameOverview, GameOverviewResponse} from '../interfaces/types/GameOverview.types';
+import type { GameOverview, GameOverviewResponse} from '../interfaces/types/LeagueSchedule.types';
 import type { TeamStatsResponse, TeamStats } from '../interfaces/types/TeamStats.types';
 
-import { parseGame } from '../interfaces/transformations/GameOverview';
+import { parseGame } from '../interfaces/transformations/LeagueSchedule';
 import { parseTeamStatsResponse } from '../interfaces/transformations/TeamStats';
 import { parse } from 'path';
 

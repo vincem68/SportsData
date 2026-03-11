@@ -50,16 +50,16 @@
 
                 <div id="atBat"> <!--for baseball, shows count, outs, and pitcher/batter-->
                     <div>
-                        <img id="pitcherHeadshot" src="">
+                        <img id="pitcherHeadshot" src="<%= overview.situation && overview.situation.pitcher ? overview.situation.pitcher.headshot : '' %>">
                         <p id="pitcherName">
-                            <% if (league == "MLB" && overview.situation !== undefined){ %>
+                            <% if (overview.situation && overview.situation.pitcher){ %>
                                 <%= overview.situation.pitcher.name %>
                             <% } %>
                         </p>
                     </div>
                     <div>
                         <p id="count"><!--Keeps track of ball and strike count in baseball game-->
-                            <% if (league == "MLB" && overview.situation){ %>
+                            <% if (overview.situation && overview.situation.batter){ %>
                                 <%= overview.situation.count %>
                             <% } %>
                         </p>
@@ -70,9 +70,9 @@
                         </p>
                     </div>
                     <div>
-                        <img id="batterHeadshot" src="">
+                        <img id="batterHeadshot" src="<%= overview.situation && overview.situation.batter ? overview.situation.batter.headshot : '' %>">
                         <p id="batterName">
-                            <% if (league == "MLB" && overview.situation){ %>
+                            <% if (overview.situation && overview.situation.batter){ %>
                                 <%= overview.situation.batter.name %>
                             <% } %>
                         </p>
@@ -201,7 +201,7 @@
                         <div class="tableDiv">
                             <table id="<%= cat.tableID %>"> <!--Every table will have ID matching category name-->
                                 <tr>
-                                    <% if (cat.tableID == "batting"){ %> <th>Position</th> <% } %>
+                                    <% if (cat.tableID.includes("batting")){ %> <th>Position</th> <% } %>
                                     <th>Player</th>
                                     <% cat.catLabelsAndDescs.forEach(info => { %>
                                         <th>
@@ -216,7 +216,7 @@
                                 </tr>
                                 <% cat.players.forEach(player => { %>
                                     <tr class="<%= player.rowID %>">
-                                        <% if (cat.categoryName == "batting"){ %>
+                                        <% if (cat.categoryName == "BATTING"){ %>
                                             <th><%= player.position %></th>
                                         <% } %>
                                         <th class="name"><%= player.athleteName %></th>
