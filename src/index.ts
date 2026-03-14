@@ -10,7 +10,7 @@ import gameRoutes from './routes/games';
 import type { BasicTeamInfo } from './interfaces/types/BasicTeamInfo.types';
 import type { SeasonInfo } from './interfaces/types/SeasonInfo.types';
 import type {TeamStats, LeagueStatsResponse} from './interfaces/types/LeagueStats.types';
-import type { TeamStandingsData, TeamRecord } from './interfaces/types/TeamStandings.types';
+import type { LeagueStandings } from './interfaces/types/Standings.types';
 import type { BasicPlayerStatsResponse, BasicPlayerStats, PlayerSplits, 
     PlayerSplitsResponse, PlayerStatsOverview, PlayerStatsOverviewResponse
 } from './interfaces/types/PlayerStats.types';
@@ -18,6 +18,7 @@ import type { BasicPlayerStatsResponse, BasicPlayerStats, PlayerSplits,
 //parsers
 import { parseBasicPlayerStats, parseMainPlayerStats, parsePlayerSplits } from './interfaces/transformations/PlayerStats';
 import { parseLeaderData } from './interfaces/transformations/Leaders';
+import { parseStandingsResponse } from './interfaces/transformations/Standings';
 
 
 const app = express();
@@ -153,40 +154,20 @@ app.get('/:sport/:league/standings', async function(req: Request, res: Response)
         res.status(400).send("Invalid sport or league");
         return;
     }
-
+    //base endpoint we will send a request to for every team
     const endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/`;
-    //get correct team array
+
+    //get correct team array that contains string values of the team abbreviations
     const teamIDs = (league.toUpperCase() == "NFL") ? nflTeams : (league.toUpperCase() == "NBA") ? nbaTeams :
         (league.toUpperCase() == "MLB") ? mlbTeams : nhlTeams;
 
-    //array to store the team data
-    const teamStandings: TeamRecord[] = [];
-
-    //start sending requests for data
-    for (const team of teamIDs){
-        const teamData: TeamStandingsData = await (await fetch(endpoint + team)).json();
-        if (teamData.team.record.items === undefined){
-            break;
-        } else {
-            const data: TeamRecord = {
-                abbreviation: teamData.team.abbreviation,
-                logo: teamData.team.logos[0].href,
-                gamesPlayed: teamData.team.record.items[0].stats.find(stat => stat.name === "gamesPlayed")?.value || 0,
-                playoffSeed: teamData.team.record.items[0].stats.find(stat => stat.name === "playoffSeed")?.value || 0,
-                wins: teamData.team.record.items[0].stats.find(stat => stat.name === "wins")?.value || 0,
-                losses: teamData.team.record.items[0].stats.find(stat => stat.name === "losses")?.value || 0,
-                ties: teamData.team.record.items[0].stats.find(stat => stat.name === "ties")?.value,
-                otLosses: teamData.team.record.items[0].stats.find(stat => stat.name === "otLosses")?.value,
-                points: teamData.team.record.items[0].stats.find(stat => stat.name === "points")?.value,
-                winPercent: teamData.team.record.items[0].stats.find(stat => stat.name === "winPercent")?.value,
-                standingSummary: teamData.team.standingSummary
-            };
-            teamStandings.push(data);
-        }
-    }
+    //the standings data of all the teams
+    const teamStandings: LeagueStandings = await parseStandingsResponse(endpoint, teamIDs, league.toUpperCase());
 
     res.render('league_standings', {port: port, sport: sport, league: league.toUpperCase(), teamStandings: teamStandings});
 })
+
+
 
 app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
 

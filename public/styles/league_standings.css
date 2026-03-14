@@ -44,11 +44,11 @@
     width: 20%;
 }
 
-.playoffTeam td {
+.playoffs td {
     background-color: lightgreen;
 }
 
-.wildcardTeam td {
+.wildcard td {
     background-color: lightyellow;
 }
 
