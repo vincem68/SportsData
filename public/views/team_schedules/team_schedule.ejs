@@ -43,22 +43,22 @@
         <h3 class="importantHeadline">Team is currently in the <%= data.season.name %></h3>
 
         <!--Check if we're requesting postseason schedule for a postseason that hasn't happened yet-->
-        <% if (requestedType == 3 && (requestedSeason == data.season.year && data.season.type < 3)){ %>
+        <% if (data.requestedSeason.type == 3 && (data.requestedSeason.year == data.season.year && data.season.type < 3)){ %>
 
             <h2>Postseason has not Occurred Yet. Check Back at a Later Date.</h2>
 
         <!--check if team qualified for postseason-->
-        <% } else if (requestedType == 3 && data.events.length == 0 && requestedSeason < data.season.year) { %>
+        <% } else if (data.requestedSeason.type == 3 && data.games.length == 0 && data.requestedSeason.year < data.season.year) { %>
 
             <h2>This Team Did Not Qualify for the Postseason this Year.</h2>
 
-        <% } else if (data.events.length == 0){ %>
+        <% } else if (data.games.length == 0){ %>
 
             <h2>This Schedule is Not Available. Check Back Later!</h2>
 
         <% } else { %>
 
-            <% if (league.toUpperCase() == "NFL"){ %> <!--NFL will have different schedule format-->
+            <% if (league == "NFL"){ %> <!--NFL will have different schedule format-->
 
                 <%- include ('weeks') %>
 

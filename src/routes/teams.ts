@@ -8,7 +8,9 @@ import type { TeamInfoResponse, TeamInfo } from '../interfaces/types/TeamInfo.ty
 import type { TeamNews, TeamNewsResponse } from '../interfaces/types/TeamNews.types';
 import type { GameOverview, GameOverviewResponse} from '../interfaces/types/LeagueSchedule.types';
 import type { TeamStatsResponse, TeamStats } from '../interfaces/types/TeamStats.types';
+import type { NFLSchedule } from '../interfaces/types/NFLSchedules.types';
 
+import { parseNFLScheduleResponse } from '../interfaces/transformations/NFLSchedules';
 import { parseGame } from '../interfaces/transformations/LeagueSchedule';
 import { parseTeamStatsResponse } from '../interfaces/transformations/TeamStats';
 import { parseTeamResponse } from '../interfaces/transformations/Team';
@@ -41,11 +43,12 @@ router.get('/:team/roster', async function(req: Request, res: Response){
  * This route will get the schedule for the specified team
  */
 router.get('/:team/schedule', async function(req: Request, res: Response){
+
     const sport = req.params.sport;
     const league = req.params.league;
     const team = req.params.team;
 
-    if (!checkRequestParams(sport, league)){
+    if (!checkRequestParams(sport, league, team)){
         res.status(400).send("Bad Request: Invalid sport or league parameter.");
         return;
     }
@@ -53,17 +56,15 @@ router.get('/:team/schedule', async function(req: Request, res: Response){
     let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/schedule`;
 
     if (req.query.season !== undefined && req.query.seasonType !== undefined){
-        endpoint += `?season=${req.query.season}&seasontype=${req.query.seasonType}`;
+        if (checkQueryParams(league, Number(req.query.season), Number(req.query.seasonType))){
+            endpoint += `?season=${req.query.season}&seasontype=${req.query.seasonType}`;
+        }
     }
 
-    const response = await fetch(endpoint);
-    const data = await response.json();
+    const data: NFLSchedule = await parseNFLScheduleResponse(endpoint);
 
-    const requestedSeason = (req.query.season !== undefined) ? req.query.season : 0;
-    const requestedType = (req.query.seasonType !== undefined) ? req.query.seasonType : "0";
-
-    res.render('team_schedules/team_schedule', {port: port, team: team, league: league, sport: sport, 
-        requestedSeason: requestedSeason, requestedType: requestedType, data: data});
+    res.render('team_schedules/team_schedule', {port: port, team: team, league: league.toUpperCase(), 
+        sport: sport, data: data});
 })
 
 /**

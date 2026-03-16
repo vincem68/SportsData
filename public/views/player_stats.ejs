@@ -117,10 +117,8 @@
                             </tr>
                             <tr>
                                 <!--Upon initial page load, only show the first split stats of first category-->
-                                <% let counter = 0; %>
-                                <% playerSplits.categories[0].splits[0].values.forEach(stat => { %>
-                                    <td id="cell-<%= counter %>"><%= stat %></td> 
-                                    <% counter++; %>
+                                <% playerSplits.categories[0].splits[0].values.forEach((stat, index) => { %>
+                                    <td id="cell-<%= index %>"><%= stat %></td> 
                                 <% }) %>
                             </tr>
                         </table>
