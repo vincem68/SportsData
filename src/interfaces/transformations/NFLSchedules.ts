@@ -1,9 +1,9 @@
 import type { NFLSchedule, NFLScheduleResponse } from "../types/NFLSchedules.types";
 
-export async function parseNFLScheduleResponse(endpoint: string): Promise<NFLSchedule> {
+export async function parseNFLScheduleResponse(team: string, season: number, seasonType: number): Promise<NFLSchedule> {
 
-    const response = await fetch(endpoint);
-    const data: NFLScheduleResponse = await response.json();
+    const data: NFLScheduleResponse = await fetch(`https://site.api.espn.com/apis/site/v2/sports/football/nfl/teams/${team}/schedule?season=${season}&seasontype=${seasonType}`)
+        .then(async response => await response.json());
 
     const games = data.events.map((event) => {
 
@@ -29,9 +29,9 @@ export async function parseNFLScheduleResponse(endpoint: string): Promise<NFLSch
     return {
 
         team: {
-            id: data.events[0].competitions[0].competitors[0].team.id,
-            name: data.events[0].competitions[0].competitors[0].team.displayName,
-            abbreviation: data.events[0].competitions[0].competitors[0].team.abbreviation,
+            id: data.team.id,
+            name: data.team.displayName,
+            abbreviation: data.team.abbreviation,
             logo: data.team.logo
         },
 
@@ -41,11 +41,15 @@ export async function parseNFLScheduleResponse(endpoint: string): Promise<NFLSch
             name: data.season.name
         },
 
-        requestedSeason: {
+        requestedSeason: data.requestedSeason ? {
             year: data.requestedSeason.year,
             type: data.requestedSeason.type,
             name: data.requestedSeason.name
-        },
+        } : undefined,
+
+        eliminatedPostseason: seasonType == 3 && games.length == 0 && season <= data.season.year && data.season.type >= 3 ? true : undefined,
+
+        inactivePostseason: seasonType == 3 && games.length == 0 && season == data.season.year && data.season.type < 3 ? true : undefined,
         
         byeWeek: data.byeWeek ? data.byeWeek : 0,
 

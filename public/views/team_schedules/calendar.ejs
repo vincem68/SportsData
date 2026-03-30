@@ -1,298 +1,69 @@
-<%
-
-const months = (league.toUpperCase() == "MLB") ?
-[
-    {key: "03", totalDays: 31, name: "March"},
-    {key: "04", totalDays: 30, name: "April"},
-    {key: "05", totalDays: 31, name: "May"},
-    {key: "06", totalDays: 30, name: "June"},
-    {key: "07", totalDays: 31, name: "July"},
-    {key: "08", totalDays: 31, name: "August"},
-    {key: "09", totalDays: 30, name: "September"},
-    {key: "10", totalDays: 31, name: "October"}
-] :
-[
-    {key: "10", totalDays: 31, name: "October"},
-    {key: "11", totalDays: 30, name: "November"},
-    {key: "12", totalDays: 31, name: "December"},
-    {key: "01", totalDays: 31, name: "January"},
-    {key: "02", totalDays: (data.requestedSeason.year % 4 == 0) ? 29 : 28, name: "February"},
-    {key: "03", totalDays: 31, name: "March"},
-    {key: "04", totalDays: 30, name: "April"}
-];
-
-data.events.forEach(game => {
-
-    //change the dates of the games to local time dates
-    const localDate = new Date(game.date);
-    const year = localDate.getFullYear();
-    const month = String(localDate.getMonth() + 1).padStart(2, '0');
-    const day = String(localDate.getDate()).padStart(2, '0');
-    const hours = String(localDate.getHours()).padStart(2, '0');
-    const minutes = String(localDate.getMinutes()).padStart(2, '0');
-    game.date = `${year}-${month}-${day}T${hours}:${minutes}`;
-});
-%>
 
 <div id="scheduleDiv">
-    
-    <%
-    //for each month, filter out the events that take place in said month
-    months.forEach(month => {
 
-        //all games in month
-        const monthlyGames = data.events.filter(game => game.date.substring(5, 7) == month.key);
+    <% data.months.forEach(month => { %>
 
-        if (monthlyGames.length > 0){ //if we have games this month
+        <h3 class="monthTitle"><%= month.monthName %></h3>
+        <div class="monthDiv">
 
-            let weekday = 0; //index of a weekday (0 for Sun, 1 for Mon, etc)
-            let dayNum = 1; //numbered day of the month
+            <!--Loop through every calendar week of the month, make a div for each-->
+            <% for (let week = 0; week < month.totalCalendarWeeks; week++) { %>
 
-            //get the weekday of the first day of the month
-            const firstDayOfMonth = new Date(monthlyGames[0].date.substring(0, 8) + "01" +
-                monthlyGames[0].date.substring(10, 16)).getDay();
+                <div class="weekDiv">
 
-            monthlyGames.reverse();
+                    <!--Loop through the 7 days of each calendar week. Includes dead days-->
+                    <% for (let day = 0; day < 7; day++) { %>
 
-            %>
+                        <!--Add in dead days of the start of the calendar if on first week-->
+                        <% if (week == 0 && day < month.firstWeekDayOfMonth) { %>
+                            <div class="deadDay"></div>
+                            <% continue; %>
+                        <% } %>
 
-            <h3 class="monthTitle"><%= month.name %></h3>
-            <div class="monthDiv">
+                        <!--Add in dead days of the end of the calendar if on last week-->
+                        <% if (week === month.totalCalendarWeeks - 1 && day > month.lastWeekDayOfMonth) { %>
+                            <div class="deadDay"></div>
+                            <% continue; %>
+                        <% } %>
 
-            
-                <div class="weekDiv"> <!--Focus on the first week first, where we have dead days-->
+                        <!--Get the numbered day of the month-->
+                        <% const dayNum = week * 7 + (day - month.firstWeekDayOfMonth + 1); %>
+                        <!--See if there's a game that exists with the day number of the month-->
+                        <% const game = month.events.find(game => game.dayNum === dayNum); %>
+                        <!--If a game exists with that numbered day in that month, make a div for it-->
+                        <% if (game) { %>
 
-                    <!--get weekday of first month day, then add in dead days until we reach said weekday-->
-                    <% while (weekday < firstDayOfMonth){ %>
-                        <div class="deadDay"></div>
-                        <% weekday++;
-                    }
+                            <div class="gameDay <% if (game.home) { %> homeGame <% } else { %> roadGame <% } %>">
 
-                    //now go through first week and add empty days or game days as usual
-                    while (weekday < 7) {
+                                <h4 class="dayNum"><%= dayNum %></h4>
+                                <img class="opponentLogo" src="<%= game.opponentLogo %>" alt="<%= game.opponentAbbr %> logo">
+                                <p><%= game.opponentAbbr %></p>
 
-                        if (monthlyGames.length == 0){
+                                <a href="http://localhost:<%= port %>/<%= sport %>/<%= league.toLowerCase() %>/games/<%= game.id %>">
 
-                            while (weekday < 7){
-
-                                if (dayNum <= month.totalDays){ %>
-                                    <div class="emptyDay">
-                                        <h4 class="dayNum"><%= dayNum %></h4>
-                                    </div>
-                                    <% dayNum++;
-                                } else { %>
-                                    <div class="deadDay"></div>
-                                <% }
-                                weekday++;
-                            }
-
-                        } else {
-
-                            const game = monthlyGames.pop();
-
-                            if (parseInt(game.date.substring(8, 10)) == dayNum){
-
-                                let homeTeam = true; //set to either road or home game class
-
-                                //if our team is the road team, set gameClass to roadGame and swap the array elements
-                                if (data.team.abbreviation == game.competitions[0].competitors[1].team.abbreviation){
-                                    const temp = game.competitions[0].competitors[0];
-                                    game.competitions[0].competitors[0] = game.competitions[0].competitors[1];
-                                    game.competitions[0].competitors[1] = temp;
-                                    homeTeam = false;
-                                }
-
-                                %>
-
-                                <div class="gameDay <% if (homeTeam){ %> homeGame <% } else { %> roadGame <% } %>">
-
-                                    <h4 class="dayNum"><%= dayNum %></h4>
-                                    <% if (game.competitions[0].competitors[1].team.logos !== undefined){ %>
-                                        <img class="opponentLogo" src="<%= game.competitions[0].competitors[1].team.logos[0].href %>">
+                                    <% if (game.status == "pre"){ %> 
+                                        <%= game.startTime %>
+                                    <% } else if (game.status == "post") { %>
+                                        <% if (game.winner) { %> W <% } else { %> L <% } %> <%= game.score %>
                                     <% } else { %>
-                                        <img class="opponentLogo" src="/images/coyotes_logo.png">
+                                        In Progress
                                     <% } %>
-                                    <h6><%= game.competitions[0].competitors[1].team.abbreviation %></h6>
-                                    <!--put the needed details here depending on pre, in progress or final-->
-                                    <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
-                                        <% if (game.competitions[0].status.type.state == "pre"){ %>
+                                </a>
+                            </div>
 
-                                            <%= game.competitions[0].status.type.shortDetail.split('-')[1] %>
-
-                                        <% } else if (game.competitions[0].status.type.detail == "Postponed"){ %>
-
-                                            Postponed
-
-                                        <% } else if (game.competitions[0].status.type.state == "post"){ %>
-                                            <% if (game.competitions[0].competitors[0].winner) { %> W <% } else { %> L <% } %>
-                                            
-                                            <%= game.competitions[0].competitors[0].score.displayValue + 
-                                                "-" + game.competitions[0].competitors[1].score.displayValue %>
-                                        <% } else { %>
-                                            In Progress
-                                        <% } %>
-                                    </a>
-
-                                    <% if (monthlyGames.find(game => parseInt(game.date.substring(8, 10)) == dayNum) != null){
-                                        const doubleHeader = monthlyGames.pop(); %>
-                                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= doubleHeader.id %>">
-                                            <% if (doubleHeader.competitions[0].status.type.state == "pre"){ %>
-
-                                                <%= doubleHeader.competitions[0].status.type.shortDetail.split('-')[1] %>
-
-                                            <% } else if (doubleHeader.competitions[0].status.type.detail == "Postponed"){ %>
-                                                Postponed
-
-                                            <% } else if (doubleHeader.competitions[0].status.type.state == "post"){ %>
-
-                                                <% if (doubleHeader.competitions[0].competitors[0].winner) { %> W <% } else { %> L <% } %>
-                                                <%= doubleHeader.competitions[0].competitors[0].score.displayValue + 
-                                                    "-" + doubleHeader.competitions[0].competitors[1].score.displayValue %>
-                                            <% } else { %>
-                                                In Progress
-                                            <% } %>
-                                        </a>
-                                    <% } %>
-                                </div>
-                                
-                            <% } else { %>
-
-                                <div class="emptyDay">
-                                    <h4 class="dayNum"><%= dayNum %></h4>
-                                </div>
-                                <% monthlyGames.push(game); //push game back onto stack
-                            }
-                            weekday++;
-                            dayNum++;
-                        }
-                    } %>
-                </div>
-
-                <% while (dayNum <= month.totalDays){ %>
-
-                    <div class="weekDiv">
-
-                        <% weekday = 0;
+                            <!--Else, make an empty calendar day where it only has a number and nothing else-->
+                        <% } else { %>
+                            <div class="emptyDay">
+                                <h4 class="dayNum"><%= dayNum %></h4>
+                            </div>
+                        <% } %>
                         
-                        while (weekday < 7){
+                    <% } %>
+                </div>
+            <% } %>
 
-                            if (monthlyGames.length == 0){
-
-                                while (weekday < 7){
-
-                                    if (dayNum <= month.totalDays){ %>
-                                        <div class="emptyDay">
-                                            <h4 class="dayNum"><%= dayNum %></h4>
-                                        </div>
-                                        <% dayNum++;
-                                    } else { %>
-                                        <div class="deadDay"></div>
-                                    <% }
-                                    weekday++;
-                                }
-
-                                break;
-
-                            } else {
-
-                                const game = monthlyGames.pop();
-
-                                //if the next game's date matches the numbered day
-                                if (parseInt(game.date.substring(8, 10)) == dayNum){
-
-                                    let homeTeam = true; //set to either road or home game class
-
-                                    //if our team is the road team, set gameClass to roadGame and swap the array elements
-                                    if (data.team.abbreviation == game.competitions[0].competitors[1].team.abbreviation){
-                                        const temp = game.competitions[0].competitors[0];
-                                        game.competitions[0].competitors[0] = game.competitions[0].competitors[1];
-                                        game.competitions[0].competitors[1] = temp;
-                                        homeTeam = false;
-                                    }
-
-                                    %>
-
-                                    <div class="gameDay <% if (homeTeam){ %> homeGame <% } else { %> roadGame <% } %>">
-
-                                        <h4 class="dayNum"><%= dayNum %></h4>
-                                        
-                                        <% if (game.competitions[0].competitors[1].team.logos !== undefined){ %>
-                                            <img class="opponentLogo" src="<%= game.competitions[0].competitors[1].team.logos[0].href %>">
-                                        <% } else { %>
-                                            <img class="opponentLogo" src="/images/coyotes_logo.png">
-                                        <% } %>
-                                        <h6><%= game.competitions[0].competitors[1].team.abbreviation %></h6>
-                                        <!--put the needed details here depending on pre, in progress or final-->
-                                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
-                                            <% if (game.competitions[0].status.type.state == "pre"){ %>
-
-                                                <%= game.competitions[0].status.type.shortDetail.split('-')[1] %>
-
-                                            <% } else if (game.competitions[0].status.type.detail == "Postponed"){ %>
-
-                                                Postponed
-
-                                            <% } else if (game.competitions[0].status.type.state == "post"){ %>
-                                            
-                                                <% if (game.competitions[0].competitors[0].winner) { %> W <% } else { %> L <% } %>
-                                                <%= game.competitions[0].competitors[0].score.displayValue + 
-                                                    "-" + game.competitions[0].competitors[1].score.displayValue %>
-                                            
-                                            <% } else { %>
-                                                In Progress
-                                            <% } %>
-                                        </a>
-
-                                        <% if (monthlyGames.find(game => parseInt(game.date.substring(8, 10)) == dayNum) != null){
-                                            const doubleHeader = monthlyGames.pop(); %>
-                                            <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= doubleHeader.id %>">
-                                              <% if (doubleHeader.competitions[0].status.type.state == "pre"){ %>
-
-                                                    <%= doubleHeader.competitions[0].status.type.shortDetail.split('-')[1] %>
-
-                                                <% } else if (doubleHeader.competitions[0].status.type.detail == "Postponed"){ %>
-
-                                                    Postponed
-
-                                                <% } else if (doubleHeader.competitions[0].status.type.state == "post"){ %>
-                                                    
-                                                    <% if (doubleHeader.competitions[0].competitors[0].winner) { %> W <% } else { %> L <% } %>
-                                                    <%= doubleHeader.competitions[0].competitors[0].score.displayValue + 
-                                                        "-" + doubleHeader.competitions[0].competitors[1].score.displayValue %>
-                                                <% } else { %>
-                                                    In Progress
-                                                <% } %>
-                                            </a>
-                                        <% } %>
-                                    </div>
-
-                                <% } else { %>
-
-                                    <div class="emptyDay">
-                                        <h4 class="dayNum"><%= dayNum %></h4>
-                                    </div>
-
-                                    <% monthlyGames.push(game); //push game back onto stack
-                                }
-                                weekday++;
-                                dayNum++;
-                            }
-                        } %>
-                    </div>
-                <% } %>
-
-            </div>
-        <% }
-    }) %>
+        </div>
+    <% }) %>
 </div>
 
 <link rel="stylesheet" href="/styles/team_schedule_styles/calendar_styles.css">
-
-<script>
-    const links = document.querySelectorAll('a');
-    links.forEach(link => {
-        if (link.textContent.includes("Postponed")){
-            link.removeAttribute('href');
-        }
-    })
-</script>

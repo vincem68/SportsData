@@ -1,7 +1,7 @@
 import {Router, Request, Response} from 'express';
 import port from '../index';
 
-import { checkRequestParams, checkQueryParams } from '../validation_functions';
+import { checkRequestParams, checkQueryParams, getBasicResponseInfo } from '../validation_functions';
 
 import type { TeamResponse, Team} from '../interfaces/types/Team.types';
 import type { TeamInfoResponse, TeamInfo } from '../interfaces/types/TeamInfo.types';
@@ -9,12 +9,13 @@ import type { TeamNews, TeamNewsResponse } from '../interfaces/types/TeamNews.ty
 import type { GameOverview, GameOverviewResponse} from '../interfaces/types/LeagueSchedule.types';
 import type { TeamStatsResponse, TeamStats } from '../interfaces/types/TeamStats.types';
 import type { NFLSchedule } from '../interfaces/types/NFLSchedules.types';
+import type { Calendar } from '../interfaces/types/Calendar.types';
 
 import { parseNFLScheduleResponse } from '../interfaces/transformations/NFLSchedules';
 import { parseGame } from '../interfaces/transformations/LeagueSchedule';
 import { parseTeamStatsResponse } from '../interfaces/transformations/TeamStats';
 import { parseTeamResponse } from '../interfaces/transformations/Team';
-import { parse } from 'path';
+import { parseCalendarResponse } from '../interfaces/transformations/Calendar';
 
 const router = Router({ mergeParams: true });
 
@@ -53,18 +54,26 @@ router.get('/:team/schedule', async function(req: Request, res: Response){
         return;
     }
 
-    let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/schedule`;
+    //get the current season and year as default values
+    const defaultQueries = await getBasicResponseInfo(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/schedule`);
+    let requestedYear = defaultQueries.seasonYear;
+    let requestedType = defaultQueries.seasonType;
 
+    //usual check on the params, reassign the requested season and season type if the query params check out
     if (req.query.season !== undefined && req.query.seasonType !== undefined){
         if (checkQueryParams(league, Number(req.query.season), Number(req.query.seasonType))){
-            endpoint += `?season=${req.query.season}&seasontype=${req.query.seasonType}`;
+            requestedYear = Number(req.query.season);
+            requestedType = Number(req.query.seasonType);
         }
     }
 
-    const data: NFLSchedule = await parseNFLScheduleResponse(endpoint);
+    //get the structired data based off of what kind of sport and season type the user requests
+    const data = league.toLowerCase() === "nfl" ? await parseNFLScheduleResponse(team, requestedYear, requestedType) 
+        : await parseCalendarResponse(league, sport, team, requestedYear, requestedType);
 
     res.render('team_schedules/team_schedule', {port: port, team: team, league: league.toUpperCase(), 
         sport: sport, data: data});
+
 })
 
 /**

@@ -15,6 +15,7 @@
             <div id="titleSection">
                 <img class="mainLogo" src="<%= data.team.logo %>">
                 <h1><%= data.team.displayName %></h4>
+                <h3>Currently in the <%= data.season.name %></h3>
             </div>
 
             <div class="form-container">
@@ -40,19 +41,18 @@
             </div>
         </div>
 
-        <h3 class="importantHeadline">Team is currently in the <%= data.season.name %></h3>
-
         <!--Check if we're requesting postseason schedule for a postseason that hasn't happened yet-->
-        <% if (data.requestedSeason.type == 3 && (data.requestedSeason.year == data.season.year && data.season.type < 3)){ %>
+        <% if (league == "NFL" && data.inactivePostseason !== undefined){ %>
 
             <h2>Postseason has not Occurred Yet. Check Back at a Later Date.</h2>
 
         <!--check if team qualified for postseason-->
-        <% } else if (data.requestedSeason.type == 3 && data.games.length == 0 && data.requestedSeason.year < data.season.year) { %>
+        <% } else if (league == "NFL" && data.qualifiedPostseason !== undefined) { %>
 
             <h2>This Team Did Not Qualify for the Postseason this Year.</h2>
 
-        <% } else if (data.games.length == 0){ %>
+        <% } else if ((data.games !== undefined && data.games.length == 0) ||
+            (data.months !== undefined && data.months[0].events.length == 0)){ %>
 
             <h2>This Schedule is Not Available. Check Back Later!</h2>
 
@@ -65,10 +65,6 @@
             <% } else if (data.requestedSeason.type == 3){ %>
 
                 <%- include ('postseason_series') %>
-
-            <% } else if (data.requestedSeason.type == 1){ %>
-
-                <%- include ('preseason') %>
 
             <% } else { %>
 

@@ -2,7 +2,7 @@ export interface NFLScheduleResponse {
 
     team: {
         id: string
-        name: string
+        displayName: string
         abbreviation: string
         logo: string
     }
@@ -13,7 +13,7 @@ export interface NFLScheduleResponse {
         name: string
     }
 
-    requestedSeason:{
+    requestedSeason?: {
         year: number
         type: number
         name: string
@@ -80,11 +80,15 @@ export interface NFLSchedule {
         name: string
     }
 
-    requestedSeason:{
+    requestedSeason?: {
         year: number
         type: number
         name: string
     },
+
+    eliminatedPostseason?: boolean, //true if the team is eliminated from the postseason 
+
+    inactivePostseason?: boolean, //true if the team is in regular season and postseason ahs not happened yet
 
     byeWeek: number
 
