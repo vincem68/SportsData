@@ -47,8 +47,12 @@ export async function parseNFLScheduleResponse(team: string, season: number, sea
             name: data.requestedSeason.name
         } : undefined,
 
-        eliminatedPostseason: seasonType == 3 && games.length == 0 && season <= data.season.year && data.season.type >= 3 ? true : undefined,
+        //if we request a previous season and there's no postseason games, or get the current postseason games where
+        //the postseason is active, but still no games, team has not made postseason
+        eliminatedPostseason: seasonType == 3 && games.length == 0 && 
+            (season < data.season.year || (season == data.season.year && data.season.type >= 3)) ? true : undefined,
 
+        //if we try to access postseason games but the regulars season is ongoing, schedule not ready
         inactivePostseason: seasonType == 3 && games.length == 0 && season == data.season.year && data.season.type < 3 ? true : undefined,
         
         byeWeek: data.byeWeek ? data.byeWeek : 0,

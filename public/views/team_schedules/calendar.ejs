@@ -29,9 +29,11 @@
                         <!--Get the numbered day of the month-->
                         <% const dayNum = week * 7 + (day - month.firstWeekDayOfMonth + 1); %>
                         <!--See if there's a game that exists with the day number of the month-->
-                        <% const game = month.events.find(game => game.dayNum === dayNum); %>
+                        <% const gamesInDay = month.events.filter(game => game.dayNum === dayNum); %>
                         <!--If a game exists with that numbered day in that month, make a div for it-->
-                        <% if (game) { %>
+                        <% if (gamesInDay.length > 0) { %>
+
+                            <% const game = gamesInDay[0]; %> 
 
                             <div class="gameDay <% if (game.home) { %> homeGame <% } else { %> roadGame <% } %>">
 
@@ -39,16 +41,37 @@
                                 <img class="opponentLogo" src="<%= game.opponentLogo %>" alt="<%= game.opponentAbbr %> logo">
                                 <p><%= game.opponentAbbr %></p>
 
-                                <a href="http://localhost:<%= port %>/<%= sport %>/<%= league.toLowerCase() %>/games/<%= game.id %>">
+                                <% if (game.status == "Postponed"){ %>
+                                    <p>Postponed</p>
+                                <% } else { %>
 
-                                    <% if (game.status == "pre"){ %> 
-                                        <%= game.startTime %>
-                                    <% } else if (game.status == "post") { %>
-                                        <% if (game.winner) { %> W <% } else { %> L <% } %> <%= game.score %>
-                                    <% } else { %>
-                                        In Progress
+                                    <a href="http://localhost:<%= port %>/<%= sport %>/<%= league.toLowerCase() %>/games/<%= game.id %>">
+
+                                        <% if (game.status == "pre"){ %> 
+                                            <%= game.startTime %>
+                                        <% } else if (game.status == "post") { %>
+                                            <% if (game.winner) { %> W <% } else { %> L <% } %> <%= game.score %>
+                                        <% } else { %>
+                                            In Progress
+                                        <% } %>
+                                    </a>
+
+                                    <% if (gamesInDay.length > 1){ %> <!--in baseball account for rain delayed games-->
+
+                                        <% const doubleHeader = gamesInDay[1]; %>
+
+                                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league.toLowerCase() %>/games/<%= doubleHeader.id %>">
+
+                                            <% if (doubleHeader.status == "pre"){ %> 
+                                                <%= doubleHeader.startTime %>
+                                            <% } else if (doubleHeader.status == "post") { %>
+                                                <% if (doubleHeader.winner) { %> W <% } else { %> L <% } %> <%= doubleHeader.score %>
+                                            <% } else { %>
+                                                In Progress
+                                            <% } %>
+                                        </a>
                                     <% } %>
-                                </a>
+                                <% } %>
                             </div>
 
                             <!--Else, make an empty calendar day where it only has a number and nothing else-->

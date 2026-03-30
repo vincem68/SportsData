@@ -21,14 +21,15 @@ export async function parseCalendarResponse(league: string, sport: string, team:
             date: newDate,
             dayNum: parseInt(String(new Date(game.date).getDate())),
             home: game.competitions[0].competitors[0].homeAway == "home" ? true : false, //if the team is the home team, set to true, else false
-            startTime: newDate.slice(11, 16),
+            //get the military time switched to standard time
+            startTime: Number(newDate.slice(11, 13)) > 12 ? (Number(newDate.slice(11, 13)) - 12) + newDate.slice(13, 16) + " PM" : newDate.slice(11, 16) + " AM",
             opponentAbbr: game.competitions[0].competitors[1].team.abbreviation,
             opponentLogo: game.competitions[0].competitors[1].team.logos[0].href,
             score: game.competitions[0].status.type.state == "post" ?
                  game.competitions[0].competitors[0].score.displayValue + "-" + game.competitions[0].competitors[1].score.displayValue
                     : undefined,
             winner: game.competitions[0].status.type.state == "post" ? game.competitions[0].competitors[0].winner : undefined,
-            status: game.competitions[0].status.type.state
+            status: game.competitions[0].status.type.detail == "Postponed" ? "Postponed" : game.competitions[0].status.type.state
         }
 
     });
