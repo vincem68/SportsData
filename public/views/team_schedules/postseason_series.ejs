@@ -1,80 +1,55 @@
-<%
+<% data.rounds.forEach(round => { %>
 
-const baseSeriesNames = ["RD16", "QTR", "SEMI", "FINAL"]; //base names that come from API data
+    <% if (round.games.length == 0){ %>
 
-//new names for rounds depending on which league we're dealing with
-const specificSeriesNames = (league.toUpperCase() == "MLB") ? 
-    
-    ["World Series", "League Championship Series", "League Divisional Series", "Wildcard Series"]
+        <% if ((round.roundName.includes("Wild") || round.roundName.includes("First"))
+             && round.games.length == 0){ %>
 
-    : (league.toUpperCase() == "NHL") ? ["Stanley Cup Final", "Conference Final", "Second Round", "First Round"]
-
-    : ["NBA Finals", "Conference Final", "Second Round", "First Round"];
-
-baseSeriesNames.forEach(round => { //go through each round
-
-    //filter the games that match the round
-    const seriesGames = data.events.filter(game => game.competitions[0].type.abbreviation == round)
-        .filter(game => game.competitions[0].status.type.name != "STATUS_POSTPONED"); 
-    
-    //keep track of series record
-    let wins = 0;
-    let losses = 0;
-    let gameNum = 1;
-
-    %>
-
-    <% if (seriesGames.length == 0){
-
-        if (round == "RD16"){ %>
-            <h2 class="seriesTitle"><%= specificSeriesNames.pop() %></h2>
+            <h2 class="seriesTitle"><%= round.roundName %></h2>
             <div class="seriesDiv">
                 <h1>First Round Bye</h1>
             </div>
+
         <% } %>
 
-    <% } else {
-
-        const opponent = seriesGames[0].competitions[0].competitors.find(team => 
-                data.team.abbreviation != team.team.abbreviation);
-        %>
-
-        <h2 class="seriesTitle"><%= specificSeriesNames.pop() %></h2>
+    <% } else { %>
+        
+        <h2 class="seriesTitle"><%= round.roundName %></h2>
         <div class="seriesDiv">
 
             <div class="seriesOpponent">
                 <img src="/images/versus_sign.png">
                 <div>
-                    <img src="<%= opponent.team.logos[0].href %>">
-                    <h2><%= opponent.team.displayName %></h2>
+                    <img src="<%= round.seriesOpponent.logo %>">
+                    <h2><%= round.seriesOpponent.name %></h2>
                 </div>
             </div>
 
-            <% seriesGames.forEach(game => {
-
-                const team = game.competitions[0].competitors.find(team => 
-                    data.team.abbreviation == team.team.abbreviation);
-
-                %>
+            <% round.games.forEach(game => { %>
 
                 <div id="<%= game.id %>" class="gameContainer 
-                    <% if (team.homeAway == 'home'){ %> homeGame <% } else { %> roadGame <% } %>">
+                    <% if (game.home){ %> homeGame <% } else { %> roadGame <% } %>">
+
                     <div class="awayTeamDiv">
-                        <img class="teamLogo" src="<%= game.competitions[0].competitors[1].team.logos[0].href %>">
-                        <p><%= game.competitions[0].competitors[1].team.abbreviation %></p>
+                        <img class="teamLogo" src="<% if (!game.home) { %> <%= data.team.logo %> <% } else { %> <%= round.seriesOpponent.logo %> <% } %>">
+                        <p><% if (!game.home){ %> <%= data.team.abbr %> <% } else { %> <%= round.seriesOpponent.abbr %> <% } %></p>
                     </div>
 
                     <div class="gameTimeDiv">
-                        <p>Game <%= gameNum %></p>
-                        <p><%= game.competitions[0].status.type.detail %></p>
+                        <p>Game <%= game.gameNumOfSeries %></p>
                         <p>
-                            <% if (team.winner){ %>
-                                <strong class="winner">W</strong>
+                            <% if (game.status == "pre"){ %>
+                                <%= game.startTime %>
+                            <% } else if (game.status == "in"){ %>
+                                In Progress
                             <% } else { %>
-                                <strong class="loser">L</strong>
+                                <% if (game.winner){ %>
+                                    <strong class="winner">W</strong>
+                                <% } else { %>
+                                    <strong class="loser">L</strong>
+                                <% } %>
+                                <%= game.awayScore %> - <%= game.homeScore %>
                             <% } %>
-                            <%= game.competitions[0].competitors[1].score.displayValue %> - 
-                            <%= game.competitions[0].competitors[0].score.displayValue %>
                         </p>
                         <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
                             Game Stats
@@ -82,25 +57,29 @@ baseSeriesNames.forEach(round => { //go through each round
                     </div>
 
                     <div class="homeTeamDiv">
-                        <img class="teamLogo" src="<%= game.competitions[0].competitors[0].team.logos[0].href %>">
-                        <p><%= game.competitions[0].competitors[0].team.abbreviation %></p>
+                        <img class="teamLogo" src="<% if (game.home) { %> <%= data.team.logo %> <% } else { %> <%= round.seriesOpponent.logo %> <% } %>">
+                        <p><% if (game.home){ %> <%= data.team.abbr %> <% } else { %> <%= round.seriesOpponent.abbr %> <% } %></p>
                     </div>
+                    
                 </div>
 
-                <% 
-                
-                //increment series record by each game
-                if (team.winner) { wins++; } else { losses++; }
-                gameNum++; //increase game number for next game
-            });
-
-            %>
+            <% }) %>
 
             <h2 class="seriesResult">
-                <% if (wins > losses){ %>
-                    <%= data.team.abbreviation %> Wins Series <%= wins.toString() + "-" + losses.toString() %>
+
+                <% if (round.homeWins > round.awayWins){ %>
+
+                    <%= data.team.abbr %> <% if (round.homeWins < round.neededWins) { %> Leads 
+                        <% } else { %> Wins Series <%= round.homeWins %>-<%= round.awayWins %> <% } %>
+
+                <% } else if (round.homeWins < round.awayWins){ %>
+
+                    <%= round.seriesOpponent.abbr %> <% if (round.awayWins < round.neededWins) { %> Leads 
+                        <% } else { %> Wins Series <%= round.awayWins %>-<%= round.homeWins %> <% } %>
+
                 <% } else { %>
-                    <%= data.team.abbreviation %> Loses Series <%= wins.toString() + "-" + losses.toString() %>
+
+                    Series tied <%= round.homeWins %>-<%= round.awayWins %>
                 <% } %>
             </h2>
         </div>

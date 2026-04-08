@@ -3,7 +3,9 @@ import type { Calendar, CalendarResponse, Event } from "../types/Calendar.types"
 export async function parseCalendarResponse(league: string, sport: string, team: string, season: number, seasonType: number): Promise<Calendar> {
 
 
-    const response: CalendarResponse = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/schedule?season=${season}&seasontype=${seasonType}`)).json();
+    const response: CalendarResponse = await (
+        await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/schedule?season=${season}&seasontype=${seasonType}`)
+    ).json();
 
     //got to parse the games before filtering the games by month
     const parsedGames: Event[] = response.events.map(game => {

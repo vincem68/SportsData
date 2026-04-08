@@ -10,12 +10,14 @@ import type { GameOverview, GameOverviewResponse} from '../interfaces/types/Leag
 import type { TeamStatsResponse, TeamStats } from '../interfaces/types/TeamStats.types';
 import type { NFLSchedule } from '../interfaces/types/NFLSchedules.types';
 import type { Calendar } from '../interfaces/types/Calendar.types';
+import type { PostseasonSchedule } from '../interfaces/types/PostseasonSeries.types';
 
 import { parseNFLScheduleResponse } from '../interfaces/transformations/NFLSchedules';
 import { parseGame } from '../interfaces/transformations/LeagueSchedule';
 import { parseTeamStatsResponse } from '../interfaces/transformations/TeamStats';
 import { parseTeamResponse } from '../interfaces/transformations/Team';
 import { parseCalendarResponse } from '../interfaces/transformations/Calendar';
+import { parsePostseasonScheduleResponse } from '../interfaces/transformations/PostseasonSeries';
 
 const router = Router({ mergeParams: true });
 
@@ -68,7 +70,9 @@ router.get('/:team/schedule', async function(req: Request, res: Response){
     }
 
     //get the structired data based off of what kind of sport and season type the user requests
-    const data = league.toLowerCase() === "nfl" ? await parseNFLScheduleResponse(team, requestedYear, requestedType) 
+    const data: NFLSchedule | Calendar | PostseasonSchedule = league.toLowerCase() === "nfl" ? 
+        await parseNFLScheduleResponse(team, requestedYear, requestedType) :
+        requestedType === 3 ? await parsePostseasonScheduleResponse(sport, league, team, requestedYear, requestedType)
         : await parseCalendarResponse(league, sport, team, requestedYear, requestedType);
 
     res.render('team_schedules/team_schedule', {port: port, team: team, league: league.toUpperCase(), 
