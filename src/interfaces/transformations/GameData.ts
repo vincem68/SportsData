@@ -44,7 +44,8 @@ export const parseOverview = (response: GameSpecificOverviewResponse, league: st
         situation: competition.situation ? {
             downDistanceText: league == "NFL" ? competition.situation.downDistanceText : undefined,
             possession: league == "NFL" ? competition.situation.possession : undefined,
-            count: competition.situation && competition.situation.batter ? competition.situation.batter.summary : undefined,
+            count: competition.situation && competition.situation.batter ? 
+                competition.situation.balls + "-" + competition.situation.strikes : undefined,
             outs: league == "MLB" ? competition.situation.outs : undefined,
             pitcher: league == "MLB" && competition.situation.pitcher ? {
                 name: competition.situation.pitcher.athlete.shortName,

@@ -216,10 +216,13 @@ async function updateGameStats(){
 
     //update the at bat pitcher/batter if available, show name and headshot
     if (updateOverview.situation && updateOverview.situation.pitcher){
+        atBatSection.style.display = 'flex';
         pitcherHeadshot.src = updateOverview.situation.pitcher.headshot;
         pitcherName.textContent = updateOverview.situation.pitcher.name;
         batterHeadshot.src = updateOverview.situation.batter.headshot;
         batterName.textContent = updateOverview.situation.batter.name;
+    } else {
+        atBatSection.style.display = 'none';
     }
 
     //update football marker if football game and the possession arrow image
@@ -435,12 +438,13 @@ async function parseOverview() {
             
             downDistanceText: league == "NFL" ? competition.situation.downDistanceText : undefined,
             possession: league == "NFL" ? competition.situation.possession : undefined,
-            count: competition.situation.batter ? competition.situation.batter : "--",
+            count: competition.situation.batter ? competition.situation.balls + "-" + competition.situation.strikes : "--",
             outs: league == "MLB" && competition.situation ? competition.situation.outs : undefined,
 
             pitcher: league == "MLB" && competition.situation.pitcher ? {
                 name: competition.situation.pitcher.athlete.shortName,
                 id: competition.situation.pitcher.athlete.id,
+                headshot: competition.situation.pitcher.athlete.headshot
             } : undefined,
 
             batter: league == "MLB" && competition.situation.batter ? {

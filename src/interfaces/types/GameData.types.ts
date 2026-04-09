@@ -32,6 +32,8 @@ interface Format {
 interface Situation {
     downDistanceText?: string
     possession?: string
+    balls?: number
+      strikes?: number
     outs?: number
     pitcher?: {
       athlete: {
@@ -44,7 +46,6 @@ interface Situation {
         shortName: string
         headshot: string
       }
-      summary: string //the strikes and balls
     }
     onFirst?: boolean
     onSecond?: boolean
