@@ -1,7 +1,3 @@
-<% 
-    let index = 0;
-%>
-
 <!DOCTYPE html>
 
 <html>
@@ -25,8 +21,7 @@
                 <% } else { %>
                     <img src = '/images/nhl_logo.png' class = 'mainLogo' alt = 'NHL Logo'>
                 <% } %>
-                <h1><%= league %> Stats for the <%= requestedSeason %> 
-                    <% if (leagueStats.length > 16) { %> Regular Season <% } else { %> Postseason <% } %></h1>
+                <h1><%= league %> Stats for the <%= leagueStats.requestedSeason.displayName %></h1>
             </div>
 
             <div class="form-container">
@@ -34,7 +29,7 @@
                     <div class="form-group">
                         <label for="season">Select Year</label>
                         <select name="season">
-                            <% for (let i = currentSeason; i >= 2000; i--){ %>
+                            <% for (let i = leagueStats.season.year; i >= 2000; i--){ %>
                                 <option value="<%= i %>"><%= i %></option>
                             <% } %>
                         </select>
@@ -53,20 +48,19 @@
         </div>
 
         <!--Lets do it so you can pick a category-->
-        <% if (leagueStats.length != 0){ %>
+        <% if (leagueStats.categories.length != 0){ %>
             <div class="select-wrapper">
                 <label for="categorySelect">Select Category:</label>
                 <select id="categorySelect" name="categorySelect"> <!--pick category-->
-                    <% leagueStats[0].categories.forEach(category => { %>
-                        <option value="<%= index %>"><%= category.displayName %></option>
-                    <% index++; 
-                    })%>
+                    <% leagueStats.categories.forEach((category, index) => { %>
+                        <option value="<%= index %>"><%= category.name %></option>
+                    <% })%>
                 </select>
             </div>
         <% } %>
 
         <!--If no stats are given-->
-        <% if (leagueStats.length == 0){ %>
+        <% if (leagueStats.categories.length == 0){ %>
 
             <h1>Data is Not Available</h1>
 
@@ -76,125 +70,50 @@
 
                 <h4>Click on Column Names to Sort by a Stat. Green is Sorted by Most, Red by Least.</h4>
             
-                <% for (let i = 0; i < leagueStats[0].categories.length; i++) { <!--loop through the category names and make table for each-->
+                <% leagueStats.categories.forEach(category => { %><!--loop through the category names and make table for each-->
+
+                    <h3 class="importantHeadline"><%= category.name %></h3> <!--category name-->
                     
-                    index = 0; %>
                     <div class="tableDiv">
 
-                        <h3 class="importantHeadline"><%= leagueStats[0].categories[i].displayName %></h3> <!--category name-->
                         <table>
                             <tr>
                                 <th>Rank</th>
                                 <th>Team</th> <!--Team column-->
                                 <!--populate first row with the names of stats in current category-->
-                                <% leagueStats[0].categories[i].stats.forEach(stat => { %>
+                                <% category.statsDesc.forEach((stat, index) => { %>
                                     <th class="statName" onclick="sortTable(<%= index %>)"> <!--give each column header an index name-->
                                         <div class="tooltip"><%= stat.abbreviation %>
                                             <span class="tooltip-text">
-                                                <u><%= stat.displayName %></u>
+                                                <u><%= stat.name %></u>
                                                 <br>
                                                 <%= stat.description %>
                                             </span>
                                         </div>
                                     </th>
-                                    <% index++;
-                                }); %>
+                                <% }) %>
                             </tr>
                             <!--go through each team in leagueStats and display their stats-->
-                            <% 
-                            index = 0;
-                            let rowCol = 0;
-                            leagueStats.forEach(team => { %>
+                            <% category.teams.forEach((team, index) => { %>
                                 <tr>
-                                    <th><%= ++rowCol %></th>
-                                    <th class="name"><%= team.teamName %></th>
-                                    <% team.categories[i].stats.forEach(stat => { %>
-                                        <td><%= stat.displayValue %></td>
-                                        <% index++;
-                                    }); %>
+                                    <th><%= index + 1 %></th>
+                                    <th class="name"><%= team.teamAbbr %></th>
+                                    <% team.statValues.forEach(value => { %>
+                                        <td><%= value %></td>
+                                    <% }) %>
                                 </tr>
-                            <% index = 0; 
-                            }); %>
+                            <% }) %>
                         </table>
                     </div>
-                <% } %>
+                <% }) %>
             </div>
         <% } %>
 
-        <script type="text/javascript">
+        <script>
             const leagueStats = <%- JSON.stringify(leagueStats) %>;
-            const categorySelector = document.getElementById('categorySelect'); //category select
-            categorySelector.value = 0; //make the first option selected by default
-            let evenClick = true; //use this to help alternate sorting in opposite directions
-
-            const tableDivs = document.querySelectorAll('.tableDiv');
-            tableDivs.forEach(div => div.style.display = 'none');
-
-            //make stat selects and tables appear
-            function toggleTable(){
-                const index = categorySelector.value;
-                tableDivs.forEach(table => table.style.display = 'none');
-                tableDivs[index].style.display = 'block';
-            }
-
-            //sort table
-            function sortTable(colIndex){ //give column index of table for leagueStats lookup
-
-                const catIndex = categorySelector.value; //value of selected category
-
-                //sort the leagueStats array, every other click sorts it from least to greatest
-                evenClick = !evenClick;
-                //color of sorted column
-                const sortedColumnClass = (evenClick) ? "greatestSorted" : "leastSorted";
-
-                if (evenClick){ //if true, sort from greatest, if false, sort from least
-                    leagueStats.sort((team1, team2) => team2.categories[catIndex].stats[colIndex].value - 
-                     team1.categories[catIndex].stats[colIndex].value);
-                } else {
-                    leagueStats.sort((team1, team2) => team1.categories[catIndex].stats[colIndex].value - 
-                     team2.categories[catIndex].stats[colIndex].value);
-                }
-                
-                //replace each row except for the first one
-                const table = document.querySelectorAll('table')[catIndex];
-                table.replaceChildren(table.rows[0]);
-
-                let rankedRow = 1;
-
-                leagueStats.forEach(team => {
-                    const row = document.createElement('tr');
-                    const name = document.createElement('th');
-                    const rowNum = document.createElement('th');
-                    name.textContent = team.teamName; //add in team name cell
-                    name.classList.add("name"); //add name class to team name elements
-                    rowNum.textContent = rankedRow;
-                    row.append(rowNum);
-                    row.append(name);
-                    let index = 0;
-                    team.categories[catIndex].stats.forEach(stat => { //go through each stat and make the cell
-                        const cell = document.createElement('td');
-                        cell.classList.add("stat");
-                        cell.setAttribute('name', index);
-                        index++;
-                        cell.textContent = stat.displayValue;
-                        row.append(cell);
-                    });
-                    table.append(row);
-                    rankedRow++;
-                });
-                const statCells = document.querySelectorAll('.stat');
-                statCells.forEach(cell => {
-                    if (Number(cell.getAttribute("name")) == colIndex){
-                        cell.classList.add(sortedColumnClass);
-                    } else {
-                        cell.classList.remove("leastSorted", "greatestSorted");
-                    }
-                });
-            }
-
-            toggleTable();
-
-            categorySelector.addEventListener('change', toggleTable);
         </script>
+
+        <script src="/scripts/league_stats.js"></script>
+
     </body>
 </html>

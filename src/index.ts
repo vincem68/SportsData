@@ -7,15 +7,15 @@ import teamRoutes from './routes/teams';
 import gameRoutes from './routes/games';
 
 //interfaces
-import type { BasicTeamInfo } from './interfaces/types/BasicTeamInfo.types';
-import type { SeasonInfo } from './interfaces/types/SeasonInfo.types';
-import type {TeamStats, LeagueStatsResponse} from './interfaces/types/LeagueStats.types';
+import type { LeagueStats } from './interfaces/types/LeagueStats.types';
+import type {LeagueStatsResponse} from './interfaces/types/LeagueStats.types';
 import type { LeagueStandings } from './interfaces/types/Standings.types';
 import type { BasicPlayerStatsResponse, BasicPlayerStats, PlayerSplits, 
     PlayerSplitsResponse, PlayerStatsOverview, PlayerStatsOverviewResponse
 } from './interfaces/types/PlayerStats.types';
 
 //parsers
+import { parseLeageStatsResponse } from './interfaces/transformations/LeagueStats';
 import { parseBasicPlayerStats, parseMainPlayerStats, parsePlayerSplits } from './interfaces/transformations/PlayerStats';
 import { parseLeaderData } from './interfaces/transformations/Leaders';
 import { parseStandingsResponse } from './interfaces/transformations/Standings';
@@ -78,66 +78,23 @@ app.get('/:sport/:league/stats', async function(req: Request, res: Response){
     const sport = req.params.sport;
     const league = req.params.league;
 
+    //check request params
     if (!checkRequestParams(sport, league)){
         res.status(400).send("Invalid sport or league");
         return;
     }
-    
-    const leagueStats: TeamStats[] = [];
 
-    const queries = (req.query.season !== undefined && req.query.seasonType !== undefined) ? 
-        `?season=${req.query.season}&seasontype=${req.query.seasonType}` : "";
-    
-    let requestedSeason: number = 0;
-    let currentType: number = 0;
-    
-    //set the team array to whichever league we're using
-    const teamIDs = (league.toUpperCase() == "NFL") ? nflTeams : (league.toUpperCase() == "NBA") ? nbaTeams :
+    //get the list of teams to send to the parser
+    const teams = (league.toUpperCase() == "NFL") ? nflTeams : (league.toUpperCase() == "NBA") ? nbaTeams :
         (league.toUpperCase() == "MLB") ? mlbTeams : nhlTeams;
 
-    //get the current season of the league
-    const currentYearResponse: LeagueStatsResponse = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
-        `/teams/${teamIDs[0]}/statistics`)).json();
+    //get the data from the parser. Add in the queries if they're valid
+    const leagueStats: LeagueStats = (req.query.season !== undefined && req.query.seasonType !== undefined) ?
+        await parseLeageStatsResponse(teams, league.toUpperCase(), sport.toLowerCase(), req.query.season.toString(), req.query.seasonType.toString()) :
+        await parseLeageStatsResponse(teams, league.toUpperCase(), sport.toLowerCase());
 
-    //get the current season year so we can send it to the rendered file for the year selector
-    let currentSeason = currentYearResponse.season.year;
-
-    //test request to see if available data
-    const checkValidResponse: LeagueStatsResponse = await (await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
-        `/teams/${teamIDs[0]}/statistics${queries}`)).json();
-
-    //check if code 404 exists
-    if (checkValidResponse.code === undefined) {
-        //loop through the teams array and make a call on each ID to get that teams data, and render the data
-        for (const team of teamIDs){
-
-            let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}` + 
-            `/teams/${team}/statistics${queries}`;
-
-            const teamData: LeagueStatsResponse = await (await fetch(endpoint)).json();
-
-            if (requestedSeason == 0){
-                requestedSeason = teamData.requestedSeason.year;
-                currentType = teamData.season.type;
-                currentSeason = teamData.season.year;
-            }
-
-            //if we're asking for postseason stats, only add teams that qualified
-            if (req.query.seasonType == "3"){
-                if (teamData.requestedSeason.qualifiedPostSeason){
-                    const teamStats: TeamStats = {teamName: team, categories: teamData.results.stats.categories};
-                    leagueStats.push(teamStats);
-                }
-            //else, just add like normal
-            } else {
-                const teamStats: TeamStats = {teamName: team, categories: teamData.results.stats.categories};
-                leagueStats.push(teamStats);
-            }
-        }
-    }
     
-    res.render('league_stats', {port: port, sport: sport, league: league.toUpperCase(), requestedSeason: requestedSeason, 
-        currentSeason: currentSeason, currentType: currentType, leagueStats: leagueStats});
+    res.render('league_stats', {port: port, sport: sport, league: league.toUpperCase(), leagueStats: leagueStats});
     
 })
 

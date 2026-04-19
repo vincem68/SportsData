@@ -303,13 +303,9 @@ async function updateGameStats(){
         //make the leader headlines visible again
         document.querySelectorAll('.leaderHeadline').forEach(headline => headline.style.display = 'flex');
 
-        //now go through new postgame leaders and populate the section
-        createLeaders(updateSummary.awayLeaders, awayTeamLeadersDiv);
-        createLeaders(updateSummary.homeLeaders, homeTeamLeadersDiv);
-        leaderSection.style.display = 'flex';
-
-        //stop requests
         clearInterval(request);
+        request = setInterval(createLeaders, 10000);
+
     }
 }
 
@@ -363,31 +359,65 @@ function updatePlayerBoxscores(playersArray) {
  * happens when the page is loaded before game ends but remains open,
  * creates the leaders for both teams
  * */
-function createLeaders(leaders, divID){
+function createLeaders(){
 
-    leaders.forEach(leader => {
-        //create the div
-        const leaderDiv = document.createElement('div');
-        //create headline for leader's category
-        const leaderHeadline = document.createElement('h3');
-        leaderHeadline.textContent = leader.category;
-        //create athlete image
-        const headshot = document.createElement('img');
-        headshot.src = leader.athleteHeadshot;
-        headshot.classList.add('headshot');
-        //create headline for athlete name
-        const leaderName = document.createElement('h4');
-        leaderName.textContent = leader.athleteName;
-        leaderName.classList.add('leaderName');
-        //add in a p element for the leader's value of the game
-        const desc = document.createElement('p'); 
-        desc.textContent = leader.value;
-        desc.classList.add('leaderDesc');
-        //append everything to the leaderDiv and add it to the leader section div
-        leaderDiv.appendChild(leaderHeadline); leaderDiv.appendChild(headshot);
-        leaderDiv.appendChild(leaderName); leaderDiv.appendChild(desc);
-        divID.appendChild(leaderDiv);
-    });
+    //get the leaders data from the JSON response
+    const leaders = parseLeaders();
+
+    if (leaders.awayLeaders !== undefined && league != "MLB"){ //if leaders exist and its not a baseball game (since MLB doesn't have leaders in their API), create the divs for the leaders section
+
+        leaders.awayLeaders.forEach(leader => {
+            //create the div
+            const leaderDiv = document.createElement('div');
+            //create headline for leader's category
+            const leaderHeadline = document.createElement('h3');
+            leaderHeadline.textContent = leader.category;
+            //create athlete image
+            const headshot = document.createElement('img');
+            headshot.src = leader.athleteHeadshot;
+            headshot.classList.add('headshot');
+            //create headline for athlete name
+            const leaderName = document.createElement('h4');
+            leaderName.textContent = leader.athleteName;
+            leaderName.classList.add('leaderName');
+            //add in a p element for the leader's value of the game
+            const desc = document.createElement('p'); 
+            desc.textContent = leader.value;
+            desc.classList.add('leaderDesc');
+            //append everything to the leaderDiv and add it to the leader section div
+            leaderDiv.appendChild(leaderHeadline); leaderDiv.appendChild(headshot);
+            leaderDiv.appendChild(leaderName); leaderDiv.appendChild(desc);
+            awayTeamLeadersDiv.appendChild(leaderDiv);
+        });
+
+        leaders.homeLeaders.awayLeaders.forEach(leader => {
+            //create the div
+            const leaderDiv = document.createElement('div');
+            //create headline for leader's category
+            const leaderHeadline = document.createElement('h3');
+            leaderHeadline.textContent = leader.category;
+            //create athlete image
+            const headshot = document.createElement('img');
+            headshot.src = leader.athleteHeadshot;
+            headshot.classList.add('headshot');
+            //create headline for athlete name
+            const leaderName = document.createElement('h4');
+            leaderName.textContent = leader.athleteName;
+            leaderName.classList.add('leaderName');
+            //add in a p element for the leader's value of the game
+            const desc = document.createElement('p'); 
+            desc.textContent = leader.value;
+            desc.classList.add('leaderDesc');
+            //append everything to the leaderDiv and add it to the leader section div
+            leaderDiv.appendChild(leaderHeadline); leaderDiv.appendChild(headshot);
+            leaderDiv.appendChild(leaderName); leaderDiv.appendChild(desc);
+            homeTeamLeadersDiv.appendChild(leaderDiv);
+        });
+
+        leaderSection.style.display = 'flex';
+        clearInterval(request);
+    }
+    
 }
 
 //if game hasn't started yet, set setInterval to initalizeStats to check for game start
@@ -524,31 +554,6 @@ async function parseSummary() {
             value: stat.displayValue
         })),
 
-        awayLeaders: response.leaders && response.meta.gameState != "in" ? response.leaders[0].leaders.map(leader => ({
-
-            category: leader.displayName,
-            athleteName: leader.leaders[0].athlete.shortName,
-
-            //NFL response data will have a different JSON structure
-            athleteHeadshot: (typeof leader.leaders[0].athlete.headshot === "string") ? 
-                leader.leaders[0].athlete.headshot : leader.leaders[0].athlete.headshot.href ?? "",
-
-            value: leader.leaders[0].displayValue
-
-        })) : undefined,
-        
-        homeLeaders: response.leaders && response.meta.gameState != "in" ? response.leaders[1].leaders.map(leader => ({
-
-            category: leader.displayName,
-            athleteName: leader.leaders[0].athlete.shortName,
-
-            athleteHeadshot: (typeof leader.leaders[0].athlete.headshot === "string") ?
-                leader.leaders[0].athlete.headshot : leader.leaders[0].athlete.headshot.href ?? "",
-
-            value: leader.leaders[0].displayValue
-
-        })) : undefined,
-
         awayPlayerStats: response.boxscore.players ?
         
             response.boxscore.players[0].statistics.map(category => ({
@@ -605,4 +610,40 @@ async function parseSummary() {
                 }))
             })) : undefined
     }
+}
+
+
+//this function will parse the leader data from the JSON response when the game is over and the page is open during that
+async function parseLeaders(){
+
+    const response = await (await fetch(summaryEndpoint)).json();
+
+    return {
+
+        awayLeaders: response.leaders && response.meta.gameState != "in" ? response.leaders[0].leaders.map(leader => ({
+
+            category: leader.displayName,
+            athleteName: leader.leaders[0].athlete.shortName,
+
+            //NFL response data will have a different JSON structure
+            athleteHeadshot: (typeof leader.leaders[0].athlete.headshot === "string") ? 
+                leader.leaders[0].athlete.headshot : leader.leaders[0].athlete.headshot.href ?? "",
+
+            value: leader.leaders[0].displayValue
+
+        })) : undefined,
+            
+        homeLeaders: response.leaders && response.meta.gameState != "in" ? response.leaders[1].leaders.map(leader => ({
+
+            category: leader.displayName,
+            athleteName: leader.leaders[0].athlete.shortName,
+
+            athleteHeadshot: (typeof leader.leaders[0].athlete.headshot === "string") ?
+                leader.leaders[0].athlete.headshot : leader.leaders[0].athlete.headshot.href ?? "",
+
+            value: leader.leaders[0].displayValue
+
+        })) : undefined
+    }
+
 }

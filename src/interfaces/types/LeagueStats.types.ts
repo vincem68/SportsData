@@ -1,58 +1,81 @@
 
 export interface LeagueStatsResponse {
+
   status: string
-  results: Results
-  season: Season
-  requestedSeason: RequestedSeason
-  team: Team
+
+  season: {
+    year: number
+    type: number
+    displayName: string
+    name: string
+  }
+
+  requestedSeason: {
+    year: number
+    type: number
+    displayName: string
+    name: string
+    qualifiedPostSeason: boolean
+  }
+
+  team: {
+    id: number
+    name: string
+    abbreviation: string
+    displayName: string
+    logo: string
+    recordSummary: string
+  }
+
+  results: {
+    stats: {
+      categories: {
+        displayName: string
+        stats: {
+          abbreviation: string
+          displayName: string
+          displayValue: string
+          description: string
+        }[]
+      }[]
+    }
+  }
   code?: number
-}
-
-interface Results {
-  stats: Statistics
-}
-
-interface Statistics {
-  categories: Category[]
-}
-
-export interface Category {
-  displayName: string
-  abbreviation: string
-  stats: Stat[]
-}
-
-export interface Stat {
-  displayName: string
-  description: string
-  abbreviation: string
-  displayValue: string
-}
-
-export interface Season {
-  year: number
-  type: number
-  name: string
-  displayName: string
-}
-
-export interface RequestedSeason {
-  year: number
-  type: number
-  name: string
-  displayName: string
-  qualifiedPostSeason: boolean
-}
-
-export interface Team {
-  abbreviation: string
-  logo: string
 }
 
 
 //this will be the interface we use when putting the array of all the teams stats together
 //in the league stats route
-export interface TeamStats {
-  teamName: string;
-  categories: Category[];
+export interface LeagueStats {
+
+  season: {
+    year: number
+    type: number
+    displayName: string
+    name: string
+  }
+
+  requestedSeason: {
+    year: number
+    type: number
+    displayName: string
+    name: string
+  }
+
+  categories: { //we will partition th data by categories, then get the needed team stats
+
+    name: string
+    statsDesc: { //the text descriptions of the cats and stats
+      name: string
+      abbreviation: string
+      description: string
+    }[]
+
+    teams: { //the actual stats for each team in the category
+      teamAbbr: string
+      teamLogo: string
+      statValues: string[] //where we will keep the stats for the entire category for each team
+    }[]
+
+  }[]
 }
