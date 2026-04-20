@@ -1,15 +1,15 @@
 import type { LeagueStatsResponse, LeagueStats } from "../types/LeagueStats.types";
+import { getBasicResponseInfo } from "../../validation_functions";
 
 
-export async function parseLeageStatsResponse(teams: string[], league: string, sport: string, year?: string, type?: string): Promise<LeagueStats> {
-
+export async function parseLeageStatsResponse(teams: string[], league: string, sport: string, year?: string): Promise<LeagueStats> {
 
     //go through each team to get the needed data
-    const teamData: LeagueStatsResponse[] = await Promise.all(teams.map(async team => {
+    let teamData: LeagueStatsResponse[] = await Promise.all(teams.map(async team => {
 
-        const endpoint = (year !== undefined && type !== undefined) ?
-            `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/statistics?season=${year}&seasontype=${type}` :
-            `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/statistics`;
+        const endpoint = (year !== undefined) ?
+            `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/statistics?seasontype=2&season=${year}` :
+            `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/statistics?seasontype=2`;
 
         const teamStatsResponse: LeagueStatsResponse = await fetch(endpoint)
             .then(res => res.json())
@@ -27,6 +27,7 @@ export async function parseLeageStatsResponse(teams: string[], league: string, s
             name: category.displayName,
             //get the stat names, abbr and descriptions for each stat in the category
             statsDesc: category.stats.map(stat => {
+
                 return {
                     name: stat.displayName,
                     abbreviation: stat.abbreviation,
@@ -39,7 +40,11 @@ export async function parseLeageStatsResponse(teams: string[], league: string, s
                 return {
                     teamAbbr: team.team.abbreviation,
                     teamLogo: team.team.logo,
-                    statValues: team.results.stats.categories[index].stats.map(stat => stat.displayValue) //get the display value for each stat in the category
+                    //get the display value for each stat in the category
+                    statValues: team.results.stats.categories[index].stats.map(stat => {
+                        return (stat.perGameDisplayValue) ? stat.displayValue + " | Per Game: " + stat.perGameDisplayValue
+                            : stat.displayValue.split(':')[0];
+                    })
                 }
             })
         }

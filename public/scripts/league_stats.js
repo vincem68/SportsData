@@ -28,9 +28,11 @@ function sortTable(colIndex){ //give column index of table for leagueStats looku
     console.log(sortedColumnClass);
 
     if (sortedColumnClass == "greatestSorted"){ //if true, sort from greatest, if false, sort from least
-        leagueStats.categories[catIndex].teams.sort((team1, team2) => team2.statValues[colIndex] - team1.statValues[colIndex]);
+        leagueStats.categories[catIndex].teams.sort((team1, team2) => team2.statValues[colIndex].split(' | Per Game: ')[0]
+             - team1.statValues[colIndex].split(' | Per Game: ')[0]);
     } else {
-        leagueStats.categories[catIndex].teams.sort((team1, team2) => team1.statValues[colIndex] - team2.statValues[colIndex]);
+        leagueStats.categories[catIndex].teams.sort((team1, team2) => team1.statValues[colIndex].split(' | Per Game: ')[0] 
+            - team2.statValues[colIndex].split(' | Per Game: ')[0]);
     }
 
     //make sure the class is updated

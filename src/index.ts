@@ -89,8 +89,8 @@ app.get('/:sport/:league/stats', async function(req: Request, res: Response){
         (league.toUpperCase() == "MLB") ? mlbTeams : nhlTeams;
 
     //get the data from the parser. Add in the queries if they're valid
-    const leagueStats: LeagueStats = (req.query.season !== undefined && req.query.seasonType !== undefined) ?
-        await parseLeageStatsResponse(teams, league.toUpperCase(), sport.toLowerCase(), req.query.season.toString(), req.query.seasonType.toString()) :
+    const leagueStats: LeagueStats = (req.query.season !== undefined && checkQueryParams(league, Number(req.query.season))) ?
+        await parseLeageStatsResponse(teams, league.toUpperCase(), sport.toLowerCase(), req.query.season.toString()) :
         await parseLeageStatsResponse(teams, league.toUpperCase(), sport.toLowerCase());
 
     

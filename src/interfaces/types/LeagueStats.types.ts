@@ -36,6 +36,7 @@ export interface LeagueStatsResponse {
           displayName: string
           displayValue: string
           description: string
+          perGameDisplayValue?: string
         }[]
       }[]
     }

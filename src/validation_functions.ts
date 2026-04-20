@@ -45,8 +45,8 @@ export function checkRequestParams(sport: string, league: string, team?: string)
         (team === undefined || teams.includes(team.toUpperCase()));
 }
 
-export function checkQueryParams(league: string, year: number, type: number, week?: number, date?: string): boolean {
-    if (type > 4 || type < 1){
+export function checkQueryParams(league: string, year: number, type?: number, week?: number, date?: string): boolean {
+    if (type && (type > 4 || type < 1)){
         return false;
     }
     if (year < 2000){
