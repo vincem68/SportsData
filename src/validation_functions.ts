@@ -18,6 +18,8 @@ export async function getBasicResponseInfo(endpoint: string): Promise<BasicTeamI
             const basicInfo: BasicTeamInfo = {
                 seasonYear: data.season.year,
                 seasonType: data.season.type,
+                reqSeasonYear: data.requestedSeason.year,
+                reqSeasonType: data.requestedSeason.type,
                 teamName: data.team ? data.team.displayName : undefined,
                 teamLogo: data.team ? data.team.logo : undefined
             }
@@ -45,8 +47,8 @@ export function checkRequestParams(sport: string, league: string, team?: string)
         (team === undefined || teams.includes(team.toUpperCase()));
 }
 
-export function checkQueryParams(league: string, year: number, type?: number, week?: number, date?: string): boolean {
-    if (type && (type > 4 || type < 1)){
+export function checkQueryParams(league: string, year: number, type: number, week?: number, date?: string): boolean {
+    if (type > 4 || type < 1){
         return false;
     }
     if (year < 2000){

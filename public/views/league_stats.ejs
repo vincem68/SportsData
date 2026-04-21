@@ -21,17 +21,27 @@
                 <% } else { %>
                     <img src = '/images/nhl_logo.png' class = 'mainLogo' alt = 'NHL Logo'>
                 <% } %>
-                <h1><%= league %> Stats for the <%= leagueStats.requestedSeason.displayName %></h1>
+                <h1><%= league %> Stats for the <%= leagueStats.requestedSeason.displayName 
+                    + " " + leagueStats.requestedSeason.name  %></h1>
             </div>
 
             <div class="form-container">
                 <form method="GET">
+
                     <div class="form-group">
                         <label for="season">Select Year</label>
                         <select name="season">
                             <% for (let i = leagueStats.season.year; i >= 2000; i--){ %>
                                 <option value="<%= i %>"><%= i %></option>
                             <% } %>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="seasonType">Select Season Type</label>
+                        <select name="seasonType">
+                            <option value="2">Regular Season</option>
+                            <option value="3">Postseason</option>
                         </select>
                     </div>
 

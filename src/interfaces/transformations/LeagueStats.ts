@@ -2,14 +2,17 @@ import type { LeagueStatsResponse, LeagueStats } from "../types/LeagueStats.type
 import { getBasicResponseInfo } from "../../validation_functions";
 
 
-export async function parseLeageStatsResponse(teams: string[], league: string, sport: string, year?: string): Promise<LeagueStats> {
+export async function parseLeageStatsResponse(teams: string[], league: string, sport: string, year?: string, type?: string): Promise<LeagueStats> {
+
+    //get the default year and type, which are the type we are currently in
+    const defaultData = await getBasicResponseInfo(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${teams[0]}/statistics`);
 
     //go through each team to get the needed data
     let teamData: LeagueStatsResponse[] = await Promise.all(teams.map(async team => {
 
-        const endpoint = (year !== undefined) ?
-            `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/statistics?seasontype=2&season=${year}` :
-            `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/statistics?seasontype=2`;
+        const endpoint = (year && type) ? `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/statistics?season=${year}&seasontype=${type}` 
+            : `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/statistics`;
+
 
         const teamStatsResponse: LeagueStatsResponse = await fetch(endpoint)
             .then(res => res.json())
@@ -19,6 +22,11 @@ export async function parseLeageStatsResponse(teams: string[], league: string, s
             });
         return teamStatsResponse;
     }));
+
+    //if the user requests postseason data, filter out the teams that did not qualify 
+    if ((type && type == '3') || (!type && defaultData.seasonType == 3)){
+        teamData = teamData.filter(team => team.requestedSeason.qualifiedPostSeason == true);
+    }
 
     const categories = teamData[0].results.stats.categories.map((category, index) => {
 
