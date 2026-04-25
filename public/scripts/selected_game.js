@@ -277,6 +277,11 @@ async function updateGameStats(){
         awayTeamStatsCells.forEach((cell, index) => cell.textContent = updateSummary.awayTeamStats[index].value);
     }
 
+    if (document.getElementById('awayColHeaders').children.length == 1){
+        setUpPlayerStatsHeaders(updateSummary.awayPlayerStats.catLabelsAndDescs, "away");
+        setUpPlayerStatsHeaders(updateSummary.awayPlayerStats.catLabelsAndDescs, "home");
+    }
+
     //update player stats
     updatePlayerBoxscores(updateSummary.awayPlayerStats);
     updatePlayerBoxscores(updateSummary.homePlayerStats);
@@ -524,10 +529,10 @@ async function parseSummary() {
     //for NBA games, filter out the players that have no stats
     if (league == "NBA" && response.boxscore.players) { //if its an NBA game, filter out the overall category since it is redundant with the team stats
         response.boxscore.players[0].statistics[0].athletes = 
-            response.boxscore.players[0].statistics[0].athletes.filter(athlete => !athlete.didNotPlay);
+            response.boxscore.players[0].statistics[0].athletes.filter(athlete => athlete.didNotPlay == false);
 
-        response.boxscore.players[0].statistics[0].athletes = 
-            response.boxscore.players[0].statistics[0].athletes.filter(athlete => !athlete.didNotPlay);
+        response.boxscore.players[1].statistics[0].athletes = 
+            response.boxscore.players[1].statistics[0].athletes.filter(athlete => athlete.didNotPlay == false);
         //shorten the abbreviation here
         response.boxscore.teams[0].statistics[18].abbreviation = "PCOT";
         response.boxscore.teams[1].statistics[18].abbreviation = "PCOT";
@@ -592,7 +597,7 @@ async function parseSummary() {
 
                 tableID: category.name ? response.boxscore.teams[1].team.abbreviation + category.name :
                     category.type ? response.boxscore.teams[1].team.abbreviation + category.type :
-                    response.boxscore.teams[0].team.abbreviation + "overall",
+                    response.boxscore.teams[1].team.abbreviation + "overall",
 
                 catLabelsAndDescs: category.labels.map((label, index) => ({
                     label: label,
@@ -644,6 +649,29 @@ async function parseLeaders(){
             value: leader.leaders[0].displayValue
 
         })) : undefined
+    }
+
+}
+
+
+//a little helper function that fixes a weird issue where table headers aren't showing after game start
+function setUpPlayerStatsHeaders(labels, homeOrAway) {
+
+    const colHeaders = document.getElementById(homeOrAway + "ColHeaders");
+
+    if (colHeaders.children.length == 1){
+        labels.forEach(labelInfo => {
+            const header = document.createElement('th');
+            const div = document.createElement('div');
+            div.classList.add('tooltip');
+            div.textContent = labelInfo.label;
+            const span = document.createElement('span');
+            span.classList.add('tooltip-text');
+            span.textContent = labelInfo.desc;
+            div.appendChild(span);
+            header.appendChild(div);
+            colHeaders.appendChild(header);
+        });
     }
 
 }

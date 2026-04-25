@@ -116,8 +116,8 @@ export const parseSummary = (response: GameSpecificSummaryResponse, league: stri
         response.boxscore.players[0].statistics[0].athletes = 
             response.boxscore.players[0].statistics[0].athletes.filter(athlete => !athlete.didNotPlay);
 
-        response.boxscore.players[0].statistics[0].athletes = 
-            response.boxscore.players[0].statistics[0].athletes.filter(athlete => !athlete.didNotPlay);
+        response.boxscore.players[1].statistics[0].athletes = 
+            response.boxscore.players[1].statistics[0].athletes.filter(athlete => !athlete.didNotPlay);
         //shorten the abbreviation here
         response.boxscore.teams[0].statistics[18].abbreviation = "PCOT";
         response.boxscore.teams[1].statistics[18].abbreviation = "PCOT";
@@ -214,7 +214,7 @@ export const parseSummary = (response: GameSpecificSummaryResponse, league: stri
 
                     tableID: category.name ? response.boxscore.teams[1].team.abbreviation + category.name :
                         category.type ? response.boxscore.teams[1].team.abbreviation + category.type :
-                        response.boxscore.teams[0].team.abbreviation + "overall",
+                        response.boxscore.teams[1].team.abbreviation + "overall",
 
                     catLabelsAndDescs: category.labels.map((label, index) => ({
                         label: label,

@@ -28,7 +28,7 @@
                 <img id="live_status_img" src="/images/live_status.gif">
                 <p id="status"><%= overview.status.shortDetail %></p>
                 <p id="seriesStatus"> <!--series score if in postseason and not NFL-->
-                    <% if (overview.seasonType == 3 && league != "NFL"){ %>
+                    <% if (overview.seasonType == 3 && league != "NFL" && overview.status.state != "in"){ %>
                         <%= overview.seriesSummary %>
                     <% } %>
                 </p>
@@ -200,7 +200,7 @@
                         <h2><%= cat.categoryName %></h2>
                         <div class="tableDiv">
                             <table id="<%= cat.tableID %>"> <!--Every table will have ID matching category name-->
-                                <tr>
+                                <tr id="awayColHeaders">
                                     <% if (cat.tableID.includes("batting")){ %> <th>Position</th> <% } %>
                                     <th>Player</th>
                                     <% cat.catLabelsAndDescs.forEach(info => { %>
@@ -236,7 +236,7 @@
                         <h2><%= cat.categoryName %></h2>
                         <div class="tableDiv">
                             <table id="<%= cat.tableID %>"> <!--Every table will have ID matching category name-->
-                                <tr>
+                                <tr id="homeColHeaders">
                                     <% if (cat.tableID.includes("batting")){ %> <th>Position</th> <% } %>
                                     <th>Player</th>
                                     <% cat.catLabelsAndDescs.forEach(info => { %>
