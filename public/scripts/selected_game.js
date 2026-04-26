@@ -137,6 +137,8 @@ async function initializeStats() {
  * */
 function createPlayerBoxscores(playerStats, divID){
 
+    console.log("create player box scores");
+
     //go by category when making each table (like passing, rushing, batting, etc)
     playerStats.forEach(category => {
         //create the table for the player category (like rushing, passing, forwards, etc)
@@ -197,7 +199,7 @@ function createPlayerBoxscores(playerStats, divID){
 async function updateGameStats(){
 
     //basically use this as to know the requests are going
-    console.log("Hello");
+    console.log("Update");
 
     //send requests for updated data
     const updateSummary = await parseSummary();
@@ -365,6 +367,8 @@ function updatePlayerBoxscores(playersArray) {
  * creates the leaders for both teams
  * */
 function createLeaders(){
+
+    console.log("Create Leaders");
 
     //get the leaders data from the JSON response
     const leaders = parseLeaders();

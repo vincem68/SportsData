@@ -30,8 +30,6 @@ export interface BasicTeamInfo {
 
     seasonYear: number
     seasonType: number
-    reqSeasonYear: number
-    reqSeasonType: number
     teamName?: string
     teamLogo?: string
 }

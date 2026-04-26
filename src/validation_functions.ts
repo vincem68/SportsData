@@ -12,14 +12,14 @@ import { BasicTeamInfo, DataResponse } from "./interfaces/types/BasicTeamInfo.ty
  */
 export async function getBasicResponseInfo(endpoint: string): Promise<BasicTeamInfo>{
 
+    console.log(endpoint);
+
     const response = await fetch(endpoint)
         .then(res => res.json())
         .then((data: DataResponse) => {
             const basicInfo: BasicTeamInfo = {
                 seasonYear: data.season.year,
                 seasonType: data.season.type,
-                reqSeasonYear: data.requestedSeason.year,
-                reqSeasonType: data.requestedSeason.type,
                 teamName: data.team ? data.team.displayName : undefined,
                 teamLogo: data.team ? data.team.logo : undefined
             }
@@ -57,7 +57,8 @@ export function checkQueryParams(league: string, year: number, type: number, wee
     if ((league.toLowerCase() == 'nfl' || league.toLowerCase() == 'mlb') && new Date().getFullYear() < year){
         return false;
     }
-    if ((league.toLowerCase() == 'nba' || league.toLowerCase() == 'nhl') && new Date().getFullYear() < year + 1){
+    if ((league.toLowerCase() == 'nba' || league.toLowerCase() == 'nhl') && 
+        (new Date().getFullYear() < year + 1 && new Date().getMonth() >= 8) || (new Date().getFullYear() < year && new Date().getMonth() < 6)){
         return false;
     }
     if (week !== undefined && (week < 1 || week > 18)){

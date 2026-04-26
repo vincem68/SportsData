@@ -161,8 +161,14 @@ app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
         `${baseEndpoint}${yearAndTypeResponse.seasonYear}/types/${yearAndTypeResponse.seasonType}/leaders`;
     
     const data = await parseLeaderData(paramsEndpoint);
+
+    const reqYear = (req.query.season) ? Number(req.query.season) : yearAndTypeResponse.seasonYear;
+    const reqSeasonName = (req.query.seasonType) ? 
+        (req.query.seasonType == "2") ? "Regular Season" : "Postseason"
+        : (yearAndTypeResponse.seasonType == 2) ? "Regular Season" : "Postseason";
+
     res.render('league_leaders', {port: port, sport: sport, league: league.toUpperCase(), 
-        data: data, currentYear: yearAndTypeResponse.seasonYear});
+        data: data, currentYear: yearAndTypeResponse.seasonYear, reqYear: reqYear, reqSeasonName: reqSeasonName});
 })
 
 /**
