@@ -41,25 +41,39 @@ export const parseOverview = (response: GameSpecificOverviewResponse, league: st
             displayClock: competition.status.displayClock
         },
 
+        //this info will contain extra info of the game, for example, the count and outs for baseball, or
+        //what yard the football is at in a football game, and who has the ball
         situation: competition.situation ? {
+
             downDistanceText: league == "NFL" ? competition.situation.downDistanceText : undefined,
             possession: league == "NFL" ? competition.situation.possession : undefined,
             count: competition.situation && competition.situation.batter ? 
                 competition.situation.balls + "-" + competition.situation.strikes : undefined,
             outs: league == "MLB" ? competition.situation.outs : undefined,
+
+            //headshot and name for the pitcher of the At Bat section
             pitcher: league == "MLB" && competition.situation.pitcher ? {
                 name: competition.situation.pitcher.athlete.shortName,
                 headshot: competition.situation.pitcher.athlete.headshot
             } : undefined,
+
+            //batter info for the At Bat div on the score board, has headshot and name
             batter: league == "MLB" && competition.situation.batter ? {
                 name: competition.situation.batter.athlete.shortName,
                 headshot: competition.situation.batter.athlete.headshot
-            } : undefined
+            } : undefined,
+
+            //the optional boolean values to tell us what bases have runners on
+            onFirst: league == "MLB" ? competition.situation.onFirst : undefined,
+            onSecond: league == "MLB" ? competition.situation.onSecond : undefined,
+            onThird: league == "MLB" ? competition.situation.onThird : undefined
 
         } : undefined,
 
+        //series record if the game is a postseason game. Used for NHL, MLB and NBA games. 
         seriesSummary: competition.series?.summary || '',
 
+        //the amount of points each team scores in an interval. Intervals are quarters, innings, or periods
         linescore : {
             intervalLength: competition.format.regulation.periods,
             

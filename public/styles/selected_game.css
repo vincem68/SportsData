@@ -178,3 +178,18 @@ h2, h3 {
     height: 50px;
     width: 140px;
 }
+
+#baseIndicator {
+    display: flex;
+    align-items: flex-end;
+}
+
+.baseImg {
+    height: 50px;
+    width: 50px;
+}
+
+#secondBase {
+    position: relative;
+    top: -20px;
+}

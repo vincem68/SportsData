@@ -8,6 +8,8 @@ const atBatSection = document.getElementById('atBat');
 const footballSection = document.getElementById('footballInfo');
 const awayTeamLeadersDiv = document.getElementById('awayTeamLeaders');
 const homeTeamLeadersDiv = document.getElementById('homeTeamLeaders');
+const baseIndicator = document.getElementById('baseIndicator');
+const linescoreHeaders = document.getElementById('linescoreHeaders');
 
 //specific stat keepers
 const score = document.getElementById('score');
@@ -25,6 +27,9 @@ const homeTeamBoxscore = document.getElementById('homeTeamBoxscore');
 const footballPosArrow = document.getElementById('footballPossessionArrow');
 const awayLinescoreRow = document.getElementById('awayTeamLinescoreRow');
 const homeLinescoreRow = document.getElementById('homeTeamLinescoreRow');
+const firstBase = document.getElementById('firstBase');
+const secondBase = document.getElementById('secondBase');
+const thirdBase = document.getElementById('thirdBase');
 
 //the divs for the buttons of player scoresheets
 const homeButton = document.getElementById("homeTeamButton");
@@ -41,6 +46,7 @@ linescoreDiv.style.display = gameState == "pre" ? 'none' : 'flex';
 atBatSection.style.display = league == "MLB" && gameState == "in" ? 'flex' : 'none';
 footballSection.style.display = league == "NFL" && gameState == "in" ? 'flex' : 'none';
 leaderSection.style.display = gameState == "in" ? 'none' : 'flex';
+baseIndicator.style.display = gameState == "in" && league == "MLB" ? 'flex' : 'none';
 document.getElementById('boxscore').style.display = league == "MLB" ? 'none' : 'flex';
 document.querySelectorAll('.leaderHeadline')[0].style.display = (awayTeamLeadersDiv.children.length > 0) ? 'block' : 'none';
 document.querySelectorAll('.leaderHeadline')[1].style.display = (homeTeamLeadersDiv.children.length > 0) ? 'block' : 'none';
@@ -54,6 +60,14 @@ if (league == "NFL" && gameState == "in"){ //set arrow to correct side
 } else {
     footballPosArrow.style.display = 'none';
 }
+
+//for the bases
+if (league == "MLB" && gameState == "in"){
+    firstBase.src = overview.situation && overview.situation.onFirst ? "/images/highlighted_base.svg" : "/images/empty_base.png";
+    secondBase.src = overview.situation && overview.situation.onSecond ? "/images/highlighted_base.svg" : "/images/empty_base.png";
+    thirdBase.src = overview.situation && overview.situation.onThird ? "/images/highlighted_base.svg" : "/images/empty_base.png";
+}
+
 
 //when home team buttin div is clicked, hide away player stats and show home player ones
 function toggleHomeStats(){
@@ -102,6 +116,7 @@ async function initializeStats() {
         score.textContent = "0 - 0";
         //if its a baseball game
         atBatSection.style.display = league == "MLB" ? 'flex' : 'none';
+        baseIndicator.style.display = league == "MLB" ? 'flex' : 'none';
         //get yard marker and down
         footballSection.style.display = league == "NFL" ? 'flex' : 'none';
 
@@ -214,6 +229,9 @@ async function updateGameStats(){
     if (league == "MLB" && updateOverview.situation){
         count.textContent = updateOverview.situation.count;
         outs.textContent = updateOverview.situation.outs + " outs";
+        firstBase.src = updateOverview.situation.onFirst ? "/images/highlighted_base.svg" : "/images/empty_base.png";
+        secondBase.src = updateOverview.situation.onSecond ? "/images/highlighted_base.svg" : "/images/empty_base.png";
+        thirdBase.src = updateOverview.situation.onThird ? "/images/highlighted_base.svg" : "/images/empty_base.png";
     }
 
     //update the at bat pitcher/batter if available, show name and headshot
@@ -238,8 +256,9 @@ async function updateGameStats(){
 
     //update the linescores
     //if the game is open and the game has to go to OT or extra innings. we need to add a new column
-    if (updateOverview.linescore.currentAwayLinescoreInterval >= updateOverview.linescore.intervalLength){
+    if (updateOverview.linescore.currentAwayLinescoreInterval == document.querySelectorAll('.linescoreCell').length){
         const rowHeader = document.createElement('th'); //new row header for the new inning/OT column
+        rowHeader.classList.add('linescoreInterval');
         //if NHL game goes to shootout, just label the new column SO 
         if (league == "NHL" && updateOverview.linescore.currentAwayLinescoreInterval == 4 && updateOverview.seasonType == 2){   
             rowHeader.textContent = "SO";
@@ -249,10 +268,19 @@ async function updateGameStats(){
             rowHeader.textContent = updateOverview.linescore.currentAwayLinescoreInterval - updateOverview.linescore.intervalLength + 1;
         }
         //add in new cells for teams, with 0 as value
-        const newAwayCell = document.createElement('td'); newAwayCell.textContent = '0';
-        awayLinescoreRow.appendChild(newAwayCell);
+        const newAwayCell = document.createElement('td'); newAwayCell.textContent = '0'; newAwayCell.classList.add('linescoreCell');
         const newHomeCell = document.createElement('td'); newHomeCell.textContent = '0';
-        homeLinescoreRow.appendChild(newHomeCell);
+
+        if (document.getElementById('headerPoint') !== undefined){
+            linescoreHeaders.insertBefore(rowHeader, document.getElementById('headerPoint'));
+            awayLinescoreRow.insertBefore(newAwayCell, document.getElementById('awayPoint'));
+            homeLinescoreRow.insertBefore(newHomeCell, document.getElementById('homePoint'));
+        } else {
+            linescoreHeaders.appendChild(rowHeader);
+            awayLinescoreRow.appendChild(newAwayCell);
+            homeLinescoreRow.appendChild(newHomeCell);
+        }
+        
     }
     awayLinescoreRow.querySelectorAll('td')[updateOverview.linescore.currentAwayLinescoreInterval].textContent = 
             updateOverview.linescore.currentAwayLinescoreValue;
@@ -306,6 +334,7 @@ async function updateGameStats(){
         footballSection.style.display = 'none';
         atBatSection.style.display = 'none';
         live_image.style.display = 'none';
+        baseIndicator.style.display = 'none';
 
         //make the leader headlines visible again
         document.querySelectorAll('.leaderHeadline').forEach(headline => headline.style.display = 'flex');
@@ -489,8 +518,11 @@ async function parseOverview() {
             batter: league == "MLB" && competition.situation.batter ? {
                 name: competition.situation.batter.athlete.shortName,
                 headshot: competition.situation.batter.athlete.headshot
-            } : undefined
+            } : undefined,
 
+            onFirst: league == "MLB" ? competition.situation.onFirst : undefined,
+            onSecond: league == "MLB" ? competition.situation.onSecond : undefined,
+            onThird: league == "MLB" ? competition.situation.onThird : undefined
 
         } : undefined,
 

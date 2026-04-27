@@ -144,6 +144,9 @@ export interface GameSpecificOverview {
           name: string
           headshot: string
         }
+        onFirst?: boolean
+        onSecond?: boolean
+        onThird?: boolean
     }
     seriesSummary?: string
 
