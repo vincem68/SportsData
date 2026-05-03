@@ -2,7 +2,7 @@
 
 <html>
     <head>
-        <title><%= data.team.displayName %></title>
+        <title><%= data.team.name %></title>
         <link rel="stylesheet" href="/styles/roster.css">
     </head>
     <body>
@@ -11,38 +11,68 @@
 
         <div id = 'teamTitleDiv'> <!--Shows the general info of the team-->
 
-            <img id="teamLogo" src="<%= data.team.logo %>" alt="Logo of <%= data.team.displayName %>">
+            <img id="teamLogo" src="<%= data.team.logo %>" alt="Logo of <%= data.team.name %>">
 
-            <h1><%= data.team.displayName %></h1>
-            <p>Season: <%= data.team.seasonSummary %></p>
-            <p>Head Coach:
-                <% if (data.coach !== undefined){ %>
-                    <%= data.coach[0].firstName + ' ' + data.coach[0].lastName %>
-                <% } else { %>
-                    Vacant
-                <% } %> 
-                </p>
+            <h1><%= data.team.name %></h1>
+            <p><%= data.season.name %> Season</p>
+            <p>Head Coach: <% if (data.coach){ %> <%= data.coach %> <% } else { %> Vacant <% } %></p>
+            <p>Season Record: <%= data.team.record %>, <%= data.team.standings %></p>
         </div>
 
         <div id="rosterDiv">
 
-            <% if (league.toUpperCase() == "NHL"){ %>
+            <% data.groups.forEach(group => { %>
 
-                <%- include('team_roster_data/nhl_team_roster') %>
+                <% if (league !== "NBA"){ %> <!--This will show the position name. Not for basketball since rosters aren't divided-->
+                    <h4 class="importantHeadline"><%= group.name %></h4>
+                <% } %>
 
-            <% } else if (league.toUpperCase() == "NBA"){ %>
+                <table>
 
-                <%- include('team_roster_data/nba_team_roster') %>
+                    <tr>
+                        <th>Headshot</th>
+                        <th>Player</th>
+                        <th>Position</th>
+                        <th>Jersey No.</th>
+                        <% if (league == "MLB"){ %>
+                            <th>Bats</th>
+                            <th>Throws</th>
+                        <% } %>
+                        <th>Age</th>
+                        <th>Weight</th>
+                        <th>Height</th>
+                        <th>Years Exp.</th>
+                        <th>Status</th>
+                        <th>Player Page</th>
+                    </tr>
 
-            <% } else if (league.toUpperCase() == "NFL") { %>
+                    <% group.athletes.forEach(athlete => { %>
 
-                <%- include('team_roster_data/nfl_team_roster') %>
+                        <tr>
+                            <td><img class="headshot" src="<%= athlete.headshot %>"></td>
+                            <td><%= athlete.fullName %></td>
+                            <td><%= athlete.position.abbr %></td>
+                            <td><%= athlete.jersey %></td>
+                            <% if (league == "MLB"){ %>
+                                <td><%= athlete.bats.abbr %></td>
+                                <td><%= athlete.throws.abbr %></td>
+                            <% } %>
+                            <td><%= athlete.age %></td>
+                            <td><%= athlete.weight %></td>
+                            <td><%= athlete.height %></td>
+                            <td><%= athlete.yearsExperience %></td>
+                            <td><%= athlete.status %></td>
+                            <td>
+                                <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/player/<%= athlete.id %>">
+                                    Player Stats
+                                </a>
+                            </td>
+                        </tr>
 
-            <% } else { %>
+                    <% }) %>
+                </table>
 
-                <%- include('team_roster_data/mlb_team_roster') %>
-
-            <% } %>
+            <% }) %>
         </div>
     </body>
 </html>

@@ -3,7 +3,7 @@ import port from '../index';
 
 import { checkRequestParams, checkQueryParams, getBasicResponseInfo } from '../validation_functions';
 
-import type { TeamResponse, Team} from '../interfaces/types/Team.types';
+import type { Team} from '../interfaces/types/Team.types';
 import type { TeamInfoResponse, TeamInfo } from '../interfaces/types/TeamInfo.types';
 import type { TeamNews, TeamNewsResponse } from '../interfaces/types/TeamNews.types';
 import type { GameOverview, GameOverviewResponse} from '../interfaces/types/LeagueSchedule.types';
@@ -11,6 +11,7 @@ import type { TeamStatsResponse, TeamStats } from '../interfaces/types/TeamStats
 import type { NFLSchedule } from '../interfaces/types/NFLSchedules.types';
 import type { Calendar } from '../interfaces/types/Calendar.types';
 import type { PostseasonSchedule } from '../interfaces/types/PostseasonSeries.types';
+import type { RosterData } from '../interfaces/types/Roster.types';
 
 import { parseNFLScheduleResponse } from '../interfaces/transformations/NFLSchedules';
 import { parseGame } from '../interfaces/transformations/LeagueSchedule';
@@ -18,6 +19,7 @@ import { parseTeamStatsResponse } from '../interfaces/transformations/TeamStats'
 import { parseTeamResponse } from '../interfaces/transformations/Team';
 import { parseCalendarResponse } from '../interfaces/transformations/Calendar';
 import { parsePostseasonScheduleResponse } from '../interfaces/transformations/PostseasonSeries';
+import { parseRosterData } from '../interfaces/transformations/Roster';
 
 const router = Router({ mergeParams: true });
 
@@ -35,11 +37,9 @@ router.get('/:team/roster', async function(req: Request, res: Response){
         return;
     }
 
-    const response = await fetch('https://site.api.espn.com/apis/site/v2/sports/' + 
-        `${sport}/${league}/teams/${team}/roster`);
-    
-    const data = await response.json();
-    res.render('team_roster', {port: port, league: league, sport: sport, team: team, data: data});
+    const rosterData: RosterData = await parseRosterData(league.toUpperCase(), sport, team);
+
+    res.render('team_roster', {port: port, league: league, sport: sport, team: team, data: rosterData});
 })
 
 /**
