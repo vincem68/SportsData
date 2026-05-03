@@ -61,7 +61,11 @@
                             <td><%= athlete.weight %></td>
                             <td><%= athlete.height %></td>
                             <td><%= athlete.yearsExperience %></td>
-                            <td><%= athlete.status %></td>
+                            <td>
+                                <% if (athlete.status != "Active"){ %>
+                                    <img class="injuredImg" src="/images/injured_symbol.png">
+                                <% } %>
+                                <%= athlete.status %></td>
                             <td>
                                 <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/player/<%= athlete.id %>">
                                     Player Stats

@@ -30,19 +30,27 @@ export interface NBA_Player { //for the NBA rosters. There's no positions listed
     displayHeight: string
     age: number
     jersey: string
+
     position: {
         displayName: string
         abbreviation: string
     }
+
     experience: {
         years: number
     }
+
     headshot: {
         href: string
     }
+
     status: {
         name: string
     }
+
+    injuries: {
+        status: string
+    }[]
 }
 
 export interface Roster {
@@ -50,28 +58,39 @@ export interface Roster {
     position: string
 
     items: {
+
         id: string
         fullName: string
         displayWeight: string
         displayHeight: string
         age: number
         jersey: string
+
         position: {
             displayName: string
             abbreviation: string
         }
+
         experience: {
             years: number
         }
+
         headshot: {
             href: string
         }
+
         status: {
             name: string
         }
+
+        injuries: {
+            status: string
+        }[]
+
         bats?: {
             abbreviation: string
         }
+
         throws?: {
             abbreviation: string
         }
