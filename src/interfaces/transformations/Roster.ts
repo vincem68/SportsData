@@ -4,7 +4,7 @@ import type { RosterResponse, RosterData, Roster, NBA_Player } from "../types/Ro
 export async function parseRosterData(league: string, sport: string, team: string): Promise<RosterData>{
 
     const res: RosterResponse = await (
-        await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/roster`)
+        await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league.toLowerCase()}/teams/${team}/roster`)
     ).json();
 
     if (league !== "NBA"){ //filter out any groups that have no players 

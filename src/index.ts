@@ -191,15 +191,10 @@ app.get('/:sport/:league/player/:playerID', async function(req: Request, res: Re
         return;
     }
 
-    const endpoint = `https://site.web.api.espn.com/apis/common/v3/sports/${sport}/${league.toLowerCase()}/athletes/${playerID}`;
-
     //get the basic info of player like name, position, team, etc
-    const basicPlayerInfo: BasicPlayerStatsResponse = await (await fetch(endpoint)).json();
-    const playerInfo: BasicPlayerStats = parseBasicPlayerStats(basicPlayerInfo);
-
+    const playerInfo: BasicPlayerStats = await parseBasicPlayerStats(league.toLowerCase(), sport, playerID);
     //get the basic stats of player, like regular season stats, career, postseason
-    const mainPlayerStats: PlayerStatsOverviewResponse = await (await fetch(endpoint + "/overview")).json();
-    const playerOverview: PlayerStatsOverview | null = parseMainPlayerStats(mainPlayerStats);
+    const playerOverview: PlayerStatsOverview = await parseMainPlayerStats(league.toLowerCase(), sport, playerID);
 
     //if the main stats aren't available, neither will the splits, so just render the basic stats
     if (playerOverview === null){
@@ -209,8 +204,7 @@ app.get('/:sport/:league/player/:playerID', async function(req: Request, res: Re
     }
 
     //get advanced splits of a player
-    const advancedPlayerStats: PlayerSplitsResponse = await (await fetch(endpoint + "/splits")).json();
-    const playerSplits: PlayerSplits = parsePlayerSplits(advancedPlayerStats);
+    const playerSplits: PlayerSplits = await parsePlayerSplits(league.toLowerCase(), sport, playerID);
 
     res.render('player_stats', {port: port, sport: sport, league: league, playerInfo: playerInfo, 
         playerOverview: playerOverview, playerSplits: playerSplits});
