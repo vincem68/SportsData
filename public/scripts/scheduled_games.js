@@ -1,3 +1,5 @@
+import { parseGame, setUpGameDiv, updateGameDiv } from "./update_game_div.js";
+
 const form = document.getElementById("dateSelection");
 const dateInput = document.getElementById('date');
 
@@ -101,14 +103,14 @@ if (typeSelector){ //if its for football games, add listener for week selection
  * Check on both active and upcoming games for status changes and to move gameDivs to proper
  * container divs 
  */
-async function updateGames(){
+async function updateCompleteSchedule(){
 
     console.log("hello");
 
     //get the data from the response
-    const updatedGames = await parseLeagueScheduleResponse();
+    const updatedGames = await parseLeagueScheduleResponse(endpoint);
 
-    //first go through upcoming games to see if any have started
+    //first go through upcoming games to see if any have started, and move/update the divs to activeGames
     upcomingGames.querySelectorAll('.gameContainer').forEach(gameDiv => {
 
         const gameID = gameDiv.id;
@@ -117,44 +119,9 @@ async function updateGames(){
 
         //if null, the game has started. Move to Active Games Div
         if (gameData.status.state != "pre"){
-            //get the game elements 
-            const status = gameDiv.querySelector('.status');
-            const score = gameDiv.querySelector('.score');
-            const mlbCount = gameDiv.querySelector('.mlbCount');
-            const mlbOuts = gameDiv.querySelector('.mlbOuts');
-            const yardMarker = gameDiv.querySelector('.yardMarker');
-            const arrowImage = gameDiv.querySelector('.arrow_img');
-            const seriesRecord = gameDiv.querySelector('.seriesRecord');
-
-            //hide series record for active games
-            seriesRecord.style.display = "none";
-
-            //update the status of the game
-            status.textContent = gameData.status.shortDetail;
-
-            //update baseball count if in MLB game
-            mlbCount.style.display = (league == "MLB" && gameData.situation !== undefined) ? "flex" : "none";
-            mlbCount.textContent = (league == "MLB" && gameData.situation !== undefined) ? gameData.situation.count : "";
-            mlbOuts.style.display = (league == "MLB" && gameData.situation !== undefined) ? "flex" : "none";
-            mlbOuts.textContent = (league == "MLB" && gameData.situation !== undefined) ? gameData.situation.outs + " Outs" : "";
-
-            //update football marker if an NFL game
-            if (league == "NFL" && gameData.situation !== undefined){
-                //display the yard marker and possession arrow
-                arrowImage.style.display = "flex";
-                yardMarker.style.display = "flex";
-                yardMarker.textContent = gameData.situation.downDistanceText;
-                //set the image arrow to face the correct team based on possession
-                if (gameData.situation.possession == gameData.awayTeam.id){
-                    arrowImage.src = "/images/left_arrow.png";
-                } else {
-                    arrowImage.src = "/images/right_arrow.png";
-                }
-            }
-
-            //get score of game
-            score.style.display = "flex";
-            score.textContent = gameData.awayTeam.score + " - " + gameData.homeTeam.score;
+            
+            //set up the gameDiv
+            setUpGameDiv(gameDiv, gameData, league.toUpperCase());
 
             gameDiv.parentNode.removeChild(gameDiv); //remove from upcoming
 
@@ -169,47 +136,17 @@ async function updateGames(){
         }
     });
 
+    //here, check to see if any divs containing data on active games has the game concluded, to shift to the completedGamesDiv
     activeGames.querySelectorAll('.gameContainer').forEach(gameDiv => {
 
-        //get the related game data from response and game div
         const gameID = gameDiv.id;
+        //find the specific game in the upcomingGames portion of response
         const gameData = updatedGames.find(event => event.id == gameID);
 
-        const status = gameDiv.querySelector('.status');
-        const score = gameDiv.querySelector('.score');
-        const mlbCount = gameDiv.querySelector('.mlbCount');
-        const mlbOuts = gameDiv.querySelector('.mlbOuts');
-        const yardMarker = gameDiv.querySelector('.yardMarker');
-        const arrowImage = gameDiv.querySelector('.arrow_img');
-        const seriesRecord = gameDiv.querySelector('.seriesRecord');
-
-        //update the status of the game
-        status.textContent = gameData.status.shortDetail;
-        //get score of game
-        score.textContent = gameData.awayTeam.score + " - " + gameData.homeTeam.score;
-
-        //update baseball count if in MLB game
-        mlbCount.style.display = (league == "MLB" && gameData.situation !== undefined) ? "flex" : "none";
-        mlbCount.textContent = (league == "MLB" && gameData.situation !== undefined) ? gameData.situation.count : "";
-        mlbOuts.style.display = (league == "MLB" && gameData.situation !== undefined) ? "flex" : "none";
-        mlbOuts.textContent = (league == "MLB" && gameData.situation !== undefined) ? gameData.situation.outs + " Outs" : "";
+        updateGameDiv(gameDiv, gameData, league.toUpperCase());
 
         //if the game is now finished, move it to completed games
         if (gameData.status.state == "post"){
-
-            //hide any baseball and football in game details
-            mlbCount.style.display = "none";
-            yardMarker.style.display = "none";
-            arrowImage.style.display = "none";
-            mlbOuts.style.display = "none";
-
-            //for series score updates on final games
-            if (gameData.seriesSummary !== undefined){
-                seriesRecord.style.display = "flex";
-                seriesRecord.textContent = gameData.seriesSummary;
-            } else {
-                seriesRecord.style.display = "none";
-            }
 
             gameDiv.parentNode.removeChild(gameDiv); //remove from active
 
@@ -225,52 +162,24 @@ async function updateGames(){
         }
     });
 
+    //when upcoming and active game divs are both empty, all the games for the day are done. Stop sending requests
     if (activeGames.children.length == 0 && upcomingGames.children.length == 0){
         clearInterval(requests);
     }
 }
 
-let requests = setInterval(updateGames, 10000); //update games every 20 seconds
-//immediately clear it if all games are already final upon initial page load or user refresh
-if (activeGames.children.length == 0 && upcomingGames.children.length == 0){
-    clearInterval(requests);
-}
-
-//divy up the games into active, upcoming, and completed based on their status
-async function parseLeagueScheduleResponse() {
+//get the response of full games, and parse the data 
+async function parseLeagueScheduleResponse(endpoint) {
 
     const response = await (await fetch(endpoint)).json();
 
-    return response.events.map(game => {
+    return response.events.map(game => parseGame(game));
+}
 
-        const competition = game.competitions[0];
-        const awayCompetitor = game.competitions[0].competitors[1];
-        const homeCompetitor = game.competitions[0].competitors[0];
 
-        return {
-            id: game.id,
-            seasonType: game.season.type,
-            awayTeam: {
-                id: awayCompetitor.id,
-                score: awayCompetitor.score
-            },
-            homeTeam: {
-                id: homeCompetitor.id,
-                score: homeCompetitor.score
-            },
-            status: {
-                state: competition.status.type.state,
-                shortDetail: competition.status.type.shortDetail,
-                period: competition.status.period,
-                displayClock: competition.status.displayClock
-            },
-            situation: competition.situation ? {
-                downDistanceText: competition.situation.downDistanceText,
-                possession: competition.situation.possession,
-                count: `${competition.situation.balls}-${competition.situation.strikes}`,
-                outs: competition.situation.outs
-            } : undefined,
-            seriesSummary: competition.series?.summary || ''
-        };
-    });
+
+let requests = setInterval(updateCompleteSchedule, 10000); //update games every 20 seconds
+//immediately clear it if all games are already final upon initial page load or user refresh
+if (activeGames.children.length == 0 && upcomingGames.children.length == 0){
+    clearInterval(requests);
 }

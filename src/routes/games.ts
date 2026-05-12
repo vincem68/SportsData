@@ -12,8 +12,6 @@ import type { GameSpecificOverview, GameSpecificOverviewResponse,
 
 
 import { parseLeagueScheduleResponse } from '../interfaces/transformations/LeagueSchedule';
-import {parseGame} from '../interfaces/transformations/LeagueSchedule';
-import { parse } from 'path';
 import { parseOverview, parseSummary} from '../interfaces/transformations/GameData';
 
 const router = Router({ mergeParams: true });
@@ -71,29 +69,18 @@ router.get('/', async function(req: Request, res: Response) {
         res.status(400).send("Bad Request: Invalid sport or league parameter.");
         return;
     }
-    
-    let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard`;
 
-    //gotta take out the hyphons I think
-    if (req.query.date !== undefined){
-        const date = req.query.date.toString();
-        endpoint += `?dates=${date.replace(/-/g, "")}`;
-    }
+    const leagueSchedule: LeagueSchedule = req.query.date ? await parseLeagueScheduleResponse(league.toUpperCase(), sport, req.query.date.toString())
 
-    if (req.query.season !== undefined && req.query.week !== undefined && req.query.seasonType !== undefined){
-        const season = req.query.season;
-        const week = req.query.week;
-        const type = req.query.seasonType;
-        endpoint += (checkQueryParams(league, Number(season), Number(type), Number(week))) ? 
-            `?dates=${season}&week=${week}&seasontype=${type}` : '';
-    }
+        : req.query.season && req.query.week && req.query.seasonType ? 
+            await parseLeagueScheduleResponse(league.toUpperCase(), sport, {season: req.query.season.toString(), week: req.query.week.toString(), type: req.query.seasonType.toString()})
 
-    const data: LeagueScheduleResponse = await (await fetch(endpoint)).json();
+        : await parseLeagueScheduleResponse(league.toUpperCase(), sport);
 
-    const leagueSchedule: LeagueSchedule = parseLeagueScheduleResponse(data);
+
     //render all the data onto the scheduled games page
     res.render('scheduled_games', { port: port, sport: sport, league: league.toUpperCase(),
-        leagueSchedule: leagueSchedule, endpoint: endpoint, parseGame: parseGame});
+        leagueSchedule: leagueSchedule});
 })
 
 export default router;

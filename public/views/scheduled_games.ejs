@@ -40,7 +40,7 @@
                     <div class="form-group">
                         <label for="season">Select Season:</label>
                         <select name="season">
-                            <% for (let i = year; i >= 2000; i--){ %>
+                            <% for (let i = leagueSchedule.season; i >= 2000; i--){ %>
                                 <option value="<%= i %>"><%= i %></option>
                             <% } %>
                         </select>
@@ -174,11 +174,12 @@
     <% } %>
 
     <script>
-        const endpoint = "<%= endpoint %>";
+        const leagueSchedule = <%- JSON.stringify(leagueSchedule) %>;
+        const endpoint = leagueSchedule.endpoint;
         const league = "<%= league %>";
     </script>
 
-    <script src="/scripts/scheduled_games.js"></script>
+    <script type="module" src="/scripts/scheduled_games.js"></script>
 
 </body>
 </html>

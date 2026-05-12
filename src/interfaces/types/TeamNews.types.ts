@@ -1,24 +1,22 @@
-export interface TeamNewsResponse {
-  articles: Article[]
-}
 
-interface Article {
+export interface TeamNewsResponse {
+    
+  articles: {
+
     headline: string
     description: string
-    images: Image[]
-    links: Link[]
-}
 
-interface Image {
-    url: string
-}
+    images: {
+        url: string
+    }[]
 
-interface Link {
-    web: Web
-}
+    links: {
+        web: {
+            href: string
+        }
+    }[]
 
-interface Web {
-    href: string
+  }[]
 }
 
 export interface TeamNews {

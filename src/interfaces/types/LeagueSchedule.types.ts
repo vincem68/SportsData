@@ -146,6 +146,8 @@ export interface TeamOnBye {
  * Will contain all the data of the current requested games
  */
 export interface LeagueSchedule {
+    
+    endpoint: string
     season: number //season year and type
     seasonType: number
     seasonTypeName: string //the name of the season type (ex: regular, preseason, etc)

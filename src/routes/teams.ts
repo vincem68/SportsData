@@ -20,6 +20,7 @@ import { parseTeamResponse } from '../interfaces/transformations/Team';
 import { parseCalendarResponse } from '../interfaces/transformations/Calendar';
 import { parsePostseasonScheduleResponse } from '../interfaces/transformations/PostseasonSeries';
 import { parseRosterData } from '../interfaces/transformations/Roster';
+import { parseTeamInfoRespose, parseTeamNewsResponse } from '../interfaces/transformations/TeamInfo';
 
 const router = Router({ mergeParams: true });
 
@@ -128,43 +129,13 @@ router.get('/:team', async function(req: Request, res: Response){
         return;
     }
 
-    const dataEndpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}`;
-    const newsEndpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/news?team=${team}`;
-
     //get basic team data
-    const data: TeamInfoResponse = await (await fetch(dataEndpoint)).json();
-    const teamData: TeamInfo = {
-        displayName: data.team.displayName,
-        recordSummary: data.team.record.items !== undefined ? data.team.record.items[0].summary : '',
-        logoUrl: data.team.logos[0].href,
-        gameID: data.team.nextEvent.length > 0 ? data.team.nextEvent[0].id : ''
-    };
+    const teamData: TeamInfo = await parseTeamInfoRespose(league, sport, team);
     //get news on team
-    const news: TeamNewsResponse = await (await fetch(newsEndpoint)).json();
-    const newsArticles: TeamNews[] = news.articles.map((article) => {{
-        return {
-            headline: article.headline,
-            description: article.description,
-            imageUrl: article.images.length > 0 ? article.images[0].url : '',
-            articleUrl: article.links.length > 0 ? article.links[0].web.href : ''
-        }
-    }});
-
-    //get details for previous or next scheduled game
-    if (teamData.gameID === '') { //if there is no available data for a next game
-        res.render('selected_team', {port: port, sport: sport, league: league.toUpperCase(), 
-            team: team, data: teamData, news: newsArticles, game: null, parseResponse: parseGame});
-        return;
-    }
-
-    //otherwise, 
-    const gameID = data.team.nextEvent[0].id;
-    const nextGameEndpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard/${gameID}`;
-    const gameResponse: GameOverviewResponse = await (await fetch(nextGameEndpoint)).json();
-    const game: GameOverview = parseGame(gameResponse);
+    const newsArticles: TeamNews[] = await parseTeamNewsResponse(league, sport, team);
 
     res.render('selected_team', {port: port, sport: sport, league: league.toUpperCase(), 
-        team: team, data: teamData, news: newsArticles, game: game, parseResponse: parseGame});
+        team: team, data: teamData, news: newsArticles});
 })
 
 /**
@@ -181,7 +152,7 @@ router.get('/', async function(req: Request, res: Response){
         return;
     }
     //get the teams for the league
-    const teams: Team[] = await parseTeamResponse(`http://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams`);
+    const teams: Team[] = await parseTeamResponse(league, sport);
     
     res.render('team_selection', {port: port, sport: sport, league: league.toUpperCase(), teams: teams});
 })
