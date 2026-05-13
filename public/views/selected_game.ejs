@@ -275,10 +275,11 @@
 
         <!--declare variables from the rendered data here for the scripts-->
         <script>
-            const summaryEndpoint = <%- JSON.stringify(summaryEndpoint) %>;
-            const overviewEndpoint = <%- JSON.stringify(overviewEndpoint) %>;
-            const gameState = "<%= summary.gameState %>";
+            const summary = <%- JSON.stringify(summary) %>;
             const overview = <%- JSON.stringify(overview) %>;
+            const summaryEndpoint = "<%= summary.endpoint %>";
+            const overviewEndpoint = "<%= overview.endpoint %>";
+            const gameState = "<%= summary.gameState %>";
             const league = "<%= league %>";
         </script>
 

@@ -1,14 +1,12 @@
 import {Router, Request, Response} from 'express';
 import port from '../index';
 
-import { checkRequestParams, checkQueryParams } from '../validation_functions';
+import { checkRequestParams } from '../validation_functions';
 
 
-import type { LeagueScheduleResponse, LeagueSchedule } from '../interfaces/types/LeagueSchedule.types';
-import type { GameOverview, GameOverviewResponse} from '../interfaces/types/LeagueSchedule.types';
-import type { GameSpecificOverview, GameSpecificOverviewResponse,
-    GameSpecificSummary, GameSpecificSummaryResponse
-} from '../interfaces/types/GameData.types';
+import type { LeagueSchedule } from '../interfaces/types/LeagueSchedule.types';
+import type { GameOverview } from '../interfaces/types/LeagueSchedule.types';
+import type { GameSpecificSummary } from '../interfaces/types/GameData.types';
 
 
 import { parseLeagueScheduleResponse } from '../interfaces/transformations/LeagueSchedule';
@@ -37,22 +35,13 @@ router.get('/:id', async function(req: Request, res: Response){
         return;
     }
 
-    const overviewEndpoint = `https://site.api.espn.com/apis/site/v2/sports` +
-        `/${sport}/${league}/scoreboard/${game_id}`;
-
-    const summaryEndpoint = `https://site.api.espn.com/apis/site/v2/sports` +
-        `/${sport}/${league}/summary?event=${game_id}`;
-
-    const overviewResponse = await (await fetch(overviewEndpoint)).json();
-    const overview = parseOverview(overviewResponse, league.toUpperCase());
-
-    const summaryResponse = await (await fetch(summaryEndpoint)).json();
-    const summary = parseSummary(summaryResponse, league.toUpperCase());
+    const overview: GameOverview = await parseOverview(league.toUpperCase(), sport, game_id);
+;
+    const summary: GameSpecificSummary = await parseSummary(league.toUpperCase(), sport, game_id);
 
     //maybe we need to see what kinds of data is available in the pre state
     //overview will be used for selected_game, boxscore will be used for the more specific subfile
-    res.render('selected_game', {port: port, league: league.toUpperCase(), overview: overview, summary: summary, 
-        overviewEndpoint: overviewEndpoint, summaryEndpoint: summaryEndpoint});
+    res.render('selected_game', {port: port, league: league.toUpperCase(), overview: overview, summary: summary});
 })
 
 /**

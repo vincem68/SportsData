@@ -5,16 +5,22 @@ import type { GameSpecificOverview, GameSpecificOverviewResponse,
  * @param response JSON response from ESPN containing game info
  * @returns a variable of type GameOverview to have needed JSON info much more organized and readable
  */
-export const parseOverview = (response: GameSpecificOverviewResponse, league: string): GameSpecificOverview => {
+export async function parseOverview(league: string, sport: string, gameID: string): Promise<GameSpecificOverview> {
+
+    const endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league.toLowerCase()}/scoreboard/${gameID}`;
+    const response: GameSpecificOverviewResponse = await (await fetch(endpoint)).json();
 
     const competition = response.competitions[0];
     const awayCompetitor = competition.competitors[1];
     const homeCompetitor = competition.competitors[0];
 
     return {
+
         id: response.id,
         date: response.date,
         seasonType: response.season.type,
+
+        endpoint: endpoint, 
 
         awayTeam: {
             id: awayCompetitor.id,
@@ -114,7 +120,10 @@ export const parseOverview = (response: GameSpecificOverviewResponse, league: st
  * @param league 
  * @returns 
  */
-export const parseSummary = (response: GameSpecificSummaryResponse, league: string): GameSpecificSummary => {
+export async function parseSummary(league: string, sport: string, gameID: string): Promise<GameSpecificSummary> {
+
+    const endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league.toLowerCase()}/summary?event=${gameID}`;
+    const response: GameSpecificSummaryResponse = await (await fetch(endpoint)).json();
 
     //if its a hockey game, filter out skaters category
     if (response.boxscore.players && league == "NHL") {
@@ -143,6 +152,8 @@ export const parseSummary = (response: GameSpecificSummaryResponse, league: stri
     }
 
     return {
+
+        endpoint: endpoint,
 
         //the abbreviations of the teams
         awayTeamAbbr: response.boxscore.teams[0].team.abbreviation,

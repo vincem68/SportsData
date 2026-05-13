@@ -1,87 +1,90 @@
 export interface GameSpecificOverviewResponse {
+
   id: string
   date: string
   name: string
   shortName: string
-  season: Season
-  competitions: Competition[]
-}
 
-interface Season {
-  year: number
-  type: number
-}
-
-interface Competition {
-  id: string
-  date: string
-  competitors: Competitor[]
-  status: Status
-  startDate: string
-  series: Series
-  situation?: Situation
-  format: Format
-}
-
-interface Format {
-  regulation: {
-    periods: number
+  season: {
+    year: number
+    type: number
   }
-}
 
-interface Situation {
-    downDistanceText?: string
-    possession?: string
-    balls?: number
-      strikes?: number
-    outs?: number
-    pitcher?: {
-      athlete: {
-        shortName: string
-        headshot: string
-      }
-    }
-    batter?: {
-      athlete: {
-        shortName: string
-        headshot: string
-      }
-    }
-    onFirst?: boolean
-    onSecond?: boolean
-    onThird?: boolean
-    //added pitcher and batter info for MLB games
-}
+  competitions: {
 
-interface Series {
-    summary: string
-}
-
-interface Competitor {
     id: string
-    type: string
-    homeAway: string
-    team: Team
-    score: string
-    records: Record[]
-    linescores: Linescore[]
-    statistics: {
-      displayValue: string
+    date: string
+
+    competitors: {
+
+      id: string
+      type: string
+      homeAway: string
+      team: {
+        id: string
+        name: string
+        abbreviation: string
+        displayName: string
+        logo: string
+      }
+      score: string
+      records: Record[]
+      linescores: Linescore[]
+      statistics: {
+        displayValue: string
+      }[]
+      hits?: number; //only for baseball
+      errors?: number; //only for baseball
+
     }[]
-    hits?: number; //only for baseball
-    errors?: number; //only for baseball
+
+    status: Status
+    startDate: string
+
+    series: {
+      summary: string
+    }
+
+    situation?: {
+
+      downDistanceText?: string
+      possession?: string
+      balls?: number
+      strikes?: number
+      outs?: number
+
+      pitcher?: {
+        athlete: {
+          shortName: string
+          headshot: string
+        }
+      }
+
+      batter?: {
+        athlete: {
+          shortName: string
+          headshot: string
+        }
+      }
+
+      onFirst?: boolean
+      onSecond?: boolean
+      onThird?: boolean
+    }
+
+    format: {
+      regulation: {
+      periods: number
+    }
+
+  }
+
+}[]
+
 }
 
 interface Linescore {
     displayValue: string
-}
-
-interface Team {
-  id: string
-  name: string
-  abbreviation: string
-  displayName: string
-  logo: string
 }
 
 interface Record {
@@ -91,24 +94,25 @@ interface Record {
 export interface Status {
   displayClock: string
   period: number
-  type: Type
+  type: {
+    id: string
+    name: string
+    state: string
+    description: string
+    detail: string
+    shortDetail: string
+  }
 }
-
-interface Type {
-  id: string
-  name: string
-  state: string
-  description: string
-  detail: string
-  shortDetail: string
-}
-
 
 //we will use this interface in the actual views to simplify data access
 export interface GameSpecificOverview {
+
     id: string
     date: string
-    seasonType: number,
+    seasonType: number
+
+    endpoint: string
+
     awayTeam: {
         id: string
         abbreviation: string
@@ -117,6 +121,7 @@ export interface GameSpecificOverview {
         score: string
         record: string
     }
+
     homeTeam: {
         id: string
         abbreviation: string
@@ -125,32 +130,40 @@ export interface GameSpecificOverview {
         score: string
         record: string
     }
+
     status: {
         state: string
         shortDetail: string
         period: number
         displayClock: string
     }
+
     situation?: {
+
         downDistanceText?: string
         possession?: string
         count?: string
         outs?: number
+
         pitcher?: {
           name: string
           headshot: string
         }
+
         batter?: {
           name: string
           headshot: string
         }
+
         onFirst?: boolean
         onSecond?: boolean
         onThird?: boolean
     }
+
     seriesSummary?: string
 
     linescore: {
+
       intervalLength: number
       intervals: string[] // the numebred labels of intervals, such as 1, 2, 3, ... OT, SO, etc
       awayLinescore: string[]
@@ -161,6 +174,7 @@ export interface GameSpecificOverview {
       homeRuns?: string;
       homeHits?: number;
       homeErrors?: number;
+
     }
 }
 
@@ -242,6 +256,8 @@ interface Boxscore {
 
 //The full, final interface we will restructire to from the response object
 export interface GameSpecificSummary {
+
+  endpoint: string
 
   awayTeamAbbr: string
   homeTeamAbbr: string

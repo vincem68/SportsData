@@ -355,7 +355,8 @@ function updatePlayerBoxscores(playersArray) {
             //query select the player row of the table
             const playerRow = document.getElementById(category.tableID).querySelector('.' + player.rowID);
             if (playerRow){ //if the row exists
-                playerStatCells = playerRow.querySelectorAll('td'); //get all the stat cells of row
+                
+                const playerStatCells = playerRow.querySelectorAll('td'); //get all the stat cells of row
                 //update each stat cell
                 playerStatCells.forEach((cell, index) => cell.textContent = player.stats[index]);
 
