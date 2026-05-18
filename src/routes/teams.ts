@@ -18,7 +18,7 @@ import { parseTeamResponse } from '../interfaces/transformations/Team';
 import { parseCalendarResponse } from '../interfaces/transformations/Calendar';
 import { parsePostseasonScheduleResponse } from '../interfaces/transformations/PostseasonSeries';
 import { parseRosterData } from '../interfaces/transformations/Roster';
-import { parseTeamInfoRespose, parseTeamNewsResponse } from '../interfaces/transformations/TeamInfo';
+import { parseTeamInfoResponse, parseTeamNewsResponse } from '../interfaces/transformations/TeamInfo';
 
 const router = Router({ mergeParams: true });
 
@@ -123,7 +123,7 @@ router.get('/:team', async function(req: Request, res: Response){
     }
 
     //get basic team data
-    const teamData: TeamInfo = await parseTeamInfoRespose(league, sport, team);
+    const teamData: TeamInfo = await parseTeamInfoResponse(league, sport, team);
     //get news on team
     const newsArticles: TeamNews[] = await parseTeamNewsResponse(league, sport, team);
 

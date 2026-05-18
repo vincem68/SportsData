@@ -8,7 +8,9 @@ import { StandingsResponse, LeagueStandings, TeamRecord } from "../types/Standin
  * @param league string name of the league
  * @returns an object of LeagueStandings tha contains all the necessary data for the file rendering
  */
-export async function parseStandingsResponse(endpoint: string, teamIDs: string[], league: string): Promise<LeagueStandings> {
+export async function parseStandingsResponse(league: string, sport: string, teamIDs: string[]): Promise<LeagueStandings> {
+
+    const endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/`;
 
     //fetch the data for each team in the league and store it in an array of TeamRecord objects
     const teamStandings: TeamRecord[] = await Promise.all(teamIDs.map(teamID => fetchTeamData(endpoint, teamID, league)));

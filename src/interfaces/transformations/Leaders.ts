@@ -6,7 +6,9 @@ import type { LeadersResponse, LeagueLeaders } from "../types/Leaders.types";
  * @param endpoint the endpoint to which we get all the league leader data from
  * @returns - the parsed data from the JSON response
  */
-export const parseLeaderData = async (endpoint: string): Promise<LeagueLeaders> => {
+export async function parseLeaderData(league: string, sport: string, season: string, type: string): Promise<LeagueLeaders> {
+
+    const endpoint = `https://sports.core.api.espn.com/v2/sports/${sport}/leagues/${league.toLowerCase()}/seasons/${season}/types/${type}/leaders`;
 
     const response = await fetch(endpoint)
         .then(res => res.json())

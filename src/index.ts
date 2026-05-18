@@ -1,18 +1,15 @@
 import express, {Request, Response} from 'express';
 import path from 'path';
 
-import { checkRequestParams, checkValidSeason, getBasicResponseInfo, checkQueryParams } from './validation_functions';
+import { checkRequestParams, getBasicResponseInfo, checkQueryParams } from './validation_functions';
 
 import teamRoutes from './routes/teams';
 import gameRoutes from './routes/games';
 
 //interfaces
 import type { LeagueStats } from './interfaces/types/LeagueStats.types';
-import type {LeagueStatsResponse} from './interfaces/types/LeagueStats.types';
 import type { LeagueStandings } from './interfaces/types/Standings.types';
-import type { BasicPlayerStatsResponse, BasicPlayerStats, PlayerSplits, 
-    PlayerSplitsResponse, PlayerStatsOverview, PlayerStatsOverviewResponse
-} from './interfaces/types/PlayerStats.types';
+import type { BasicPlayerStats, PlayerSplits, PlayerStatsOverview } from './interfaces/types/PlayerStats.types';
 
 //parsers
 import { parseLeageStatsResponse } from './interfaces/transformations/LeagueStats';
@@ -113,15 +110,13 @@ app.get('/:sport/:league/standings', async function(req: Request, res: Response)
         res.status(400).send("Invalid sport or league");
         return;
     }
-    //base endpoint we will send a request to for every team
-    const endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/`;
 
     //get correct team array that contains string values of the team abbreviations
     const teamIDs = (league.toUpperCase() == "NFL") ? nflTeams : (league.toUpperCase() == "NBA") ? nbaTeams :
         (league.toUpperCase() == "MLB") ? mlbTeams : nhlTeams;
 
     //the standings data of all the teams
-    const teamStandings: LeagueStandings = await parseStandingsResponse(endpoint, teamIDs, league.toUpperCase());
+    const teamStandings: LeagueStandings = await parseStandingsResponse(league.toUpperCase(), sport, teamIDs);
 
     res.render('league_standings', {port: port, sport: sport, league: league.toUpperCase(), teamStandings: teamStandings});
 })
@@ -138,9 +133,6 @@ app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
         return;
     }
 
-    //our baseendpoint to use for the leaders info
-    const baseEndpoint = `https://sports.core.api.espn.com/v2/sports/${sport}/leagues/${league.toLowerCase()}/seasons/`;
-
     //we need to use this to get the current season year and type, so we can send the correct request to 
     // the leaders endpoint. If the season and season type query params are provided, we will use those 
     // instead to send the request
@@ -155,12 +147,10 @@ app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
         }
     }
 
-    //the full endpoint to send requests to for the leader data
-    const paramsEndpoint = (req.query.season !== undefined && req.query.seasonType !== undefined) ?
-        `${baseEndpoint}${req.query.season}/types/${req.query.seasonType}/leaders` : 
-        `${baseEndpoint}${yearAndTypeResponse.seasonYear}/types/${yearAndTypeResponse.seasonType}/leaders`;
+    const data = (req.query.season && req.query.seasonType) 
     
-    const data = await parseLeaderData(paramsEndpoint);
+        ? await parseLeaderData(league.toUpperCase(), sport, req.query.season.toString(), req.query.seasonType.toString())
+        : await parseLeaderData(league.toUpperCase(), sport, yearAndTypeResponse.seasonYear.toString(), yearAndTypeResponse.seasonType.toString());
 
     const reqYear = (req.query.season) ? Number(req.query.season) : yearAndTypeResponse.seasonYear;
     const reqSeasonName = (req.query.seasonType) ? 

@@ -11,7 +11,7 @@ import { parseGame } from "./LeagueSchedule";
  * @param team team abbreviation
  * @returns 
  */
-export async function parseTeamInfoRespose(league: string, sport: string, team: string): Promise<TeamInfo>{
+export async function parseTeamInfoResponse(league: string, sport: string, team: string): Promise<TeamInfo>{
 
     const data: TeamInfoResponse = await (
         await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league.toLowerCase()}/teams/${team}`)
