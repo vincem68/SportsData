@@ -1,6 +1,13 @@
 import type { TeamStatsResponse, TeamStats } from '../types/TeamStats.types';
 
-export const parseTeamStatsResponse = (response: TeamStatsResponse, league: string): TeamStats => {
+export async function parseTeamStatsResponse(league: string, sport: string, team: string, season?: string, type?: string): Promise<TeamStats> {
+
+    //base endpoint
+    const endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league.toLowerCase()}/teams/${team}/statistics`;
+
+    //if queries exist, add it to the fetch call
+    const response: TeamStatsResponse = (season && type) ? await (await fetch(endpoint + `?season=${season}&seasontype=${type}`)).json()
+        : await (await fetch(endpoint)).json();
     
     const teamStats: TeamStats = {
         status: response.status,

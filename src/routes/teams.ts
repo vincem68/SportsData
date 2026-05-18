@@ -6,15 +6,13 @@ import { checkRequestParams, checkQueryParams, getBasicResponseInfo } from '../v
 import type { Team} from '../interfaces/types/Team.types';
 import type { TeamInfoResponse, TeamInfo } from '../interfaces/types/TeamInfo.types';
 import type { TeamNews, TeamNewsResponse } from '../interfaces/types/TeamNews.types';
-import type { GameOverview, GameOverviewResponse} from '../interfaces/types/LeagueSchedule.types';
-import type { TeamStatsResponse, TeamStats } from '../interfaces/types/TeamStats.types';
+import type { TeamStats } from '../interfaces/types/TeamStats.types';
 import type { NFLSchedule } from '../interfaces/types/NFLSchedules.types';
 import type { Calendar } from '../interfaces/types/Calendar.types';
 import type { PostseasonSchedule } from '../interfaces/types/PostseasonSeries.types';
 import type { RosterData } from '../interfaces/types/Roster.types';
 
 import { parseNFLScheduleResponse } from '../interfaces/transformations/NFLSchedules';
-import { parseGame } from '../interfaces/transformations/LeagueSchedule';
 import { parseTeamStatsResponse } from '../interfaces/transformations/TeamStats';
 import { parseTeamResponse } from '../interfaces/transformations/Team';
 import { parseCalendarResponse } from '../interfaces/transformations/Calendar';
@@ -97,18 +95,13 @@ router.get('/:team/stats', async function(req: Request, res: Response){
         return;
     }
 
-    //base endpoint
-    let endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/statistics`;
+    //if queries exist for previous season and/or type, add in extra parameters
+    const teamStats: TeamStats = (req.query.season && req.query.seasonType && 
+        checkQueryParams(league, Number(req.query.season), Number(req.query.seasonType)))
 
-    //check query params, add on to base endpoint if queries check out
-    if (req.query.season !== undefined && req.query.seasonType !== undefined){
-        if (checkQueryParams(league, Number(req.query.season), Number(req.query.seasonType))){
-            endpoint += `?season=${req.query.season}&seasontype=${req.query.seasonType}`;
-        }
-    }
+            ? await parseTeamStatsResponse(league.toUpperCase(), sport, team, req.query.season.toString(), req.query.seasonType.toString())
 
-    const teamData: TeamStatsResponse = await (await fetch(endpoint)).json();
-    const teamStats: TeamStats = parseTeamStatsResponse(teamData, league);
+            : await parseTeamStatsResponse(league.toUpperCase(), sport, team);
     
 
     res.render('team_stats', {port: port, league: league.toUpperCase(), teamStats: teamStats });

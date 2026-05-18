@@ -36,7 +36,7 @@ router.get('/:id', async function(req: Request, res: Response){
     }
 
     const overview: GameOverview = await parseOverview(league.toUpperCase(), sport, game_id);
-;
+
     const summary: GameSpecificSummary = await parseSummary(league.toUpperCase(), sport, game_id);
 
     //maybe we need to see what kinds of data is available in the pre state
