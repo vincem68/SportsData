@@ -109,8 +109,8 @@
                     const team = await (await fetch(leader.teamEndpoint)).json();
                     //fill in the name, team logo and link tds for the current leader
                     const row = document.getElementById(`${catSelect.value}-row-${leader.playerID}`);
-                    row.querySelector(".playerName").innerHTML = `<img class="headshot" src="${athlete.headshot.href}">` + athlete.displayName;;
-                    row.querySelector(".playerTeamLogo").innerHTML = `<img class="teamLogo" src="${team.logos[0].href}">${team.abbreviation}`;
+                    row.querySelector(".playerName").innerHTML = `<div class="tdFlex"> <img class="headshot" src="${athlete.headshot.href}"> ${athlete.displayName} </div>`;
+                    row.querySelector(".playerTeamLogo").innerHTML = `<div class="tdFlex"> <img class="teamLogo" src="${team.logos[0].href}"> ${team.abbreviation} </div>`;
                     row.querySelector(".playerLink").innerHTML = `<a href="http://localhost:<%= port %>/${sport}/${league}/player/${leader.playerID}">Player Stats</a>`;
                 });
                 //add class to show that we've filled in the data for this category, so we don't have to send requests again

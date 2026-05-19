@@ -25,6 +25,7 @@
     align-items: center;
 }
 
-.playerName, .playerTeamLogo {
-    text-align: center;
+.tdFlex {
+    display: flex;
+    align-items: center;
 }

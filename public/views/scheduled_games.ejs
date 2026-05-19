@@ -66,6 +66,7 @@
         <% } else { %>
 
             <div class="date-wrapper">
+                <label for="dateSelection">Select A Date:</label>
                 <form id="dateSelection" method="GET">
                     <input id="date" name="date" type="date" max="<%= leagueSchedule.seasonEndDate %>">
                     <button type="submit">Submit</button>
@@ -97,7 +98,7 @@
     <!--Go through each list from rendered data, which are active, upcoming and completed games-->
     <% Object.values(leagueSchedule.schedule).forEach(gameList => { %>
 
-        <h3 class="sectionHeadline"><%= gameList.name %></h3>
+        <h3 class="importantHeadline"><%= gameList.name %></h3>
         <div id="<%= gameList.id %>" class="gamesLayout">
 
             <% gameList.games.forEach(game => { %>

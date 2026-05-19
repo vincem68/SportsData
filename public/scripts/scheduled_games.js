@@ -11,7 +11,7 @@ const weekSelector = document.getElementById('weekSelector');
 const upcomingGames = document.getElementById('upcomingGames');
 const activeGames = document.getElementById('activeGames');
 const completedGames = document.getElementById('completedGames');
-const headlines = document.querySelectorAll('.sectionHeadline');
+const headlines = document.querySelectorAll('.importantHeadline');
 const upcoming = document.getElementById('upcomingHeadline');
 
 

@@ -100,7 +100,12 @@
                             <% category.teams.forEach((team, index) => { %>
                                 <tr>
                                     <th><%= index + 1 %></th>
-                                    <th class="name"><%= team.teamAbbr %></th>
+                                    <td>
+                                        <div class="teamDiv">
+                                            <img class="teamLogo" src="<%= team.teamLogo %>">
+                                            <%= team.teamAbbr %>
+                                        </div>
+                                    </td>
                                     <% team.statValues.forEach(value => { %>
                                         <td><%= value %></td>
                                     <% }) %>

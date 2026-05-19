@@ -26,3 +26,17 @@
 .tableDiv {
     overflow-x: auto;
 }
+
+.teamLogo {
+    height: 30px;
+    width: 30px;
+}
+
+.teamDiv {
+    display: flex;
+    align-items: center;
+}
+
+.teamDiv > img {
+    margin-right: 10px;
+}

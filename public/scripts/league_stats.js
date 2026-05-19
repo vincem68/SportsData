@@ -45,10 +45,10 @@ function sortTable(colIndex){ //give column index of table for leagueStats looku
 
     leagueStats.categories[catIndex].teams.forEach((team, index) => {
         const row = document.createElement('tr');
-        const name = document.createElement('th');
+        const name = document.createElement('td');
         const rowNum = document.createElement('th');
-        name.textContent = team.teamAbbr; //add in team name cell
-        name.classList.add("name"); //add name class to team name elements
+        name.innerHTML = `<div class="teamDiv"> <img class="teamLogo" src="${team.teamLogo}"> ${team.teamAbbr} </div>`; //add in team name cell
+        //name.classList.add("name"); //add name class to team name elements
         rowNum.textContent = index + 1; //add in row number cell    
         row.append(rowNum);
         row.append(name);

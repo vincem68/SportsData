@@ -83,3 +83,8 @@
     text-align: center;
     width: 60%;
 }
+
+#gameHeadline {
+    text-align: center;
+    padding: 20px 20px;
+}

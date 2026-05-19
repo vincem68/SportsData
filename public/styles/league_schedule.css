@@ -1,6 +1,7 @@
 @import "general_styles/general_styles.css";
 @import "general_styles/form_styles.css";
 
+
 #dateHeader {
     text-align: center;
     margin-top: 20px;
@@ -15,14 +16,6 @@
     display: flex;
     flex-flow: row wrap;
     justify-content: center;
-}
-
-.sectionHeadline {
-    background-color: lightgoldenrodyellow;
-    border-top-style: solid; border-bottom-style: solid;
-    border-top-color: lightgreen; border-bottom-color: lightgreen;
-    border-top-width: 10px; border-bottom-width: 10px;
-    text-align: center;
 }
 
 .gameContainer {
@@ -104,9 +97,13 @@
 
 /* Center a standalone date input */
 .date-wrapper {
-  max-width: 300px;
-  margin: 3rem auto;
+  max-width: 150px;
+  margin-left: 50px;
   text-align: center;
+  padding: 2rem;
+  background: lightgreen;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 /* Optional label */
@@ -123,7 +120,6 @@
   width: 100%;
   padding: 0.6rem 0.75rem;
   font-size: 1rem;
-
   color: #333;
   background-color: #fff;
   border: 1.5px solid #ccc;
