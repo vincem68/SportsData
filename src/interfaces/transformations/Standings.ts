@@ -12,6 +12,12 @@ export async function parseStandingsResponse(league: string, sport: string, team
 
     const endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league.toLowerCase()}/teams/`;
 
+    //check to see if the data is available. If not, return empty object
+    const testResponse = await (await fetch(endpoint + teamIDs[0])).json();
+    if (testResponse.team.record.items === undefined){
+        return {};
+    }
+
     //fetch the data for each team in the league and store it in an array of TeamRecord objects
     const teamStandings: TeamRecord[] = await Promise.all(teamIDs.map(teamID => fetchTeamData(endpoint, teamID, league)));
 
