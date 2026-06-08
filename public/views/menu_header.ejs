@@ -7,61 +7,33 @@
         </a>
     </div>
 
-    <div class="leagueDropDown" onclick="showDropDown(0)">
-        <div class="display">
-            <img class="leagueLogo" src="/images/nfl_logo.png">
-            <h1>NFL</h1>
-        </div>
-        <div class="list">
-            <a href="http://localhost:<%= port %>/football/nfl/teams">NFL Teams</a>
-            <a href="http://localhost:<%= port %>/football/nfl/stats">NFL Stats</a>
-            <a href="http://localhost:<%= port %>/football/nfl/games">NFL Schedule</a>
-            <a href="http://localhost:<%= port %>/football/nfl/leaders">NFL Leaders</a>
-            <a href="http://localhost:<%= port %>/football/nfl/standings">NFL Standings</a>
-        </div>
-    </div>
+    <% const params = [
+        ['football', 'nfl'],
+        ['basketball', 'nba'],
+        ['baseball', 'mlb'],
+        ['hockey', 'nhl']
+    ]; %>
 
-    <div class="leagueDropDown" onclick="showDropDown(1)">
-        <div class="display">
-            <img id="leagueLogo" src="/images/nba_logo.png">
-            <h1>NBA</h1>
-        </div>
-        <div class="list">
-            <a href="http://localhost:<%= port %>/basketball/nba/teams">NBA Teams</a>
-            <a href="http://localhost:<%= port %>/basketball/nba/stats">NBA Stats</a>
-            <a href="http://localhost:<%= port %>/basketball/nba/games">NBA Schedule</a>
-            <a href="http://localhost:<%= port %>/basketball/nba/leaders">NBA Leaders</a>
-            <a href="http://localhost:<%= port %>/basketball/nba/standings">NBA Standings</a>
-        </div>
-    </div>
+    <% params.forEach((pair, index) => { %>
 
-    <div class="leagueDropDown" onclick="showDropDown(2)">
-        <div class="display">
-            <img class="leagueLogo" src="/images/mlb_logo.png">
-            <h1>MLB</h1>
-        </div>
-        <div class="list">
-            <a href="http://localhost:<%= port %>/baseball/mlb/teams">MLB Teams</a>
-            <a href="http://localhost:<%= port %>/baseball/mlb/stats">MLB Stats</a>
-            <a href="http://localhost:<%= port %>/baseball/mlb/games">MLB Schedule</a>
-            <a href="http://localhost:<%= port %>/baseball/mlb/leaders">MLB Leaders</a>
-            <a href="http://localhost:<%= port %>/baseball/mlb/standings">MLB Standings</a>
-        </div>
-    </div>
+        <div class="leagueDropDown" onclick="showDropDown(<%= index %>)">
 
-    <div class="leagueDropDown" onclick="showDropDown(3)">
-        <div class="display">
-            <img class="leagueLogo" src="/images/nhl_logo.png">
-            <h1>NHL</h1>
+            <div class="display">
+                <img class="leagueLogo" src="/images/<%= pair[1] %>_logo.png">
+                <h1><%= pair[1].toUpperCase() %></h1>
+            </div>
+            
+            <div class="list">
+                <a href="http://localhost:<%= port %>/<%= pair[0] %>/<%= pair[1] %>/teams"><%= pair[1].toUpperCase() %> Teams</a>
+                <a href="http://localhost:<%= port %>/<%= pair[0] %>/<%= pair[1] %>/news"><%= pair[1].toUpperCase() %> News</a>
+                <a href="http://localhost:<%= port %>/<%= pair[0] %>/<%= pair[1] %>/stats"><%= pair[1].toUpperCase() %> Stats</a>
+                <a href="http://localhost:<%= port %>/<%= pair[0] %>/<%= pair[1] %>/leaders"><%= pair[1].toUpperCase() %> Leaders</a>
+                <a href="http://localhost:<%= port %>/<%= pair[0] %>/<%= pair[1] %>/standings"><%= pair[1].toUpperCase() %> Standings</a>
+                <a href="http://localhost:<%= port %>/<%= pair[0] %>/<%= pair[1] %>/games"><%= pair[1].toUpperCase() %> Schedule</a>
+            </div>
         </div>
-        <div class="list">
-            <a href="http://localhost:<%= port %>/hockey/nhl/teams">NHL Teams</a>
-            <a href="http://localhost:<%= port %>/hockey/nhl/stats">NHL Stats</a>
-            <a href="http://localhost:<%= port %>/hockey/nhl/games">NHL Schedule</a>
-            <a href="http://localhost:<%= port %>/hockey/nhl/leaders">NHL Leaders</a>
-            <a href="http://localhost:<%= port %>/hockey/nhl/standings">NHL Standings</a>
-        </div>
-    </div>
+    <% }) %>
+
 </div>
 
 <script>

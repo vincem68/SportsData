@@ -1,4 +1,4 @@
-import type { TeamNewsResponse, TeamNews } from "../types/TeamNews.types";
+import type { NewsResponse, News } from "../types/News.types";
 import type { TeamInfoResponse, TeamInfo } from "../types/TeamInfo.types";
 
 import { parseGame } from "./LeagueSchedule";
@@ -36,13 +36,17 @@ export async function parseTeamInfoResponse(league: string, sport: string, team:
  * @param team string abbreviation of team
  * @returns 
  */
-export async function parseTeamNewsResponse(league: string, sport: string, team: string): Promise<TeamNews[]>{
+export async function parseNewsResponse(league: string, sport: string, team?: string): Promise<News[]>{
 
-    const res: TeamNewsResponse = await (
-        await fetch(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league.toLowerCase()}/news?team=${team}`)
+    const endpoint = team !== undefined ? 
+        `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league.toLowerCase()}/news?team=${team}`
+        : `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league.toLowerCase()}/news`;
+
+    const res: NewsResponse = await (
+        await fetch(endpoint)
     ).json();
 
-    const teamNews: TeamNews[] = res.articles.map((article) => {{
+    const teamNews: News[] = res.articles.map((article) => {{
         return {
             headline: article.headline,
             description: article.description,

@@ -8,6 +8,7 @@ import gameRoutes from './routes/games';
 
 //interfaces
 import type { LeagueStats } from './interfaces/types/LeagueStats.types';
+import type { News } from './interfaces/types/News.types';
 import type { LeagueStandings } from './interfaces/types/Standings.types';
 import type { BasicPlayerStats, PlayerSplits, PlayerStatsOverview } from './interfaces/types/PlayerStats.types';
 
@@ -16,6 +17,7 @@ import { parseLeageStatsResponse } from './interfaces/transformations/LeagueStat
 import { parseBasicPlayerStats, parseMainPlayerStats, parsePlayerSplits } from './interfaces/transformations/PlayerStats';
 import { parseLeaderData } from './interfaces/transformations/Leaders';
 import { parseStandingsResponse } from './interfaces/transformations/Standings';
+import { parseNewsResponse } from './interfaces/transformations/TeamInfo';
 
 
 const app = express();
@@ -95,6 +97,22 @@ app.get('/:sport/:league/stats', async function(req: Request, res: Response){
     
     res.render('league_stats', {port: port, sport: sport, league: league.toUpperCase(), leagueStats: leagueStats});
     
+})
+
+app.get('/:sport/:league/news', async function(req: Request, res: Response){
+
+    const sport = req.params.sport;
+    const league = req.params.league;
+
+    //check request params
+    if (!checkRequestParams(sport, league)){
+        res.status(400).send("Invalid sport or league");
+        return;
+    }
+
+    const news: News[] = await parseNewsResponse(league.toLowerCase(), sport);
+
+    res.render('league_news', {port: port, sport: sport, league: league.toUpperCase(), news: news});
 })
 
 

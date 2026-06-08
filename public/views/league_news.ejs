@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title><%= league %> News</title>
+    <link rel="stylesheet" href="/styles/league_news.css">
+</head>
+
+<body>
+
+    <%- include ('menu_header') %>
+
+    <div class="topSection">
+        <div class="titleSection">
+            <% if (league == "MLB"){ %>
+                <img src = '/images/mlb_logo.png' class = 'mainLogo' alt = 'MLB Logo'>
+            <% } else if (league == "NBA"){ %>
+                <img src = '/images/nba_logo.png' class = 'mainLogo' alt = 'NBA Logo'>
+            <% } else if (league == "NFL"){ %>
+                <img src = '/images/nfl_logo.png' class = 'mainLogo' alt = 'NFL Logo'>
+            <% } else { %>
+                <img src = '/images/nhl_logo.png' class = 'mainLogo' alt = 'NHL Logo'>
+            <% } %>
+            <h1><%= league %> News</h1>
+            <h5>All Stories Displayed Here are Written, Owned and Published by ESPN</h5>
+        </div>
+    </div>
+
+    <div id="newsSection">
+
+        <% if (news.length == 0){ %>
+
+            <h3>Nothing to Report. Check Back Later!</h3>
+
+        <% } else {
+
+            news.forEach(article => { %>
+
+                <div class="article">
+                    <% if (article.imageUrl){ %>
+                        <img class="newsImage" src="<%= article.imageUrl %>">
+                    <% } %>
+                    <h3><u><%= article.headline %></u></h3>
+                    <p><%= article.description %></p>
+                    <a href=" <%= article.articleUrl %>">Read More</a>
+                </div>
+            <% })
+        } %>
+    </div>
+
+</body>
+
+</html>

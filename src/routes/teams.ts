@@ -4,8 +4,8 @@ import port from '../index';
 import { checkRequestParams, checkQueryParams, getBasicResponseInfo } from '../validation_functions';
 
 import type { Team} from '../interfaces/types/Team.types';
-import type { TeamInfoResponse, TeamInfo } from '../interfaces/types/TeamInfo.types';
-import type { TeamNews, TeamNewsResponse } from '../interfaces/types/TeamNews.types';
+import type { TeamInfo } from '../interfaces/types/TeamInfo.types';
+import type { News } from '../interfaces/types/News.types';
 import type { TeamStats } from '../interfaces/types/TeamStats.types';
 import type { NFLSchedule } from '../interfaces/types/NFLSchedules.types';
 import type { Calendar } from '../interfaces/types/Calendar.types';
@@ -18,7 +18,7 @@ import { parseTeamResponse } from '../interfaces/transformations/Team';
 import { parseCalendarResponse } from '../interfaces/transformations/Calendar';
 import { parsePostseasonScheduleResponse } from '../interfaces/transformations/PostseasonSeries';
 import { parseRosterData } from '../interfaces/transformations/Roster';
-import { parseTeamInfoResponse, parseTeamNewsResponse } from '../interfaces/transformations/TeamInfo';
+import { parseTeamInfoResponse, parseNewsResponse } from '../interfaces/transformations/TeamInfo';
 
 const router = Router({ mergeParams: true });
 
@@ -125,7 +125,7 @@ router.get('/:team', async function(req: Request, res: Response){
     //get basic team data
     const teamData: TeamInfo = await parseTeamInfoResponse(league, sport, team);
     //get news on team
-    const newsArticles: TeamNews[] = await parseTeamNewsResponse(league, sport, team);
+    const newsArticles: News[] = await parseNewsResponse(league, sport, team, );
 
     res.render('selected_team', {port: port, sport: sport, league: league.toUpperCase(), 
         team: team, data: teamData, news: newsArticles});

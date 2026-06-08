@@ -1,5 +1,5 @@
 
-export interface TeamNewsResponse {
+export interface NewsResponse {
     
   articles: {
 
@@ -19,7 +19,7 @@ export interface TeamNewsResponse {
   }[]
 }
 
-export interface TeamNews {
+export interface News {
     headline: string
     description: string
     imageUrl?: string

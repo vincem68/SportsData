@@ -62,3 +62,8 @@ select {
     background-color: green;
     color: azure;
 }
+
+.sticky {
+    position: sticky;
+    z-index: 2;
+}

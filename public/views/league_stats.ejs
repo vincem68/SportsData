@@ -81,8 +81,8 @@
 
                         <table>
                             <tr>
-                                <th>Rank</th>
-                                <th>Team</th> <!--Team column-->
+                                <th class="sticky">Rank</th>
+                                <th class="sticky">Team</th> <!--Team column-->
                                 <!--populate first row with the names of stats in current category-->
                                 <% category.statsDesc.forEach((stat, index) => { %>
                                     <th class="statName" onclick="sortTable(<%= index %>)"> <!--give each column header an index name-->
@@ -99,8 +99,8 @@
                             <!--go through each team in leagueStats and display their stats-->
                             <% category.teams.forEach((team, index) => { %>
                                 <tr>
-                                    <th><%= index + 1 %></th>
-                                    <td>
+                                    <th class="sticky"><%= index + 1 %></th>
+                                    <td class="sticky">
                                         <div class="teamDiv">
                                             <img class="teamLogo" src="<%= team.teamLogo %>">
                                             <%= team.teamAbbr %>
