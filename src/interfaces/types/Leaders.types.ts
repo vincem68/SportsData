@@ -1,23 +1,19 @@
 
 
 export interface LeadersResponse {
-    categories: Category[];
-}
-
-interface Category {
-    name: string;
-    displayName: string;
-    leaders: Leader[];
-}
-
-interface Leader {
-    value: number;
-    athlete: {
-        $ref: string;
-    }
-    team: {
-        $ref: string;
-    }
+    categories?: {
+        name: string;
+        displayName: string;
+        leaders: {
+            value: number;
+            athlete: {
+                $ref: string;
+            }
+            team: {
+                $ref: string;
+            }
+        }[];
+    }[];
 }
 
 /**
@@ -26,7 +22,7 @@ interface Leader {
  * Each leader has an athlete and team ID, which we will use to send requests in the rendered file.
  */
 export interface LeagueLeaders {
-    categories: {
+    categories?: {
         id: string;
         name: string;
         leaders: {
