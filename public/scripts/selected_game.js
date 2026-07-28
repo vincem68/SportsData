@@ -389,7 +389,7 @@ async function updateGameStats(){
         footballSection.style.display = 'none';
         atBatSection.style.display = 'none';
         live_image.style.display = 'none';
-        baseIndicator.style.display = 'none';
+        baseballScorebug.style.display = 'none';
 
         //make the leader headlines visible again
         document.querySelectorAll('.leaderHeadline').forEach(headline => headline.style.display = 'flex');
