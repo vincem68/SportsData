@@ -48,10 +48,11 @@
                     </p>
                 </div>
 
-                <div id="baseIndicator"><!--This will show where runners are in an inning for baseball games-->
-                    <img class="baseImg" id="thirdBase" src="/images/empty_base.png">
-                    <img class="baseImg" id="secondBase" src="/images/empty_base.png">
-                    <img class="baseImg" id="firstBase" src="/images/empty_base.png">
+                <div id="baseballScorebug"><!--This will show where runners are in an inning for baseball games-->
+                    <% if (league == "MLB" && overview.situation !== undefined){ %>
+                        <img id="bases" src="">
+                        <img id="outs" src="">
+                    <% } %>
                 </div>
 
                 <div id="atBat"> <!--for baseball, shows count, outs, and pitcher/batter-->
@@ -67,11 +68,6 @@
                         <p id="count"><!--Keeps track of ball and strike count in baseball game-->
                             <% if (overview.situation && overview.situation.batter){ %>
                                 <%= overview.situation.count %>
-                            <% } %>
-                        </p>
-                        <p id="outs"><!--Keeps track of outs in baseball game-->
-                           <% if (league == "MLB" && overview.situation){ %>
-                                <%= overview.situation.outs %> outs
                             <% } %>
                         </p>
                     </div>

@@ -8,7 +8,7 @@ const atBatSection = document.getElementById('atBat');
 const footballSection = document.getElementById('footballInfo');
 const awayTeamLeadersDiv = document.getElementById('awayTeamLeaders');
 const homeTeamLeadersDiv = document.getElementById('homeTeamLeaders');
-const baseIndicator = document.getElementById('baseIndicator');
+const baseballScorebug = document.getElementById('baseballScorebug');
 const linescoreHeaders = document.getElementById('linescoreHeaders');
 
 //specific stat keepers
@@ -27,9 +27,7 @@ const homeTeamBoxscore = document.getElementById('homeTeamBoxscore');
 const footballPosArrow = document.getElementById('footballPossessionArrow');
 const awayLinescoreRow = document.getElementById('awayTeamLinescoreRow');
 const homeLinescoreRow = document.getElementById('homeTeamLinescoreRow');
-const firstBase = document.getElementById('firstBase');
-const secondBase = document.getElementById('secondBase');
-const thirdBase = document.getElementById('thirdBase');
+const bases = document.getElementById('bases');
 
 //the divs for the buttons of player scoresheets
 const homeButton = document.getElementById("homeTeamButton");
@@ -46,7 +44,7 @@ linescoreDiv.style.display = gameState == "pre" ? 'none' : 'flex';
 atBatSection.style.display = league == "MLB" && gameState == "in" ? 'flex' : 'none';
 footballSection.style.display = league == "NFL" && gameState == "in" ? 'flex' : 'none';
 leaderSection.style.display = gameState == "in" ? 'none' : 'flex';
-baseIndicator.style.display = gameState == "in" && league == "MLB" ? 'flex' : 'none';
+baseballScorebug.style.display = gameState == "in" && league == "MLB" ? 'flex' : 'none';
 document.getElementById('boxscore').style.display = league == "MLB" ? 'none' : 'flex';
 document.querySelectorAll('.leaderHeadline')[0].style.display = (awayTeamLeadersDiv.children.length > 0) ? 'block' : 'none';
 document.querySelectorAll('.leaderHeadline')[1].style.display = (homeTeamLeadersDiv.children.length > 0) ? 'block' : 'none';
@@ -63,9 +61,14 @@ if (league == "NFL" && gameState == "in"){ //set arrow to correct side
 
 //for the bases
 if (league == "MLB" && gameState == "in"){
-    firstBase.src = overview.situation && overview.situation.onFirst ? "/images/highlighted_base.svg" : "/images/empty_base.png";
-    secondBase.src = overview.situation && overview.situation.onSecond ? "/images/highlighted_base.svg" : "/images/empty_base.png";
-    thirdBase.src = overview.situation && overview.situation.onThird ? "/images/highlighted_base.svg" : "/images/empty_base.png";
+    bases.style.display = 'flex';
+    outs.style.display = 'flex';
+    outs.src = overview.situation.outs == 0 ? "/images/out_0.png" 
+            : overview.situation.outs == 1 ? "/images/out_1.png" : "/images/out_2.png";
+    bases.src = getBasesCombo(overview.situation.onFirst, overview.situation.onSecond, overview.situation.onThird);
+} else {
+    bases.style.display = 'none';
+    outs.style.display = 'none';
 }
 
 
@@ -86,6 +89,51 @@ function toggleAwayStats(){
 //set event listeners for the buttons
 homeButton.addEventListener('click', toggleHomeStats);
 awayButton.addEventListener('click', toggleAwayStats);
+
+
+
+/**
+ * Function to get the corresponding image for the bases socrebug
+ * @param {*} first 
+ * @param {*} second 
+ * @param {*} third 
+ * @returns 
+ */
+function getBasesCombo(first, second, third) {
+
+    if (!first && !second && !third){
+        return "/images/empty.png";
+    }
+
+    if (first && !second && !third){
+        return "/images/1st.png";
+    }
+
+    if (!first && second && !third){
+        return "/images/2nd.png";
+    }
+
+    if (!first && !second && third){
+        return "/images/3rd.png";
+    }
+
+    if (first && second && !third){
+        return "/images/1st2nd.png";
+    }
+
+    if (first && !second && third){
+        return "/images/1st3rd.png";
+    }
+
+    if (!first && second && third){
+        return "/images/2nd3rd.png";
+    }
+
+    if (first && second && third){
+        return "/images/loaded.png";
+    }
+
+}
 
 /**
  * This function will be used when the game page is open before the game itself is active.
@@ -116,7 +164,10 @@ async function initializeStats() {
         score.textContent = "0 - 0";
         //if its a baseball game
         atBatSection.style.display = league == "MLB" ? 'flex' : 'none';
-        baseIndicator.style.display = league == "MLB" ? 'flex' : 'none';
+        bases.style.display = league == "MLB" ? 'flex' : 'none';
+        bases.src = "/images/empty.png";
+        outs.style.display = 'flex';
+        outs.src = '/images/out_0.png';
         //get yard marker and down
         footballSection.style.display = league == "NFL" ? 'flex' : 'none';
 
@@ -227,11 +278,15 @@ async function updateGameStats(){
     
     //if its a baseball game, update the strike and out count
     if (league == "MLB" && updateOverview.situation){
+        bases.style.display = 'flex';
+        outs.style.display = 'flex';
         count.textContent = updateOverview.situation.count;
-        outs.textContent = updateOverview.situation.outs + " outs";
-        firstBase.src = updateOverview.situation.onFirst ? "/images/highlighted_base.svg" : "/images/empty_base.png";
-        secondBase.src = updateOverview.situation.onSecond ? "/images/highlighted_base.svg" : "/images/empty_base.png";
-        thirdBase.src = updateOverview.situation.onThird ? "/images/highlighted_base.svg" : "/images/empty_base.png";
+        bases.src = getBasesCombo(updateOverview.situation.onFirst, updateOverview.situation.onSecond, updateOverview.situation.onThird);
+        outs.src = updateOverview.situation.outs == 0 ? "/images/out_0.png" 
+            : updateOverview.situation.outs == 1 ? "/images/out_1.png" : "/images/out_2.png";
+    } else {
+        bases.style.display = 'none';
+        outs.style.display = 'none';
     }
 
     //update the at bat pitcher/batter if available, show name and headshot

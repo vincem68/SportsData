@@ -50,6 +50,8 @@ function sortTable(colIndex){ //give column index of table for leagueStats looku
         name.innerHTML = `<div class="teamDiv"> <img class="teamLogo" src="${team.teamLogo}"> ${team.teamAbbr} </div>`; //add in team name cell
         //name.classList.add("name"); //add name class to team name elements
         rowNum.textContent = index + 1; //add in row number cell    
+        rowNum.classList.add('rank');
+        name.classList.add('teamDesc');
         row.append(rowNum);
         row.append(name);
         team.statValues.forEach((stat, index) => { //go through each stat and make the cell

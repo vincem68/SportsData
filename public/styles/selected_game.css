@@ -179,17 +179,18 @@ h2, h3 {
     width: 140px;
 }
 
-#baseIndicator {
+#baseballScorebug {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
+    flex-direction: column;
 }
 
-.baseImg {
+#bases {
+    height: 120px;
+    width: 150px;
+}
+
+#outs {
     height: 50px;
-    width: 50px;
-}
-
-#secondBase {
-    position: relative;
-    top: -20px;
+    width: 80px;
 }

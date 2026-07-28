@@ -63,7 +63,17 @@ select {
     color: azure;
 }
 
-.sticky {
+.rank {
     position: sticky;
     z-index: 2;
+    left: 0;
+    min-width: 50px;
 }
+
+.teamDesc {
+    position: sticky;
+    z-index: 2;
+    left: 50px;
+    min-width: 90px;
+}
+
