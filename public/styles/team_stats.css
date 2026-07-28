@@ -31,3 +31,7 @@ h1, h2, h3, h4 {
     text-align: center;
     z-index: 0;
 }
+
+#seasonDescDiv {
+    text-align: center;
+}

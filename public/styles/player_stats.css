@@ -4,6 +4,19 @@
 
 #playerInfoDiv {
     display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+#playerTitleDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#secondaryInfoDiv {
+    display: flex;
     flex-direction: column;
     align-items: center;
 }

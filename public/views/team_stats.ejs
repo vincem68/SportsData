@@ -4,6 +4,7 @@
     <head>
         <title><%= teamStats.teamName %> Stats</title>
         <link rel="stylesheet" href="/styles/team_stats.css">
+        <link href="https://jsdelivr.net" rel="stylesheet">
     </head>
 
     <body>
@@ -41,7 +42,7 @@
         </div>
 
         <div id="seasonDescDiv">
-            <p>Showing Stats for the <%= teamStats.requestedYearText %> <%= teamStats.requestedTypeText %></p>
+            <p>Requested Season: <%= teamStats.requestedYearText %> <%= teamStats.requestedTypeText %></p>
             <p>Season Record: <%= teamStats.recordSummary %></p>
             <p>Standings: <%= teamStats.standingSummary %></p>
         </div>

@@ -12,17 +12,25 @@
 
         <!--This is the basic info section of the player-->
         <div id="playerInfoDiv">
-            <!--when the player headshot is not in response-->
-            <% const playerHeadshot = (playerInfo.playerHeadshot !== "") ? playerInfo.playerHeadshot : "/images/default_headshot.png"; %>
-            <img id="headshot" src="<%= playerHeadshot %>"> <!--player pic-->
-            <h1><%= playerInfo.playerName %></h1> <!--player name-->
-            <div id="extraPlayerInfo">
-                <img id="teamLogo" src="<%= playerInfo.teamLogo %>">
-                <h2><%= playerInfo.teamName + " " + playerInfo.playerPosition %></h2>
+
+            <div id="playerTitleDiv">
+                <% const playerHeadshot = (playerInfo.playerHeadshot !== "") ? playerInfo.playerHeadshot : "/images/default_headshot.png"; %>
+                <img id="headshot" src="<%= playerHeadshot %>"> <!--player pic-->
+                <h1><%= playerInfo.playerName %></h1> <!--player name-->
             </div>
-            <h2>Jersey <%= playerInfo.playerJersey %></h2>
-            <h5>Date of Birth: <%= playerInfo.playerDOB %> (Age: <%= playerInfo.playerAge %>)</h5>
-            <h5>Height: <%= playerInfo.playerHeight %>  Weight: <%= playerInfo.playerWeight %></h5>
+            <!--when the player headshot is not in response-->
+            <div id="secondaryInfoDiv">
+                <div id="extraPlayerInfo">
+                    <img id="teamLogo" src="<%= playerInfo.teamLogo %>">
+                    <h2><%= playerInfo.teamName + " " + playerInfo.playerPosition %></h2>
+                </div>
+                <h4>
+                    Jersey <%= playerInfo.playerJersey %><br>
+                    Date of Birth: <%= playerInfo.playerDOB %> (Age: <%= playerInfo.playerAge %>)<br>
+                    Height: <%= playerInfo.playerHeight %><br>
+                    Weight: <%= playerInfo.playerWeight %>
+                </h4>
+            </div>
         </div>
 
         <!--If the response returned null for the main stats, we have no stats to show for this player-->
