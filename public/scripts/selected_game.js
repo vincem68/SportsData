@@ -66,9 +66,6 @@ if (league == "MLB" && gameState == "in"){
     outs.src = overview.situation.outs == 0 ? "/images/out_0.png" 
             : overview.situation.outs == 1 ? "/images/out_1.png" : "/images/out_2.png";
     bases.src = getBasesCombo(overview.situation.onFirst, overview.situation.onSecond, overview.situation.onThird);
-} else {
-    bases.style.display = 'none';
-    outs.style.display = 'none';
 }
 
 
