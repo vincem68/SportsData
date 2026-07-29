@@ -8,12 +8,10 @@ const atBatSection = document.getElementById('atBat');
 const footballSection = document.getElementById('footballInfo');
 const awayTeamLeadersDiv = document.getElementById('awayTeamLeaders');
 const homeTeamLeadersDiv = document.getElementById('homeTeamLeaders');
-const baseballScorebug = document.getElementById('baseballScorebug');
 const linescoreHeaders = document.getElementById('linescoreHeaders');
 
 //specific stat keepers
 const score = document.getElementById('score');
-const live_image = document.getElementById('live_status_img');
 const gameStatus = document.getElementById('status');
 const count = document.getElementById('count');
 const outs = document.getElementById('outs');
@@ -38,13 +36,11 @@ const buttonSection = document.getElementById('buttonSection');
 homePlayerStatsDiv.style.display = "none";
 
 //hide any stat divs if the game has not started yet
-live_image.style.display = gameState != "in" ? 'none' : 'flex';
 buttonSection.style.display = gameState == "pre" ? 'none' : 'flex';
 linescoreDiv.style.display = gameState == "pre" ? 'none' : 'flex';
 atBatSection.style.display = league == "MLB" && gameState == "in" ? 'flex' : 'none';
 footballSection.style.display = league == "NFL" && gameState == "in" ? 'flex' : 'none';
 leaderSection.style.display = gameState == "in" ? 'none' : 'flex';
-baseballScorebug.style.display = gameState == "in" && league == "MLB" ? 'flex' : 'none';
 document.getElementById('boxscore').style.display = league == "MLB" ? 'none' : 'flex';
 document.querySelectorAll('.leaderHeadline')[0].style.display = (awayTeamLeadersDiv.children.length > 0) ? 'block' : 'none';
 document.querySelectorAll('.leaderHeadline')[1].style.display = (homeTeamLeadersDiv.children.length > 0) ? 'block' : 'none';
@@ -60,7 +56,7 @@ if (league == "NFL" && gameState == "in"){ //set arrow to correct side
 }
 
 //for the bases
-if (league == "MLB" && gameState == "in"){
+if (league == "MLB" && (overview.status.shortDetail.includes("Top") || overview.status.shortDetail.includes("Bot"))){
     bases.style.display = 'flex';
     outs.style.display = 'flex';
     outs.src = overview.situation.outs == 0 ? "/images/out_0.png" 
@@ -152,7 +148,6 @@ async function initializeStats() {
         buttonSection.style.display = 'flex';
         leaderSection.style.display = 'none';
         linescoreDiv.style.display = 'flex';
-        live_image.style.display = 'flex';
         //change boxscore headline from season stats to Box Score
         document.getElementById('boxHeadline').textContent = "Box Score";
         //update the game status, and show the score as 0-0
@@ -274,7 +269,7 @@ async function updateGameStats(){
     score.textContent = updateOverview.awayTeam.score + " - " + updateOverview.homeTeam.score;
     
     //if its a baseball game, update the strike and out count
-    if (league == "MLB" && updateOverview.situation){
+    if (league == "MLB" && (updateOverview.status.shortDetail.includes("Top") || updateOverview.status.shortDetail.includes("Bot"))){
         bases.style.display = 'flex';
         outs.style.display = 'flex';
         count.textContent = updateOverview.situation.count;
@@ -385,8 +380,6 @@ async function updateGameStats(){
         //hide these
         footballSection.style.display = 'none';
         atBatSection.style.display = 'none';
-        live_image.style.display = 'none';
-        baseballScorebug.style.display = 'none';
 
         //make the leader headlines visible again
         document.querySelectorAll('.leaderHeadline').forEach(headline => headline.style.display = 'flex');
@@ -455,7 +448,12 @@ function createLeaders(){
     //get the leaders data from the JSON response
     const leaders = parseLeaders();
 
-    if (leaders.awayLeaders !== undefined && league != "MLB"){ //if leaders exist and its not a baseball game (since MLB doesn't have leaders in their API), create the divs for the leaders section
+    if (league == "MLB"){
+        clearInterval(request);
+        return;
+    }
+
+    if (leaders.awayLeaders !== undefined){ //if leaders exist and its not a baseball game (since MLB doesn't have leaders in their API), create the divs for the leaders section
 
         leaders.awayLeaders.forEach(leader => {
             //create the div

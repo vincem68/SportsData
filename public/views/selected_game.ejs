@@ -25,17 +25,19 @@
 
             <!--This is the middle section for clock/inning info-->
             <div id="gameInfoOverview"> <!--Put status of game here-->
-                <img id="live_status_img" src="/images/live_status.gif">
-                <p id="status"><%= overview.status.shortDetail %></p>
+
+                <div id="gameStatus">
+                    <p id="score"><!--game score if in/post game-->
+                        <% if (overview.status.state != "pre"){ %>
+                            <%= overview.awayTeam.score %> - <%= overview.homeTeam.score %>
+                        <% } %>
+                    </p>
+                    <p id="status"><%= overview.status.shortDetail %></p>
+                </div>
+
                 <p id="seriesStatus"> <!--series score if in postseason and not NFL-->
                     <% if (overview.seasonType == 3 && league != "NFL" && overview.status.state != "in"){ %>
                         <%= overview.seriesSummary %>
-                    <% } %>
-                </p>
-
-                <p id="score"><!--game score if in/post game-->
-                    <% if (overview.status.state != "pre"){ %>
-                        <%= overview.awayTeam.score %> - <%= overview.homeTeam.score %>
                     <% } %>
                 </p>
 
@@ -48,15 +50,9 @@
                     </p>
                 </div>
 
-                <div id="baseballScorebug"><!--This will show where runners are in an inning for baseball games-->
-                    <% if (league == "MLB" && overview.situation !== undefined){ %>
-                        <img id="bases" src="">
-                        <img id="outs" src="">
-                    <% } %>
-                </div>
-
                 <div id="atBat"> <!--for baseball, shows count, outs, and pitcher/batter-->
-                    <div>
+                    <div class="atBatPlayer">
+                        <p>Pitcher</p>
                         <img id="pitcherHeadshot" src="<%= overview.situation && overview.situation.pitcher ? overview.situation.pitcher.headshot : '' %>">
                         <p id="pitcherName">
                             <% if (overview.situation && overview.situation.pitcher){ %>
@@ -64,14 +60,17 @@
                             <% } %>
                         </p>
                     </div>
-                    <div>
+                    <div id="baseballScorebug">
+                        <img id="bases" src="">
                         <p id="count"><!--Keeps track of ball and strike count in baseball game-->
                             <% if (overview.situation && overview.situation.batter){ %>
                                 <%= overview.situation.count %>
                             <% } %>
                         </p>
+                        <img id="outs" src="">
                     </div>
-                    <div>
+                    <div class="atBatPlayer">
+                        <p>Batter</p>
                         <img id="batterHeadshot" src="<%= overview.situation && overview.situation.batter ? overview.situation.batter.headshot : '' %>">
                         <p id="batterName">
                             <% if (overview.situation && overview.situation.batter){ %>

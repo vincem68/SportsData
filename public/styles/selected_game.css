@@ -14,7 +14,6 @@
 .teamOverview, #gameInfoOverview {
     display: flex;
     flex-flow: column;
-    justify-content: center;
     align-items: center;
     width: 33.333333%;
 }
@@ -35,8 +34,8 @@
 
 .teamLogo {
     padding-top: 25px;
-    height: 200px;
-    width: 200px;
+    height: 150px;
+    width: 150px;
 }
 
 #footballPossessionArrow {
@@ -151,18 +150,15 @@ h2, h3 {
     justify-content: center;
     align-items: center;
     flex-direction: row;
-}
-
-#atBat div {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    background-color: azure;
+    border-width: 1px;
+    border-color: black;
+    border-style: inset;
 }
 
 #pitcherHeadshot, #batterHeadshot {
-    height: 25px;
-    width: 25px;
+    height: 70px;
+    width: 90px;
 }
 
 #score {
@@ -174,11 +170,6 @@ h2, h3 {
     font-size: 30px;
 }
 
-#live_status_img {
-    height: 50px;
-    width: 140px;
-}
-
 #baseballScorebug {
     display: flex;
     align-items: center;
@@ -186,11 +177,23 @@ h2, h3 {
 }
 
 #bases {
-    height: 120px;
-    width: 150px;
+    height: 60px;
+    width: 100px;
 }
 
 #outs {
-    height: 50px;
-    width: 80px;
+    height: 30px;
+    width: 60px;
+}
+
+#count {
+    font-size: 20px;
+}
+
+.atBatPlayer {
+    margin: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
