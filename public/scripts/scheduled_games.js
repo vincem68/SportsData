@@ -1,4 +1,4 @@
-import { parseGame, setUpGameDiv, updateGameDiv } from "./update_game_div.js";
+import { parseGame, setUpGameDiv, updateGameDiv, getBasesCombo } from "./update_game_div.js";
 
 const form = document.getElementById("dateSelection");
 const dateInput = document.getElementById('date');
@@ -18,22 +18,23 @@ const upcoming = document.getElementById('upcomingHeadline');
 //hide game active sections within the games yet to start
 upcomingGames.querySelectorAll('.gameContainer').forEach(game => {
     game.querySelector('.score').style.display = 'none';
-    game.querySelector('.mlbCount').style.display = 'none';
+    game.querySelector('.baseballInfoDiv').style.display = 'none';
     game.querySelector('.yardMarker').style.display = 'none';
     game.querySelector('.arrow_img').style.display = 'none';
 });
 
 //hide mlb count and football marker in the finished games
 completedGames.querySelectorAll('.gameContainer').forEach(game => {
-    game.querySelector('.mlbCount').style.display = 'none';
+    game.querySelector('.baseballInfoDiv').style.display = 'none';
     game.querySelector('.yardMarker').style.display = 'none';
     game.querySelector('.arrow_img').style.display = 'none';
 });
 
 activeGames.querySelectorAll('.gameContainer').forEach(game => {
     if (league != "MLB"){
-        game.querySelector('.mlbCount').style.display = 'none';
+        game.querySelector('.baseballInfoDiv').style.display = 'none';
     }
+    
     if (league != "NFL"){
         game.querySelector('.arrow_img').style.display = 'none';
         game.querySelector('.yardMarker').style.display = 'none';

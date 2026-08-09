@@ -29,6 +29,9 @@ interface Situation {
     balls?: number
     strikes?: number
     outs?: number
+    onFirst?: boolean
+    onSecond?: boolean
+    onThird?: boolean
 }
 
 interface Series {
@@ -102,6 +105,9 @@ export interface GameOverview {
         possession?: string
         count?: string
         outs?: number
+        onFirst?: boolean
+        onSecond?: boolean
+        onThird?: boolean
     }
     seriesSummary?: string
 }

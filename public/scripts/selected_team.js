@@ -5,6 +5,7 @@ const state = game.status.state;
 const gameDiv = document.querySelector('.gameContainer');
 const status = document.querySelector('.status');
 const count = document.querySelector('.mlbCount');
+const baseballDiv = document.querySelector('.baseballInfoDiv');
 const score = document.querySelector('.score');
 const seriesRecord = document.querySelector('.seriesRecord');
 const yardMarker = document.querySelector('.yardMarker');
@@ -12,7 +13,7 @@ const arrowImage = document.querySelector('.arrow_img');
 const endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league.toLowerCase()}/scoreboard/${gameID}`;
 
 //set displays for elements on initial load
-count.style.display = (league == "MLB" && game.situation !== undefined) ? 'flex' : 'none';
+baseballDiv.style.display = (league == "MLB" && game.situation !== undefined) ? 'flex' : 'none';
 yardMarker.style.display = (league == "NFL" && game.situation !== undefined) ? 'flex' : 'none'; 
 score.style.display = (game.status.state != "pre") ? 'flex' : 'none';
 seriesRecord.style.display = (game.seasonType == 3 && game.status.state != "pre") ? 'flex' : 'none';

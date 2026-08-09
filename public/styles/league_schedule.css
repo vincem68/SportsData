@@ -20,11 +20,12 @@
 
 .gameContainer {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
 
     border-style: solid;
     border-color: black;
     background-color: lightblue;
+    width: 250px;
 
     margin: 20px;
 }
@@ -34,11 +35,46 @@
   width: 20px;
 }
 
+.topGameSection {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin-top:10px;
+  height: auto;
+}
+
+.bottomGameSection {
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items:center;
+  justify-content: flex-start;
+  text-align: center;
+}
+
 .awayTeamDiv, .homeTeamDiv, .gameTimeDiv {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
+    justify-content: flex-end;
+}
+
+.gameTimeDiv {
+  width: 125px;
+}
+
+.baseballInfoDiv {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.basesImg {
+  height: 50px;
+  width: 70px;
 }
 
 .awayTeamDiv, .homeTeamDiv {

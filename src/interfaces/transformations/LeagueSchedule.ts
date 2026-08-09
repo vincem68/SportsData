@@ -106,7 +106,10 @@ export async function parseGame(responseOrLeague: GameOverviewResponse | string,
             downDistanceText: competition.situation.downDistanceText,
             possession: competition.situation.possession,
             count: `${competition.situation.balls}-${competition.situation.strikes}`,
-            outs: competition.situation.outs
+            outs: competition.situation.outs,
+            onFirst: competition.situation.onFirst,
+            onSecond: competition.situation.onSecond,
+            onThird: competition.situation.onThird
         } : undefined,
         seriesSummary: competition.series?.summary || ''
     };

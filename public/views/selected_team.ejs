@@ -61,28 +61,54 @@
             <div class="gamesLayout">
 
                 <div class="gameContainer">
-                    
-                    <div class="awayTeamDiv">
-                        <img class="teamLogo" src="<%= game.awayTeam.logo %>">
-                        <p><%= game.awayTeam.abbreviation %></p>
+
+                    <div class="topGameSection">
+
+                        <div class="awayTeamDiv">
+                            <img class="teamLogo" src="<%= game.awayTeam.logo %>">
+                            <p><%= game.awayTeam.abbreviation %></p>
+                        </div>
+
+                        <div class="gameTimeDiv">
+
+                            <p class="status"><%= game.status.shortDetail %></p>
+
+                            <h3 class="score">
+                                <% if (game.status.state != "pre"){ %>
+                                    <%= game.awayTeam.score %> - <%= game.homeTeam.score %>
+                                <% } %>
+                            </h3>
+                        </div>
+
+                        <div class="homeTeamDiv">
+                            <img class="teamLogo" src="<%= game.homeTeam.logo %>">
+                            <p><%= game.homeTeam.abbreviation %></p>
+                        </div>
                     </div>
 
-                    <div class="gameTimeDiv">
+                    <div class="bottomGameSection">
 
-                        <p class="status"><%= game.status.shortDetail %></p>
+                        <!--Get the correct base combo for the image-->
+                        <% const baseCombo = game.situation === undefined || league != "MLB" ? "" :
+                            !game.situation.onFirst && !game.situation.onSecond && !game.situation.onThird ? '/images/empty.PNG' :
+                            game.situation.onFirst && !game.situation.onSecond && !game.situation.onThird ? "/images/1st.png" :
+                            !game.situation.onFirst && game.situation.onSecond && !game.situation.onThird ? "/images/2nd.png" :
+                            !game.situation.onFirst && !game.situation.onSecond && game.situation.onThird ? "/images/3rd.png" :
+                            game.situation.onFirst && game.situation.onSecond && !game.situation.onThird ? "/images/1st2nd.png" :
+                            game.situation.onFirst && !game.situation.onSecond && game.situation.onThird ? "/images/1st3rd.png" :
+                            !game.situation.onFirst && game.situation.onSecond && game.situation.onThird ? "/images/2nd3rd.png" :
+                            "/images/loaded.png";
+                        %>
+                            
 
-                        <p class="mlbCount">
-                            <% if (league == "MLB" && game.situation !== undefined){ %>
-                                <%= game.situation.balls + "-" + game.situation.strikes
-                                    +  " " + game.situation.outs + " outs" %>
-                            <% } %>
-                        </p>
-
-                        <p class="mlbOuts">
-                            <% if (league == "MLB" && game.situation !== undefined){ %>
-                                <%= game.situation.outs %> Outs
-                            <% } %> 
-                        </p>
+                        <div class="baseballInfoDiv">
+                            <img class="basesImg" src="<%= baseCombo %>">
+                            <p class="mlbCount">
+                                <% if (league == "MLB" && game.situation !== undefined){ %>
+                                    <%= game.situation.count + "    " + game.situation.outs + " Outs" %>
+                                <% } %>
+                            </p>
+                        </div>
 
                         <img class="arrow_img" src="/images/left_arrow.png">
 
@@ -92,26 +118,17 @@
                             <% } %>
                         </p>
 
-                        <p class="score">
-                            <% if (game.status.state != "pre"){ %>
-                                <%= game.awayTeam.score %> - <%= game.homeTeam.score %>
-                            <% } %>
-                        </p>
-
-                        <p class="seriesRecord">
-                            <% if (game.seasonType == 3){ %>
+                        <p class="seriesRecord" style="display:none">
+                            <!--If its the postseason and its not football-->
+                            <% if (game.seriesSummary !== undefined && league != "NFL"){ %>
                                 <%= game.seriesSummary %>
                             <% } %>
                         </p>
 
-                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/games/<%= game.id %>">
+                        <!--game link-->
+                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league.toLowerCase() %>/games/<%= game.id %>">
                             Game Stats
                         </a>
-                    </div>
-
-                    <div class="homeTeamDiv">
-                        <img class="teamLogo" src="<%= game.homeTeam.logo %>">
-                        <p><%= game.homeTeam.abbreviation %></p>
                     </div>
                 </div>
             </div>

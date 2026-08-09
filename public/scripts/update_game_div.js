@@ -8,8 +8,9 @@ export function setUpGameDiv(gameDiv, gameData, league){
     //get the game elements 
     const status = gameDiv.querySelector('.status');
     const score = gameDiv.querySelector('.score');
+    const baseballInfoDiv = gameDiv.querySelector('.baseballInfoDiv');
     const mlbCount = gameDiv.querySelector('.mlbCount');
-    const mlbOuts = gameDiv.querySelector('.mlbOuts');
+    const basesImg = gameDiv.querySelector('.basesImg');
     const yardMarker = gameDiv.querySelector('.yardMarker');
     const arrowImage = gameDiv.querySelector('.arrow_img');
     const seriesRecord = gameDiv.querySelector('.seriesRecord');
@@ -21,10 +22,14 @@ export function setUpGameDiv(gameDiv, gameData, league){
     status.textContent = gameData.status.shortDetail;
 
     //update baseball count if in MLB game
-    mlbCount.style.display = (league == "MLB" && gameData.situation !== undefined) ? "flex" : "none";
-    mlbCount.textContent = (league == "MLB" && gameData.situation !== undefined) ? gameData.situation.count : "";
-    mlbOuts.style.display = (league == "MLB" && gameData.situation !== undefined) ? "flex" : "none";
-    mlbOuts.textContent = (league == "MLB" && gameData.situation !== undefined) ? gameData.situation.outs + " Outs" : "";
+    if (league == "MLB"){
+        baseballInfoDiv.style.display = 'flex';
+        basesImg.src = '/images/empty.PNG';
+        mlbCount.textContent = gameData.situation !== undefined ? 
+            gameData.situation.count + " " + gameData.situation.outs + " outs" : "";
+    } else {
+        baseballInfoDiv.style.display = 'none';
+    }
 
     //update football marker if an NFL game
     if (league == "NFL" && gameData.situation !== undefined){
@@ -52,10 +57,11 @@ export function updateGameDiv(gameDiv, gameData){
     const status = gameDiv.querySelector('.status');
     const score = gameDiv.querySelector('.score');
     const mlbCount = gameDiv.querySelector('.mlbCount');
-    const mlbOuts = gameDiv.querySelector('.mlbOuts');
     const yardMarker = gameDiv.querySelector('.yardMarker');
     const arrowImage = gameDiv.querySelector('.arrow_img');
     const seriesRecord = gameDiv.querySelector('.seriesRecord');
+    const baseballInfoDiv = gameDiv.querySelector('.baseballInfoDiv');
+    const basesImg = gameDiv.querySelector('.basesImg');
 
     //update the status of the game
     status.textContent = gameData.status.shortDetail;
@@ -63,19 +69,20 @@ export function updateGameDiv(gameDiv, gameData){
     score.textContent = gameData.awayTeam.score + " - " + gameData.homeTeam.score;
 
     //update baseball count if in MLB game
-    mlbCount.style.display = (league == "MLB" && gameData.situation !== undefined) ? "flex" : "none";
-    mlbCount.textContent = (league == "MLB" && gameData.situation !== undefined) ? gameData.situation.count : "";
-    mlbOuts.style.display = (league == "MLB" && gameData.situation !== undefined) ? "flex" : "none";
-    mlbOuts.textContent = (league == "MLB" && gameData.situation !== undefined) ? gameData.situation.outs + " Outs" : "";
+    if (league == "MLB"){
+        mlbCount.textContent = gameData.situation !== undefined ? 
+            gameData.situation.count + "    " + gameData.situation.outs + " outs" : "";
+        basesImg.src = gameData.situation !== undefined ? 
+            getBasesCombo(gameData.situation.onFirst, gameData.situation.onSecond, gameData.situation.onThird) : '/images/empty.PNG';
+    }
 
     //if the game is now finished, hide the needed elements and finalize data
     if (gameData.status.state == "post"){
 
         //hide any baseball and football in game details
-        mlbCount.style.display = "none";
+        baseballInfoDiv.style.display = 'none';
         yardMarker.style.display = "none";
         arrowImage.style.display = "none";
-        mlbOuts.style.display = "none";
 
         //for series score updates on final games
         if (gameData.seriesSummary !== undefined){
@@ -125,8 +132,47 @@ export function parseGame(data) {
             downDistanceText: competition.situation.downDistanceText,
             possession: competition.situation.possession,
             count: `${competition.situation.balls}-${competition.situation.strikes}`,
+            onFirst: competition.situation.onFirst,
+            onSecond: competition.situation.onSecond,
+            onThird: competition.situation.onThird,
             outs: competition.situation.outs
         } : undefined,
         seriesSummary: competition.series?.summary || ''
     };
+}
+
+export function getBasesCombo(first, second, third) {
+
+    if (!first && !second && !third){
+        return "/images/empty.png";
+    }
+
+    if (first && !second && !third){
+        return "/images/1st.png";
+    }
+
+    if (!first && second && !third){
+        return "/images/2nd.png";
+    }
+
+    if (!first && !second && third){
+        return "/images/3rd.png";
+    }
+
+    if (first && second && !third){
+        return "/images/1st2nd.png";
+    }
+
+    if (first && !second && third){
+        return "/images/1st3rd.png";
+    }
+
+    if (!first && second && third){
+        return "/images/2nd3rd.png";
+    }
+
+    if (first && second && third){
+        return "/images/loaded.png";
+    }
+
 }
