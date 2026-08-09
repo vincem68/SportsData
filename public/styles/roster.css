@@ -6,14 +6,9 @@
     width: 200px;
 }
 
-.headshot {
-    width: 15%;
-    height: 15%;
-}
-
 .altHeadshot {
-    width: 15%;
-    height: 15%;
+    width: 50px;
+    height: 60px;
 }
 
 #rosterDiv {
@@ -24,11 +19,37 @@
 
 #teamTitleDiv {
     display: flex;
+    flex-direction: row;
+    justify-content: center;
+    background-color: azure;
+}
+
+#teamTitleDiv > div {
+    display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 .injuredImg {
-    width: 30px;
-    height: 30px;
+    width: 50px;
+    height: 50px;
+}
+
+.imgTD {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.headshot {
+    width: 70px;
+    height: 50px;
+}
+
+.catDiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }

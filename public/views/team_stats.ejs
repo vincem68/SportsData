@@ -14,7 +14,16 @@
         <div class="topSection">
             <div class="titleSection">
                 <img class="mainLogo" src="<%= teamStats.teamLogo %>">
-                <h1><%= teamStats.teamName %> Team Stats</h1>
+                <h1><%= teamStats.teamName %></h1>
+                <div id="seasonDescDiv">
+                    <h4>
+                        Requested Season: <%= teamStats.requestedYearText %> <%= teamStats.requestedTypeText %>
+                        <br>
+                        Season Record: <%= teamStats.recordSummary %>
+                        <br>
+                        Standings: <%= teamStats.standingSummary %>
+                    </h4>
+                </div>
             </div>
 
             <div class="form-container">
@@ -39,12 +48,6 @@
                     <button>Submit</button>
                 </form>
             </div>
-        </div>
-
-        <div id="seasonDescDiv">
-            <p>Requested Season: <%= teamStats.requestedYearText %> <%= teamStats.requestedTypeText %></p>
-            <p>Season Record: <%= teamStats.recordSummary %></p>
-            <p>Standings: <%= teamStats.standingSummary %></p>
         </div>
 
         <!--If no data is available for the requested team/season, show this message-->

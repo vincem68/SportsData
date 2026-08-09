@@ -11,12 +11,15 @@
 
         <div id = 'teamTitleDiv'> <!--Shows the general info of the team-->
 
-            <img id="teamLogo" src="<%= data.team.logo %>" alt="Logo of <%= data.team.name %>">
-
-            <h1><%= data.team.name %></h1>
-            <p><%= data.season.name %> Season</p>
-            <p>Head Coach: <% if (data.coach){ %> <%= data.coach %> <% } else { %> Vacant <% } %></p>
-            <p>Season Record: <%= data.team.record %>, <%= data.team.standings %></p>
+            <div>
+                <img id="teamLogo" src="<%= data.team.logo %>" alt="Logo of <%= data.team.name %>">
+                <h1><%= data.team.name %></h1>
+            </div>
+            <div>
+                <h2><%= data.season.name %> Season</h2>
+                <h3>Head Coach: <% if (data.coach){ %> <%= data.coach %> <% } else { %> Vacant <% } %></h3>
+                <h3>Season Record: <%= data.team.record %>, <%= data.team.standings %></h3>
+            </div>
         </div>
 
         <div id="rosterDiv">
@@ -24,58 +27,63 @@
             <% data.groups.forEach(group => { %>
 
                 <% if (league !== "NBA"){ %> <!--This will show the position name. Not for basketball since rosters aren't divided-->
-                    <h4 class="importantHeadline"><%= group.name %></h4>
+                    <h2 class="importantHeadline"><%= group.name %></h2>
                 <% } %>
 
-                <table>
+                <div class="catDiv">
 
-                    <tr>
-                        <th>Headshot</th>
-                        <th>Player</th>
-                        <th>Position</th>
-                        <th>Jersey No.</th>
-                        <% if (league == "MLB"){ %>
-                            <th>Bats</th>
-                            <th>Throws</th>
-                        <% } %>
-                        <th>Age</th>
-                        <th>Weight</th>
-                        <th>Height</th>
-                        <th>Years Exp.</th>
-                        <th>Status</th>
-                        <th>Player Page</th>
-                    </tr>
-
-                    <% group.athletes.forEach(athlete => { %>
+                    <table>
 
                         <tr>
-                            <td><img class="headshot" src="<%= athlete.headshot %>"></td>
-                            <td><%= athlete.fullName %></td>
-                            <td><%= athlete.position.abbr %></td>
-                            <td><%= athlete.jersey %></td>
+                            <th>Player</th>
+                            <th>Position</th>
+                            <th>Jersey No.</th>
                             <% if (league == "MLB"){ %>
-                                <td><%= athlete.bats %></td>
-                                <td><%= athlete.throws %></td>
+                                <th>Bats</th>
+                                <th>Throws</th>
                             <% } %>
-                            <td><%= athlete.age %></td>
-                            <td><%= athlete.weight %></td>
-                            <td><%= athlete.height %></td>
-                            <td><%= athlete.yearsExperience %></td>
-                            <td>
-                                <% if (athlete.status != "Active"){ %>
-                                    <img class="injuredImg" src="/images/injured_symbol.png">
-                                <% } %>
-                                <%= athlete.status %></td>
-                            <td>
-                                <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/player/<%= athlete.id %>">
-                                    Player Stats
-                                </a>
-                            </td>
+                            <th>Age</th>
+                            <th>Weight</th>
+                            <th>Height</th>
+                            <th>Years Exp.</th>
+                            <th>Status</th>
+                            <th>Player Page</th>
                         </tr>
 
-                    <% }) %>
-                </table>
+                        <% group.athletes.forEach(athlete => { %>
 
+                            <tr>
+                                <td class="imgTD">
+                                    <img class="headshot" src="<%= athlete.headshot %>">
+                                    <%= athlete.fullName %>
+                                </td>
+                                <td><%= athlete.position.abbr %></td>
+                                <td><%= athlete.jersey %></td>
+                                <% if (league == "MLB"){ %>
+                                    <td><%= athlete.bats %></td>
+                                    <td><%= athlete.throws %></td>
+                                <% } %>
+                                <td><%= athlete.age %></td>
+                                <td><%= athlete.weight %></td>
+                                <td><%= athlete.height %></td>
+                                <td><%= athlete.yearsExperience %></td>
+                                <% const tdClass = athlete.status != "Active" ? "imgTD" : ""; %>
+                                <td class="<%= tdClass %>">
+                                    <% if (athlete.status != "Active"){ %>
+                                        <img class="injuredImg" src="/images/injured_symbol.png">
+                                    <% } %>
+                                    <%= athlete.status %></td>
+                                <td>
+                                    <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/player/<%= athlete.id %>">
+                                        Player Stats
+                                    </a>
+                                </td>
+                            </tr>
+
+                        <% }) %>
+                    </table>
+
+                </div>
             <% }) %>
         </div>
     </body>
