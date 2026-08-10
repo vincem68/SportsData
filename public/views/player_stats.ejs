@@ -36,7 +36,7 @@
         <!--If the response returned null for the main stats, we have no stats to show for this player-->
         <% if (playerOverview === null){ %>
 
-            <h1>Data is Not Available</h1>
+            <h1 class="errorMessage">Data is Not Available</h1>
 
         <!--Else, show the stats if we do have them-->
         <% } else { %>
@@ -73,7 +73,7 @@
             </div>
 
             <% if (playerSplits.categories.length === 0){ %>
-                <h1>Advanced Split Data is Not Available</h1>
+                <h1 class="errorMessage">Advanced Split Data is Not Available</h1>
             <% } else { %>
 
                 <!--For the advanced splits section-->

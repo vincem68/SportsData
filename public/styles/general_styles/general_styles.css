@@ -29,3 +29,7 @@ body {
     max-height: 200px;
     max-width: 220px;
 }
+
+.errorMessage {
+    text-align: center;
+}

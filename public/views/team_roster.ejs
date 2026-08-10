@@ -18,7 +18,9 @@
             <div>
                 <h2><%= data.season.name %> Season</h2>
                 <h3>Head Coach: <% if (data.coach){ %> <%= data.coach %> <% } else { %> Vacant <% } %></h3>
-                <h3>Season Record: <%= data.team.record %>, <%= data.team.standings %></h3>
+                <% if (data.team.record !== undefined || data.team.standings !== undefined){ %>
+                    <h3>Season Record: <%= data.team.record %>, <%= data.team.standings %></h3>
+                <% } %>
             </div>
         </div>
 
