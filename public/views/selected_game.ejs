@@ -198,8 +198,8 @@
                 <% if (summary.gameState != "pre"){ %>
 
                     <% summary.awayPlayerStats.forEach(cat => { %>
-                        <h2><%= cat.categoryName %></h2>
                         <div class="tableDiv">
+                            <h2><%= cat.categoryName %></h2>
                             <table id="<%= cat.tableID %>"> <!--Every table will have ID matching category name-->
                                 <tr id="awayColHeaders">
                                     <% if (cat.tableID.includes("batting")){ %> <th>Position</th> <% } %>
@@ -234,8 +234,8 @@
                 <% if (summary.gameState != "pre"){ %>
 
                     <% summary.homePlayerStats.forEach(cat => { %>
-                        <h2><%= cat.categoryName %></h2>
                         <div class="tableDiv">
+                            <h2><%= cat.categoryName %></h2>
                             <table id="<%= cat.tableID %>"> <!--Every table will have ID matching category name-->
                                 <tr id="homeColHeaders">
                                     <% if (cat.tableID.includes("batting")){ %> <th>Position</th> <% } %>

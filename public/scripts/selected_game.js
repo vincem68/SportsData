@@ -55,6 +55,13 @@ if (league == "NFL" && gameState == "in"){ //set arrow to correct side
     footballPosArrow.style.display = 'none';
 }
 
+//hide any tables that have no players in it
+document.querySelectorAll(".tableDiv").forEach(div => {
+    if (div.querySelector("table").querySelectorAll("tr").length == 1){
+        div.style.display = "none";
+    }
+})
+
 //for the bases
 if (league == "MLB" && (overview.status.shortDetail.includes("Top") || overview.status.shortDetail.includes("Bot"))){
     bases.style.display = 'flex';
@@ -208,12 +215,12 @@ function createPlayerBoxscores(playerStats, divID){
         const titleRow = document.createElement('tr');
         //for baseball games, add in a position column for the batter's position (DH, 1B, 2B, etc)
         if (league == "MLB" && category.categoryName == "BATTING"){
-            const positionCol = document.createElement('th');
+            const positionCol = document.createElement('td');
             positionCol.textContent = "Position";
             titleRow.appendChild(positionCol);
         }
         //add in player name column
-        const playerNameHeader = document.createElement('th');
+        const playerNameHeader = document.createElement('td');
         playerNameHeader.textContent = "Player";
         titleRow.appendChild(playerNameHeader);
         //create the column names and give them the stat descriptions when hovered over
@@ -233,10 +240,7 @@ function createPlayerBoxscores(playerStats, divID){
             playerRow.classList.add(player.rowID);
             const playerName = document.createElement('td'); //put player name in front of row
 
-            //FIX THIS
-            if (athlete.starter !== undefined){ //differentiate between starters and bench
-                playerName.classList.add((athlete.starter == true) ? "name" : "nonstarter");
-            } else { playerName.classList.add("name"); }
+            playerName.classList.add("name");
 
             //add in player name
             playerName.textContent = player.athleteName;
@@ -249,6 +253,9 @@ function createPlayerBoxscores(playerStats, divID){
             table.appendChild(playerRow); //add the row to the table
         });
         divID.appendChild(table); //add the table to the div
+        if (table.querySelectorAll("tr").length == 1){
+            divID.style.display = 'none';
+        }
     });
 }
 
@@ -436,6 +443,10 @@ function updatePlayerBoxscores(playersArray) {
                     document.getElementById(category.tableID).insertBefore(newRow, tableRows[arrayIndex + 1]);                                   
                 } else { //for other sports/cateogries just add player to end
                     document.getElementById(category.tableID).appendChild(newRow);
+                }
+
+                if (document.getElementById(category.tableID).length == 2){
+                    document.getElementById(category.tableID).parentNode.style.display = 'flex';
                 }
             }
         }) 

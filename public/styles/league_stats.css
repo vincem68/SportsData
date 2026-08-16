@@ -25,6 +25,7 @@
 
 .tableDiv {
     overflow-x: auto;
+    overflow: visible;
 }
 
 .teamLogo {

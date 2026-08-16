@@ -64,12 +64,13 @@
     border-color: black;
     border-style: inset;
     border-width: 2px;
-    padding: 15px;
+    padding-left: 15px;
+    padding-right: 15px;
 }
 
 .headshot {
-    height: 100px;
-    width: 135px;
+    height: 75px;
+    width: 100px;
 }
 
 .leaderDiv {
@@ -89,7 +90,7 @@ h2, h3 {
 }
 
 .leaderDesc {
-    font-size: 15px;
+    font-size: 20px;
 }
 
 #buttonSection {
