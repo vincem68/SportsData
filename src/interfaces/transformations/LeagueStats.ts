@@ -50,7 +50,7 @@ export async function parseLeageStatsResponse(teams: string[], league: string, s
                     teamLogo: team.team.logo,
                     //get the display value for each stat in the category
                     statValues: team.results.stats.categories[index].stats.map(stat => {
-                        return (stat.perGameDisplayValue) ? stat.displayValue + " | Per Game: " + stat.perGameDisplayValue
+                        return (stat.perGameDisplayValue) ? stat.displayValue + " PG: " + stat.perGameDisplayValue
                             : stat.displayValue.split(':')[0];
                     })
                 }

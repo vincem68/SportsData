@@ -55,7 +55,7 @@ td {
 }
 
 .name {
-    background-color: lightseagreen;
+    text-decoration: solid;
 }
 
 select {

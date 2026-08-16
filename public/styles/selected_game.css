@@ -60,6 +60,11 @@
     margin: 20px;
     justify-content: center;
     align-items: center;
+    background-color: azure;
+    border-color: black;
+    border-style: inset;
+    border-width: 2px;
+    padding: 15px;
 }
 
 .headshot {
@@ -71,6 +76,12 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.leaderDiv > h3 {
+    border-bottom-color: black;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
 }
 
 h2, h3 {
@@ -103,7 +114,7 @@ h2, h3 {
 }
 
 #playerStats {
-    background-color: #ffa07a;
+    background-color: #CCCC;
     border-bottom-width: 5px;
     border-left-width: 5px;
     border-right-width: 5px;
@@ -132,11 +143,7 @@ h2, h3 {
 }
 
 #awayTeamButton {
-    background-color: lightsalmon;
-}
-
-.nonstarter {
-    background-color: lightgray;
+    background-color: #CCCC;
 }
 
 #footballInfo {

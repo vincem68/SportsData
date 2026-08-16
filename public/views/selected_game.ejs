@@ -218,10 +218,10 @@
                                 <% cat.players.forEach(player => { %>
                                     <tr class="<%= player.rowID %>">
                                         <% if (cat.categoryName == "BATTING"){ %>
-                                            <th><%= player.position %></th>
+                                            <td><% if (!player.starter) { %> * - <% } %> <%= player.position %></td>
                                         <% } %>
-                                        <th class="name"><%= player.athleteName %></th>
-                                        <% player.stats.forEach(stat => { %> <td><%= stat %></td> <% }) %>
+                                        <td class="name"><%= player.athleteName %></td>
+                                        <% player.stats.forEach(stat => { %> <td class="stat"><%= stat %></td> <% }) %>
                                     </tr>
                                 <% }) %>
                             </table>
@@ -252,12 +252,12 @@
                                     <% }) %>
                                 </tr>
                                 <% cat.players.forEach(player => { %>
-                                    <tr class="<%= player.rowID %>">
+                                    <tr class="name <%= player.rowID %>">
                                         <% if (cat.categoryName == "BATTING"){ %>
-                                            <th><%= player.position %></th>
+                                            <td><% if (!player.starter) { %> * - <% } %> <%= player.position %></td>
                                         <% } %>
-                                        <th class="name"><%= player.athleteName %></th>
-                                        <% player.stats.forEach(stat => { %> <td><%= stat %></td> <% }) %>
+                                        <td class="name"><%= player.athleteName %></td>
+                                        <% player.stats.forEach(stat => { %> <td class="stat"><%= stat %></td> <% }) %>
                                     </tr>
                                 <% }) %>
                             </table>

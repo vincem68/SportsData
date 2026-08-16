@@ -76,7 +76,7 @@ function toggleHomeStats(){
 function toggleAwayStats(){
     homePlayerStatsDiv.style.display = "none";
     awayPlayerStatsDiv.style.display = "flex";
-    statsDiv.style.backgroundColor = 'lightsalmon';
+    statsDiv.style.backgroundColor = '#CCCC';
 }
 
 //set event listeners for the buttons
@@ -231,7 +231,7 @@ function createPlayerBoxscores(playerStats, divID){
             //give each player row their API ID as the HTML ID for easier lookup
             const playerRow = document.createElement('tr');
             playerRow.classList.add(player.rowID);
-            const playerName = document.createElement('th'); //put player name in front of row
+            const playerName = document.createElement('td'); //put player name in front of row
 
             //FIX THIS
             if (athlete.starter !== undefined){ //differentiate between starters and bench
@@ -399,24 +399,33 @@ function updatePlayerBoxscores(playersArray) {
         category.players.forEach(player => {
             //query select the player row of the table
             const playerRow = document.getElementById(category.tableID).querySelector('.' + player.rowID);
+
             if (playerRow){ //if the row exists
                 
-                const playerStatCells = playerRow.querySelectorAll('td'); //get all the stat cells of row
+                const playerStatCells = playerRow.querySelectorAll('.stat'); //get all the stat cells of row
                 //update each stat cell
                 playerStatCells.forEach((cell, index) => cell.textContent = player.stats[index]);
 
             } else { //else, we need to add a new row to table if JSON update has new player
+
                 const newRow = document.createElement('tr'); //create row
                 newRow.classList.add(player.rowID); //set ID
-                const playerName = document.createElement('th'); //create th for name
+                const playerName = document.createElement('td'); //create td for name
                 //give bench/nonstarters visual difference
-                playerName.classList.add((player.starter !== undefined && player.starter == true) ? "name" : "nonstarter");
+                playerName.classList.add("name");
+
+                if (category.categoryName == "BATTING"){
+                    const playerPos = document.createElement('td');
+                    playerPos.textContent = player.starter ? "* - " + player.position : player.position;
+                    newRow.appendChild(playerPos);
+                }
                 //player name
                 playerName.textContent = player.athleteName;
                 newRow.appendChild(playerName); //add name to row
                 player.stats.forEach(stat => { //add new stat cells to row
                     const statTD = document.createElement('td'); 
                     statTD.textContent = stat;
+                    statTD.classList.add("stat");
                     newRow.appendChild(statTD);
                 });
 
@@ -428,7 +437,6 @@ function updatePlayerBoxscores(playersArray) {
                 } else { //for other sports/cateogries just add player to end
                     document.getElementById(category.tableID).appendChild(newRow);
                 }
-                newRow.classList.add('nonstarter'); //give non starter class
             }
         }) 
     })
