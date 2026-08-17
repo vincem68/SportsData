@@ -174,7 +174,7 @@ export async function parseSummary(league: string, sport: string, gameID: string
             value: stat.displayValue
         })),
 
-        awayLeaders: response.meta.gameState != "in" && league != "MLB" ? response.leaders[1].leaders.map(leader => ({
+        awayLeaders: response.meta.gameState != "in" && league != "MLB" && response.leaders ? response.leaders[1].leaders.map(leader => ({
 
             category: leader.displayName,
             athleteName: leader.leaders[0].athlete.shortName,
@@ -187,7 +187,7 @@ export async function parseSummary(league: string, sport: string, gameID: string
 
         })) : undefined,
         
-        homeLeaders: response.meta.gameState != "in" && league != "MLB" ? response.leaders[0].leaders.map(leader => ({
+        homeLeaders: response.meta.gameState != "in" && league != "MLB" && response.leaders ? response.leaders[0].leaders.map(leader => ({
 
             category: leader.displayName,
             athleteName: leader.leaders[0].athlete.shortName,

@@ -41,7 +41,9 @@ linescoreDiv.style.display = gameState == "pre" ? 'none' : 'flex';
 atBatSection.style.display = league == "MLB" && gameState == "in" ? 'flex' : 'none';
 footballSection.style.display = league == "NFL" && gameState == "in" ? 'flex' : 'none';
 leaderSection.style.display = gameState == "in" ? 'none' : 'flex';
-document.getElementById('boxscore').style.display = league == "MLB" ? 'none' : 'flex';
+
+document.getElementById('boxscore').style.display = league == "MLB" || awayTeamBoxscore.querySelectorAll('td').length == 0 ? 'none' : 'flex';
+
 document.querySelectorAll('.leaderHeadline')[0].style.display = (awayTeamLeadersDiv.children.length > 0) ? 'block' : 'none';
 document.querySelectorAll('.leaderHeadline')[1].style.display = (homeTeamLeadersDiv.children.length > 0) ? 'block' : 'none';
 
@@ -142,8 +144,8 @@ function getBasesCombo(first, second, third) {
 async function initializeStats() {
 
     //send the requests 
-    const updateSummary = parseSummary();
-    const updateOverview = parseOverview();
+    const updateSummary = await parseSummary();
+    const updateOverview = await parseOverview();
 
     if (updateSummary.gameState == "in"){ //when game starts, start setting everything up
 
@@ -172,6 +174,19 @@ async function initializeStats() {
 
         //reset the season stats of teams to 0 for the game specific stats
         if (league != "MLB"){
+            //if its the first game of the season, and we don't have the season stats of the team
+            if (awayTeamBoxscore.querySelectorAll('td').length == 0){
+                const boxScoreHeadRow = document.getElementById('boxscore').querySelector('tr');
+                updateSummary.awayTeamStats.forEach(stat => {
+                    const header = document.createElement('th');
+                    header.textContent = stat.label;
+                    boxScoreHeadRow.appendChild(header);
+                    const awayTD = document.createElement('td');
+                    awayTeamBoxscore.appendChild(awayTD);
+                    const homeTD = document.createElement('td');
+                    homeTeamBoxscore.appendChild(homeTD);
+                });
+            }
             awayTeamBoxscore.querySelectorAll('td').forEach(cell => cell.textContent = '0');
             homeTeamBoxscore.querySelectorAll('td').forEach(cell => cell.textContent = '0');
         }
