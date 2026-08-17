@@ -14,7 +14,8 @@
         <div class="topSection">
             <div id="titleSection">
                 <img class="mainLogo" src="<%= data.team.logo %>">
-                <h1><%= data.team.displayName %></h4>
+                <h1><%= data.team.name %></h1>
+                <h4>Schedule for the <%= data.requestedSeason.year + " " + data.requestedSeason.name %></h4>
                 <h4>Currently in the <%= data.season.name %></h4>
             </div>
 
@@ -44,17 +45,17 @@
         <!--Check if we're requesting postseason schedule for a postseason that hasn't happened yet-->
         <% if (league == "NFL" && data.inactivePostseason !== undefined){ %>
 
-            <h2>Postseason has not Occurred Yet. Check Back at a Later Date.</h2>
+            <h2 class="errorMessage">Postseason has not Occurred Yet. Check Back at a Later Date.</h2>
 
         <!--check if team qualified for postseason-->
         <% } else if (league == "NFL" && data.eliminatedPostseason !== undefined) { %>
 
-            <h2>This Team Did Not Qualify for the Postseason this Year.</h2>
+            <h2 class="errorMessage">This Team Did Not Qualify for the Postseason this Year.</h2>
 
         <% } else if ((data.games !== undefined && data.games.length == 0) ||
             (data.months !== undefined && data.months[0].events.length == 0)){ %>
 
-            <h2>This Schedule is Not Available. Check Back Later!</h2>
+            <h2 class="errorMessage">This Schedule is Not Available. Check Back Later!</h2>
 
         <% } else { %>
 

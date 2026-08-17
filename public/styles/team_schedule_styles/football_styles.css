@@ -1,3 +1,10 @@
+@font-face {
+  font-family: 'Varsity';
+  src: url('varsity-font.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
 .footballWeekDiv, .byeWeekDiv {
     display: flex;
     flex-direction: row;
@@ -28,7 +35,7 @@
 }
 
 .byeWeekDiv > h1 {
-    margin-left: 70px;
+    text-align: center;
 }
 
 .footballOpponentLogo {
@@ -37,7 +44,8 @@
 }
 
 .footballTeamName {
-    font-size: 30px;
+    font-size: 20px;
+    font-family: 'Varsity', sans-serif;
 }
 
 .week {

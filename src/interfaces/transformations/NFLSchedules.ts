@@ -20,7 +20,7 @@ export async function parseNFLScheduleResponse(team: string, season: number, sea
             state: event.competitions[0].status.type.state,
             detail: event.competitions[0].status.type.detail,
             winner: event.competitions[0].status.type.state == "post" ? event.competitions[0].competitors[0].winner : undefined,
-            score: event.competitions[0].status.type.state != "in" ?
+            score: event.competitions[0].status.type.state != "pre" ?
                  event.competitions[0].competitors[0].score.displayValue + "-" + event.competitions[0].competitors[1].score.displayValue
                     : undefined
         }

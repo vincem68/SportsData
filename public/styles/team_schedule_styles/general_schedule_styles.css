@@ -9,6 +9,10 @@
     align-items: center;
 }
 
+#titleSection {
+    text-align: center;
+}
+
 #teamLogo {
     height: 200px;
     width: 200px;;
