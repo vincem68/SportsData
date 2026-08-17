@@ -40,8 +40,8 @@
 }
 
 #mainLogo {
-    height: 20%;
-    width: 20%;
+    max-height: 200px;
+    max-width: 200px;
 }
 
 .playoffs td {

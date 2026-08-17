@@ -186,6 +186,7 @@ async function initializeStats() {
                     const homeTD = document.createElement('td');
                     homeTeamBoxscore.appendChild(homeTD);
                 });
+                boxscore.style.display = 'flex';
             }
             awayTeamBoxscore.querySelectorAll('td').forEach(cell => cell.textContent = '0');
             homeTeamBoxscore.querySelectorAll('td').forEach(cell => cell.textContent = '0');

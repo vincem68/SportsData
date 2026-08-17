@@ -5,10 +5,11 @@
 
 .tableDivide {
     overflow-x: auto;
-    padding-top: 50px;
     display: flex;
     flex-direction: column;
     padding-bottom: 10px;
+    overflow : visible;
+    overflow-x: auto;
 }
 
 .tableDivide > h4 {
