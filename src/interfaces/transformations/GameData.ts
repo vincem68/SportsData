@@ -28,7 +28,7 @@ export async function parseOverview(league: string, sport: string, gameID: strin
             name: awayCompetitor.team.displayName,
             logo: awayCompetitor.team.logo,
             score: awayCompetitor.score,
-            record: awayCompetitor.records[0].summary
+            record: awayCompetitor.records ? awayCompetitor.records[0].summary : undefined
         },
 
         homeTeam: {
@@ -37,7 +37,7 @@ export async function parseOverview(league: string, sport: string, gameID: strin
             name: homeCompetitor.team.displayName,
             logo: homeCompetitor.team.logo,
             score: homeCompetitor.score,
-            record: homeCompetitor.records[0].summary
+            record: homeCompetitor.records ? homeCompetitor.records[0].summary : undefined
         },
 
         status: {

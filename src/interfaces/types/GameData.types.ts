@@ -119,7 +119,7 @@ export interface GameSpecificOverview {
         name: string
         logo: string
         score: string
-        record: string
+        record?: string
     }
 
     homeTeam: {
@@ -128,7 +128,7 @@ export interface GameSpecificOverview {
         name: string
         logo: string
         score: string
-        record: string
+        record?: string
     }
 
     status: {

@@ -51,3 +51,9 @@ form {
     justify-content: center;
     align-items: center;
 }
+
+.currentDayOrWeek {
+    border-color: gold;
+    border-style: double;
+    border-width: 5px;
+}

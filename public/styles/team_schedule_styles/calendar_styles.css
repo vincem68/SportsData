@@ -65,10 +65,6 @@
     margin-bottom: auto;
 }
 
-.currentDay {
-    background-color: gold;
-}
-
 .monthTitle {
     background-color: lightgoldenrodyellow;
     border-top-style: solid; border-bottom-style: solid;

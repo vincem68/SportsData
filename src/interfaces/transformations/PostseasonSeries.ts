@@ -37,9 +37,9 @@ export async function parsePostseasonScheduleResponse(sport: string, league: str
         },
 
         requestedSeason: {
-            year: response.requestedSeason.year,
-            name: response.requestedSeason.name,
-            type: response.requestedSeason.type
+            year: response.requestedSeason ? response.requestedSeason.year : requestedYear,
+            name: "Postseason",
+            type: response.requestedSeason ? response.requestedSeason.type : requestedType
         },
 
         rounds: seriesSchedule

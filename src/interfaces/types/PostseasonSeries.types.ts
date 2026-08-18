@@ -19,7 +19,7 @@ export interface PostseasonScheduleResponse {
         type: number;
     }
 
-    requestedSeason: {
+    requestedSeason?: {
         year: number;
         name: string;
         type: number;

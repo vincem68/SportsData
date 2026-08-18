@@ -68,11 +68,15 @@ router.get('/:team/schedule', async function(req: Request, res: Response){
         }
     }
 
+    console.log(requestedYear + " and " + requestedType);
+
     //get the structired data based off of what kind of sport and season type the user requests
     const data: NFLSchedule | Calendar | PostseasonSchedule = league.toLowerCase() === "nfl" ? 
         await parseNFLScheduleResponse(team, requestedYear, requestedType) :
         requestedType === 3 ? await parsePostseasonScheduleResponse(sport, league, team, requestedYear, requestedType)
         : await parseCalendarResponse(league, sport, team, requestedYear, requestedType);
+
+    console.log(data);
 
     res.render('team_schedules/team_schedule', {port: port, team: team, league: league.toUpperCase(), 
         sport: sport, data: data});

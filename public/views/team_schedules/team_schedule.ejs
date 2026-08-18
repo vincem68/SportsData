@@ -9,6 +9,8 @@
 
     <body>
 
+        <% console.log(data); %>
+
         <%- include ('../menu_header') %>
 
         <div class="topSection">
@@ -43,7 +45,7 @@
         </div>
 
         <!--Check if we're requesting postseason schedule for a postseason that hasn't happened yet-->
-        <% if (league == "NFL" && data.inactivePostseason !== undefined){ %>
+        <% if (data.requestedSeason.year == data.season.year && data.season.type < 3 && data.requestedSeason.type == 3){ %>
 
             <h2 class="errorMessage">Postseason has not Occurred Yet. Check Back at a Later Date.</h2>
 
