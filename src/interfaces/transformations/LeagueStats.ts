@@ -1,5 +1,6 @@
 import type { LeagueStatsResponse, LeagueStats } from "../types/LeagueStats.types";
 import { getBasicResponseInfo } from "../../validation_functions";
+import { BasicTeamInfo } from "../types/BasicTeamInfo.types";
 
 
 export async function parseLeageStatsResponse(teams: string[], league: string, sport: string, year?: string, type?: string): Promise<LeagueStats> {
@@ -23,12 +24,38 @@ export async function parseLeageStatsResponse(teams: string[], league: string, s
         return teamStatsResponse;
     }));
 
+    const categories = teamData.filter(team => team.code === undefined).length == 0 ? undefined : parseTeamData(teamData, defaultData, type);
+    
+    const finalSeasonType = type ? Number(type) : defaultData.seasonType;
+
+    return {
+
+        season: {
+            year: defaultData.seasonYear,
+            type: defaultData.seasonType,
+            name: defaultData.seasonType == 1 ? "Preseason" : defaultData.seasonType == 3 ? "Postseason" : "Regular Season"
+        },
+
+        requestedSeason: {
+            year: year ? Number(year) : defaultData.seasonYear,
+            type: finalSeasonType,
+            name: finalSeasonType == 1 ? "Preseason" : finalSeasonType == 3 ? "Postseason" : "Regular Season"
+        },
+
+        categories: categories
+    }
+
+}
+
+//helper function to parse and filter team data
+function parseTeamData(teamData: LeagueStatsResponse[], defaultData: BasicTeamInfo, type?: string) {
+
     //if the user requests postseason data, filter out the teams that did not qualify 
     if ((type && type == '3') || (!type && defaultData.seasonType == 3)){
         teamData = teamData.filter(team => team.requestedSeason.qualifiedPostSeason == true);
     }
 
-    const categories = teamData[0].results.stats.categories.map((category, index) => {
+    const parsedData = teamData[0].results.stats.categories.map((category, index) => {
 
         return { //return each category with its name and the stat info for each stat in the category
 
@@ -58,23 +85,5 @@ export async function parseLeageStatsResponse(teams: string[], league: string, s
         }
     });
 
-    return {
-
-        season: {
-            year: teamData[0].season.year,
-            type: teamData[0].season.type,
-            displayName: teamData[0].season.displayName,
-            name: teamData[0].season.name
-        },
-
-        requestedSeason: {
-            year: teamData[0].requestedSeason.year,
-            type: teamData[0].requestedSeason.type,
-            displayName: teamData[0].requestedSeason.displayName,
-            name: teamData[0].requestedSeason.name
-        },
-
-        categories: categories
-    }
-
+    return parsedData;
 }

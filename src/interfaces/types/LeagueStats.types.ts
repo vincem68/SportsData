@@ -52,14 +52,12 @@ export interface LeagueStats {
   season: {
     year: number
     type: number
-    displayName: string
     name: string
   }
 
   requestedSeason: {
     year: number
     type: number
-    displayName: string
     name: string
   }
 
@@ -78,5 +76,5 @@ export interface LeagueStats {
       statValues: string[] //where we will keep the stats for the entire category for each team
     }[]
 
-  }[]
+  }[] | undefined
 }

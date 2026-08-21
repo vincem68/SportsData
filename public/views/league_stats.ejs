@@ -21,7 +21,7 @@
                 <% } else { %>
                     <img src = '/images/nhl_logo.png' class = 'mainLogo' alt = 'NHL Logo'>
                 <% } %>
-                <h1><%= league %> Stats for the <%= leagueStats.requestedSeason.displayName 
+                <h1><%= league %> Stats for the <%= leagueStats.requestedSeason.year 
                     + " " + leagueStats.requestedSeason.name  %></h1>
             </div>
 
@@ -51,7 +51,7 @@
         </div>
 
         <!--Lets do it so you can pick a category-->
-        <% if (leagueStats.categories.length != 0){ %>
+        <% if (leagueStats.categories){ %>
             <div class="select-wrapper">
                 <label for="categorySelect">Select Category:</label>
                 <select id="categorySelect" name="categorySelect"> <!--pick category-->
@@ -63,7 +63,7 @@
         <% } %>
 
         <!--If no stats are given-->
-        <% if (leagueStats.categories.length == 0){ %>
+        <% if (leagueStats.categories == null || leagueStats.categories.length == 0){ %>
 
             <h1 class="errorMessage">Data is Not Available</h1>
 
