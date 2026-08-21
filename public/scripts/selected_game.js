@@ -9,6 +9,7 @@ const footballSection = document.getElementById('footballInfo');
 const awayTeamLeadersDiv = document.getElementById('awayTeamLeaders');
 const homeTeamLeadersDiv = document.getElementById('homeTeamLeaders');
 const linescoreHeaders = document.getElementById('linescoreHeaders');
+const startingPitchersDiv = document.getElementById("startingPitchersDiv");
 
 //specific stat keepers
 const score = document.getElementById('score');
@@ -169,6 +170,7 @@ async function initializeStats() {
         bases.src = "/images/empty.png";
         outs.style.display = 'flex';
         outs.src = '/images/out_0.png';
+        startingPitchersDiv.style.display = league == "MLB" ? 'flex' : 'none';
         //get yard marker and down
         footballSection.style.display = league == "NFL" ? 'flex' : 'none';
 

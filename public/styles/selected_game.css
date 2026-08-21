@@ -205,3 +205,28 @@ h2, h3 {
     justify-content: center;
     align-items: center;
 }
+
+#startingPitchersDiv > div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.SPDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: azure;
+    margin: 20px;
+    border-color: black;
+    border-width: 2px;
+    border-style: solid;
+    padding: 5px;
+}
+
+.SPHeadshot {
+    height: 75px;
+    width: 100px;
+}

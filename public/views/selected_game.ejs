@@ -89,6 +89,24 @@
             </div>
         </div>
 
+
+        <!-------------------------PROBABLE STARTING PITCHERS --------------------------->
+        <% if (overview.status.state == "pre" && league == "MLB"){ %>
+            <div id="startingPitchersDiv">
+                <h2>Probable Starting Pitchers</h2>
+                <div>
+                    <div class="SPDiv">
+                        <img class="SPHeadshot" src="<%= overview.awayTeam.startingPitcher.headshot %>">
+                        <p><%= overview.awayTeam.startingPitcher.name %></p>
+                    </div>
+                    <div class="SPDiv">
+                        <img class="SPHeadshot" src="<%= overview.homeTeam.startingPitcher.headshot %>">
+                        <p><%= overview.homeTeam.startingPitcher.name %></p>
+                    </div>
+                </div>
+            </div>
+        <% } %>
+
         
         <!---------------------------------LINESCORE------------------------------------->
         <!--(this shows the points for both teams in every quarter/period/inning)-->

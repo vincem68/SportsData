@@ -20,6 +20,7 @@ export interface GameSpecificOverviewResponse {
       id: string
       type: string
       homeAway: string
+
       team: {
         id: string
         name: string
@@ -27,12 +28,21 @@ export interface GameSpecificOverviewResponse {
         displayName: string
         logo: string
       }
+
+      probables?: {
+        athlete: {
+          fullName: string
+          headshot: string
+        }
+      }[]
+
       score: string
       records: Record[]
       linescores: Linescore[]
       statistics: {
         displayValue: string
       }[]
+
       hits?: number; //only for baseball
       errors?: number; //only for baseball
 
@@ -120,6 +130,10 @@ export interface GameSpecificOverview {
         logo: string
         score: string
         record?: string
+        startingPitcher?: {
+          name: string
+          headshot: string
+        }
     }
 
     homeTeam: {
@@ -129,6 +143,10 @@ export interface GameSpecificOverview {
         logo: string
         score: string
         record?: string
+        startingPitcher?: {
+          name: string
+          headshot: string
+        }
     }
 
     status: {
