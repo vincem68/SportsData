@@ -61,6 +61,8 @@ export async function parseOverview(league: string, sport: string, gameID: strin
         //what yard the football is at in a football game, and who has the ball
         situation: competition.situation ? {
 
+            play: competition.situation.lastPlay.type.text + ": " + competition.situation.lastPlay.text,
+
             downDistanceText: league == "NFL" ? competition.situation.downDistanceText : undefined,
             possession: league == "NFL" ? competition.situation.possession : undefined,
             count: competition.situation && competition.situation.batter ? 

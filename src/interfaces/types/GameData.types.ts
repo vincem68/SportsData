@@ -57,6 +57,13 @@ export interface GameSpecificOverviewResponse {
 
     situation?: {
 
+      lastPlay: {
+        type: {
+          text: string
+        }
+        text: string
+      }
+
       downDistanceText?: string
       possession?: string
       balls?: number
@@ -157,6 +164,8 @@ export interface GameSpecificOverview {
     }
 
     situation?: {
+
+        play: string
 
         downDistanceText?: string
         possession?: string

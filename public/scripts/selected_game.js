@@ -27,6 +27,7 @@ const footballPosArrow = document.getElementById('footballPossessionArrow');
 const awayLinescoreRow = document.getElementById('awayTeamLinescoreRow');
 const homeLinescoreRow = document.getElementById('homeTeamLinescoreRow');
 const bases = document.getElementById('bases');
+const gamePlay = document.getElementById('gameAction');
 
 //the divs for the buttons of player scoresheets
 const homeButton = document.getElementById("homeTeamButton");
@@ -42,6 +43,7 @@ linescoreDiv.style.display = gameState == "pre" ? 'none' : 'flex';
 atBatSection.style.display = league == "MLB" && gameState == "in" ? 'flex' : 'none';
 footballSection.style.display = league == "NFL" && gameState == "in" ? 'flex' : 'none';
 leaderSection.style.display = gameState == "in" ? 'none' : 'flex';
+gamePlay.style.display = gameState == "in" ? 'flex' : 'none';
 
 document.getElementById('boxscore').style.display = league == "MLB" || awayTeamBoxscore.querySelectorAll('td').length == 0 ? 'none' : 'flex';
 
@@ -173,6 +175,7 @@ async function initializeStats() {
         startingPitchersDiv.style.display = league == "MLB" ? 'flex' : 'none';
         //get yard marker and down
         footballSection.style.display = league == "NFL" ? 'flex' : 'none';
+        gamePlay.style.display = 'flex';
 
         //reset the season stats of teams to 0 for the game specific stats
         if (league != "MLB"){
@@ -293,6 +296,10 @@ async function updateGameStats(){
     //update the score
     score.textContent = updateOverview.awayTeam.score + " - " + updateOverview.homeTeam.score;
     
+    if (updateOverview.situation){
+        gamePlay.textContent = updateOverview.situation.play;
+    }
+    
     //if its a baseball game, update the strike and out count
     if (league == "MLB" && (updateOverview.status.shortDetail.includes("Top") || updateOverview.status.shortDetail.includes("Bot"))){
         bases.style.display = 'flex';
@@ -337,7 +344,7 @@ async function updateGameStats(){
         } else if (league != "MLB"){ //if not a baseball game, have normal numbering for OT periods (OT, 2OT, 3OT, etc)
             rowHeader.textContent = (updateOverview.linescore.currentAwayLinescoreInterval - updateOverview.linescore.intervalLength + 1) + "OT";
         } else { //if MLB, just show the inning number for the header of the new inning column
-            rowHeader.textContent = updateOverview.linescore.currentAwayLinescoreInterval - updateOverview.linescore.intervalLength + 1;
+            rowHeader.textContent = updateOverview.linescore.currentAwayLinescoreInterval;
         }
         //add in new cells for teams, with 0 as value
         const newAwayCell = document.createElement('td'); newAwayCell.textContent = '0'; newAwayCell.classList.add('linescoreCell');
@@ -405,6 +412,7 @@ async function updateGameStats(){
         //hide these
         footballSection.style.display = 'none';
         atBatSection.style.display = 'none';
+        gamePlay.style.display = 'none';
 
         //make the leader headlines visible again
         document.querySelectorAll('.leaderHeadline').forEach(headline => headline.style.display = 'flex');
@@ -549,7 +557,7 @@ function createLeaders(){
 //if game hasn't started yet, set setInterval to initalizeStats to check for game start
 //otherwise, set to updateGameStats if game is active/final
 let request = (gameState == "pre") ? setInterval(initializeStats, 10000) : 
-    ((gameState == "in") ? setInterval(updateGameStats, 10000) : null);
+    ((gameState == "in") ? setInterval(updateGameStats, 7000) : null);
 
 
 
@@ -591,6 +599,8 @@ async function parseOverview() {
         },
 
         situation: competition.situation ? {
+
+            play: competition.situation ? competition.situation.lastPlay.type.text + ": " + competition.situation.lastPlay.text : "",
             
             downDistanceText: league == "NFL" ? competition.situation.downDistanceText : undefined,
             possession: league == "NFL" ? competition.situation.possession : undefined,

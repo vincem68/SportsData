@@ -41,6 +41,12 @@
                     <% } %>
                 </p>
 
+                <p id="gameAction">
+                    <% if (overview.situation){ %>
+                        <%= overview.situation.play %>
+                    <% } %>
+                </p>
+
                 <div id="footballInfo"> <!--have this dive for football specific info-->
                     <img id="footballPossessionArrow" src="/images/left_arrow.png">
                     <p id="footballMarker"><!--shows what down and yard marker football game is at-->
