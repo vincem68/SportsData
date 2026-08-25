@@ -40,7 +40,7 @@ homePlayerStatsDiv.style.display = "none";
 //hide any stat divs if the game has not started yet
 buttonSection.style.display = gameState == "pre" ? 'none' : 'flex';
 linescoreDiv.style.display = gameState == "pre" ? 'none' : 'flex';
-atBatSection.style.display = league == "MLB" && gameState == "in" ? 'flex' : 'none';
+atBatSection.style.display = league == "MLB" && overview.situation ? 'flex' : 'none';
 footballSection.style.display = league == "NFL" && gameState == "in" ? 'flex' : 'none';
 leaderSection.style.display = gameState == "in" ? 'none' : 'flex';
 gamePlay.style.display = gameState == "in" ? 'flex' : 'none';
@@ -417,12 +417,32 @@ async function updateGameStats(){
         //make the leader headlines visible again
         document.querySelectorAll('.leaderHeadline').forEach(headline => headline.style.display = 'flex');
 
-        clearInterval(request);
-        request = setInterval(createLeaders, 10000);
+        clearInterval(request); //clear the request
+
+        if (league != "MLB"){ //if not a baseball game, create leaders board
+            request = setInterval(() => {
+
+                const leaders = parseLeaders();
+
+                if (leaders.awayLeaders !== undefined){
+                    deployLeadersDiv(awayTeamLeadersDiv, leaders.awayLeaders);
+                    deployLeadersDiv(homeTeamLeadersDiv, leaders.homeLeaders);
+                    leaderSection.style.display = 'flex';
+                    clearInterval(request);
+                }
+
+            }, 10000);
+        }
 
     }
 }
 
+
+/**
+ * The goal of this function is to update the player box score tables. Upon every API call, the stats for each 
+ * player will update, and will also add any new player that comes into the game and create a new row
+ * @param {*} playersArray - 2D array of players from a single team containing their stats, got from API call
+ */
 function updatePlayerBoxscores(playersArray) {
     //go through every category/table
     playersArray.forEach(category => {
@@ -486,72 +506,31 @@ function updatePlayerBoxscores(playersArray) {
  * happens when the page is loaded before game ends but remains open,
  * creates the leaders for both teams
  * */
-function createLeaders(){
+function deployLeadersDiv(leadersContainer, leaderArray){
 
-    console.log("Create Leaders");
-
-    //get the leaders data from the JSON response
-    const leaders = parseLeaders();
-
-    if (league == "MLB"){
-        clearInterval(request);
-        return;
-    }
-
-    if (leaders.awayLeaders !== undefined){ //if leaders exist and its not a baseball game (since MLB doesn't have leaders in their API), create the divs for the leaders section
-
-        leaders.awayLeaders.forEach(leader => {
-            //create the div
-            const leaderDiv = document.createElement('div');
-            //create headline for leader's category
-            const leaderHeadline = document.createElement('h3');
-            leaderHeadline.textContent = leader.category;
-            //create athlete image
-            const headshot = document.createElement('img');
-            headshot.src = leader.athleteHeadshot;
-            headshot.classList.add('headshot');
-            //create headline for athlete name
-            const leaderName = document.createElement('h4');
-            leaderName.textContent = leader.athleteName;
-            leaderName.classList.add('leaderName');
-            //add in a p element for the leader's value of the game
-            const desc = document.createElement('p'); 
-            desc.textContent = leader.value;
-            desc.classList.add('leaderDesc');
-            //append everything to the leaderDiv and add it to the leader section div
-            leaderDiv.appendChild(leaderHeadline); leaderDiv.appendChild(headshot);
-            leaderDiv.appendChild(leaderName); leaderDiv.appendChild(desc);
-            awayTeamLeadersDiv.appendChild(leaderDiv);
-        });
-
-        leaders.homeLeaders.awayLeaders.forEach(leader => {
-            //create the div
-            const leaderDiv = document.createElement('div');
-            //create headline for leader's category
-            const leaderHeadline = document.createElement('h3');
-            leaderHeadline.textContent = leader.category;
-            //create athlete image
-            const headshot = document.createElement('img');
-            headshot.src = leader.athleteHeadshot;
-            headshot.classList.add('headshot');
-            //create headline for athlete name
-            const leaderName = document.createElement('h4');
-            leaderName.textContent = leader.athleteName;
-            leaderName.classList.add('leaderName');
-            //add in a p element for the leader's value of the game
-            const desc = document.createElement('p'); 
-            desc.textContent = leader.value;
-            desc.classList.add('leaderDesc');
-            //append everything to the leaderDiv and add it to the leader section div
-            leaderDiv.appendChild(leaderHeadline); leaderDiv.appendChild(headshot);
-            leaderDiv.appendChild(leaderName); leaderDiv.appendChild(desc);
-            homeTeamLeadersDiv.appendChild(leaderDiv);
-        });
-
-        leaderSection.style.display = 'flex';
-        clearInterval(request);
-    }
-    
+    leaderArray.forEach(leader => {
+        //create the div
+        const leaderDiv = document.createElement('div');
+        //create headline for leader's category
+        const leaderHeadline = document.createElement('h3');
+        leaderHeadline.textContent = leader.category;
+        //create athlete image
+        const headshot = document.createElement('img');
+        headshot.src = leader.athleteHeadshot;
+        headshot.classList.add('headshot');
+        //create headline for athlete name
+        const leaderName = document.createElement('h4');
+        leaderName.textContent = leader.athleteName;
+        leaderName.classList.add('leaderName');
+        //add in a p element for the leader's value of the game
+        const desc = document.createElement('p'); 
+        desc.textContent = leader.value;
+        desc.classList.add('leaderDesc');
+        //append everything to the leaderDiv and add it to the leader section div
+        leaderDiv.appendChild(leaderHeadline); leaderDiv.appendChild(headshot);
+        leaderDiv.appendChild(leaderName); leaderDiv.appendChild(desc);
+        leadersContainer.appendChild(leaderDiv);
+    });
 }
 
 //if game hasn't started yet, set setInterval to initalizeStats to check for game start

@@ -113,7 +113,7 @@ export async function parseOverview(league: string, sport: string, gameID: strin
                 ? parseLinescoreTotals(
                     competition.competitors[0].linescores.map(linescore => linescore.displayValue),
                     competition.format.regulation.periods
-                ): league == "MLB" ? ['','','','','','','','',''] : league == "NHL" ? ['','',''] : ['','','',''],
+                ) : league == "MLB" ? ['','','','','','','','',''] : league == "NHL" ? ['','',''] : ['','','',''],
 
             awayRuns: league == "MLB" ? competition.competitors[1].statistics[1].displayValue : undefined,
             awayHits: league == "MLB" ? competition.competitors[1].hits : undefined,
@@ -294,7 +294,7 @@ function getIntervalLabels(regFormat: number, league: string, linescoreLength: n
             const extraIntervals = Array.from({ length: linescoreLength - regFormat }, (_, i) => `${i + 1}OT`);
             intervals.push(...extraIntervals);
         } else {
-            const extraIntervals = Array.from({ length: linescoreLength - regFormat }, (_, i) => (i + 1).toString());
+            const extraIntervals = Array.from({ length: linescoreLength - regFormat }, (_, i) => (i + 10).toString());
             intervals.push(...extraIntervals);
         }
     }
