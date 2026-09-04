@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title><%= league %> Transactions for the <%= data.requestedYear %> Season</title>
+    <link rel="stylesheet" href="/styles/league_transactions.css">
+</head>
+
+<body>
+    
+    <%- include ('menu_header') %>
+
+    <div class="topSection">
+
+        <div class="titleSection">
+            <% if (league == "MLB"){ %>
+                <img src = '/images/mlb_logo.png' class = 'mainLogo' alt = 'MLB Logo'>
+            <% } else if (league == "NBA"){ %>
+                <img src = '/images/nba_logo.png' class = 'mainLogo' alt = 'NBA Logo'>
+            <% } else if (league == "NFL"){ %>
+                <img src = '/images/nfl_logo.png' class = 'mainLogo' alt = 'NFL Logo'>
+            <% } else { %>
+                <img src = '/images/nhl_logo.png' class = 'mainLogo' alt = 'NHL Logo'>
+            <% } %>
+            <h1><%= league %> Transactions for the <%= data.requestedYear %> Season</h1>
+
+        </div>
+
+
+        <div class="form-container">
+            <form method="GET">
+
+                <div class="form-group">
+                    <label for="season">Select Year</label>
+                    <select name="season">
+                        <% for (let i = data.currentYear; i >= 2000; i--){ %>
+                            <% if (i == data.requestedYear) { %>
+                                <option value="<%= i %>" selected><%= i %></option>
+                            <% } else { %>
+                                <option value="<%= i %>"><%= i %></option>
+                            <% } %>
+                        <% } %>
+                    </select>
+                    <label for="page">Select Page:</label>
+                    <input id="page" name="page" type="number" value="<%= data.pageIndex %>" min="1" max="<%= data.pageCount %>">
+                </div>
+
+                <button>Submit</button>
+            </form>
+        </div>
+    </div>
+
+    <% if (data.transactions.length == 0){ %>
+
+        <h2 class="errorMessage">Transaction Data Unavailable</h2>
+
+    <% } else { %>
+
+        <div id="transactionsContainerDiv">
+
+            <!--This will be where we have the buttons to switch pages-->
+            <div id="pageDiv">
+                
+                <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/transactions?season=<%= data.requestedYear %>&page=<%= data.pageIndex - 1 %>">
+                    <button id="prevButton" type="button" class="pageButton">
+                        <img class="arrowIcon" src="/images/left_arrow_button.png">
+                    </button>
+                </a>
+
+                <p id="pageText"><%= data.pageIndex %> Of <%= data.pageCount %></p>
+
+                <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/transactions?season=<%= data.requestedYear %>&page=<%= data.pageIndex + 1 %>">
+                    <button id="nextButton" type="button" class="pageButton">
+                        <img class="arrowIcon" src="/images/right_arrow_button.png">
+                    </button>
+                </a>
+                
+            </div>
+
+            <table>
+
+                <tr>
+                    <th>Date</th>
+                    <th>Team</th>
+                    <th>Transaction</th>
+                </tr>
+
+                <% data.transactions.forEach(trans => { %>
+                    <tr>
+                        <td><%= trans.date %></td>
+                        <td>
+                            <div class="teamDiv">
+                                <img class="teamLogo" src="<%= trans.teamLogo %>">
+                                <p><%= trans.teamAbbr %></p>
+                            </div>
+                        </td>
+                        <td>
+                            <%= trans.desc %>
+                        </td>
+                    </tr>
+                <% }) %>
+            </table>
+
+        </div>
+
+        <script>
+
+            const pageIndex = <%= data.pageIndex %>;
+            const pageCount = <%= data.pageCount %>;
+
+            document.getElementById('prevButton').style.display = pageIndex == 1 ? 'none' : 'flex';
+            document.getElementById('nextButton').style.display = pageIndex == pageCount ? 'none' : 'flex';
+
+        </script>
+    <% } %>
+</body>
+</html>

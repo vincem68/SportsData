@@ -1,4 +1,5 @@
 import type { Calendar, CalendarResponse, Event } from "../types/Calendar.types";
+import { parseDate } from "../../utility_functions";
 
 export async function parseCalendarResponse(league: string, sport: string, team: string, season: number, seasonType: number): Promise<Calendar> {
 
@@ -47,23 +48,6 @@ export async function parseCalendarResponse(league: string, sport: string, team:
 
     return calendar;
 }
-
-/**
- * This function will parse the dates of a game to local time, the dates from the JSON response are wrong
- * @param date 
- * @returns 
- */
-function parseDate(date: string){
-    //change the dates of the games to local time dates
-    const localDate = new Date(date);
-    const year = localDate.getFullYear();
-    const month = String(localDate.getMonth() + 1).padStart(2, '0');
-    const day = String(localDate.getDate()).padStart(2, '0');
-    const hours = String(localDate.getHours()).padStart(2, '0');
-    const minutes = String(localDate.getMinutes()).padStart(2, '0');
-    return `${year}-${month}-${day}T${hours}:${minutes}`;
-}
-
 
 
 function filterGamesByMonth(games: Event[], league: string, seasonType: number){

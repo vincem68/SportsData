@@ -1,5 +1,5 @@
 import type { LeagueStatsResponse, LeagueStats } from "../types/LeagueStats.types";
-import { getBasicResponseInfo } from "../../validation_functions";
+import { getBasicResponseInfo } from "../../utility_functions";
 import { BasicTeamInfo } from "../types/BasicTeamInfo.types";
 
 

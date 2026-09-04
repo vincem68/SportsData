@@ -1,7 +1,7 @@
 import {Router, Request, Response} from 'express';
 import port from '../index';
 
-import { checkRequestParams, checkQueryParams, getBasicResponseInfo } from '../validation_functions';
+import { checkRequestParams, checkQueryParams, getBasicResponseInfo } from '../utility_functions';
 
 import type { Team} from '../interfaces/types/Team.types';
 import type { TeamInfo } from '../interfaces/types/TeamInfo.types';

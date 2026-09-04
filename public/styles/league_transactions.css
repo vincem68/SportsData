@@ -1,0 +1,74 @@
+@import "general_styles/general_styles.css";
+@import "general_styles/table_styles.css";
+@import "general_styles/select_styles.css";
+@import "general_styles/form_styles.css";
+
+#transactionsContainerDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.teamLogo {
+    height: 40px;
+    width: 40px;
+}
+
+.teamDiv {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+#pageDiv {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#pageDiv {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+#pageText {
+    font-size: 30px;
+}
+
+td {
+    max-width: 700px;
+}
+
+#nextButton, #prevButton {
+    width: 100px;
+    height: 75px;
+    background-color: lightgreen;
+    margin: 30px;
+    font-size: 20px;
+    border-radius: 50%;
+}
+
+input[type="number"] {
+    height: 50px;
+    text-align: center;
+    font-size: 20px;
+    margin-right: 20px;
+}
+
+.arrowIcon {
+    height: 50px;
+    width: 50px;
+}
+
+.pageButton {
+    align-items: center;
+    justify-content: center;
+}
+
+.teamDiv > img {
+    margin-right: 5px;
+}

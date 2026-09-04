@@ -1,7 +1,7 @@
 import {Router, Request, Response} from 'express';
 import port from '../index';
 
-import { checkRequestParams } from '../validation_functions';
+import { checkRequestParams } from '../utility_functions';
 
 
 import type { LeagueSchedule } from '../interfaces/types/LeagueSchedule.types';

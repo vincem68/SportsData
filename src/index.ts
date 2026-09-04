@@ -1,7 +1,7 @@
 import express, {Request, Response} from 'express';
 import path from 'path';
 
-import { checkRequestParams, getBasicResponseInfo, checkQueryParams } from './validation_functions';
+import { checkRequestParams, getBasicResponseInfo, checkQueryParams } from './utility_functions';
 
 import teamRoutes from './routes/teams';
 import gameRoutes from './routes/games';
@@ -11,6 +11,7 @@ import type { LeagueStats } from './interfaces/types/LeagueStats.types';
 import type { News } from './interfaces/types/News.types';
 import type { LeagueStandings } from './interfaces/types/Standings.types';
 import type { BasicPlayerStats, PlayerSplits, PlayerStatsOverview } from './interfaces/types/PlayerStats.types';
+import type { Transactions } from './interfaces/types/Transactions.types';
 
 //parsers
 import { parseLeageStatsResponse } from './interfaces/transformations/LeagueStats';
@@ -18,6 +19,7 @@ import { parseBasicPlayerStats, parseMainPlayerStats, parsePlayerSplits } from '
 import { parseLeaderData } from './interfaces/transformations/Leaders';
 import { parseStandingsResponse } from './interfaces/transformations/Standings';
 import { parseNewsResponse } from './interfaces/transformations/TeamInfo';
+import { parseTransactionResponse } from './interfaces/transformations/Transactions';
 
 
 const app = express();
@@ -177,6 +179,50 @@ app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
 
     res.render('league_leaders', {port: port, sport: sport, league: league.toUpperCase(), 
         data: data, currentYear: yearAndTypeResponse.seasonYear, reqYear: reqYear, reqSeasonName: reqSeasonName});
+})
+
+
+/**
+ * This route will be for getting the transactions if the league
+ */
+app.get('/:sport/:league/transactions', async function(req: Request, res: Response){
+
+    const sport = req.params.sport;
+    const league = req.params.league;
+    
+    if (!checkRequestParams(sport, league)){
+        res.status(400).send("Invalid sport or league");
+        return;
+    }
+
+    //if the queries exist
+    if (req.query.page  && req.query.season){
+
+        console.log("page and year exist");
+
+        if (isNaN(Number(req.query.page)) || isNaN(Number(req.query.season))){
+            res.status(400).send("Invalid Queries");
+            return;
+        }
+
+        const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport, Number(req.query.season), Number(req.query.page));
+
+        res.render('league_transactions', {port: port, sport: sport, league: league.toUpperCase(), data: data});
+
+    } else if (req.query.season && !req.query.page) {
+
+        console.log("only year exists");
+
+        const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport, Number(req.query.season));
+        res.render('league_transactions', {port: port, sport: sport, league: league.toUpperCase(), data: data});
+        
+    } else {
+
+        console.log("Neither exist");
+        const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport);
+        res.render('league_transactions', {port: port, sport: sport, league: league.toUpperCase(), data: data});
+    }
+
 })
 
 /**

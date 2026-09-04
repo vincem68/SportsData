@@ -139,6 +139,9 @@
                     <th class="name"><%= overview.homeTeam.abbreviation %></th>
                     <% overview.linescore.homeLinescore.forEach(score => { %> <td><%= score %></td> <% }) %>
                     <% if (league == "MLB"){ %>
+                        <% if (overview.linescore.awayLinescore.length > overview.linescore.homeLinescore.length){ %>
+                            <td></td> <!--If extra innings and away team is batting, add in empty cell for home team-->
+                        <% } %>
                         <td id="homePoint" class="mlbLinescores"><%= overview.linescore.homeRuns %></td>
                         <td class="mlbLinescores"><%= overview.linescore.homeHits %></td>
                         <td class="mlbLinescores"><%= overview.linescore.homeErrors %></td>

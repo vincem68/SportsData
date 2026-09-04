@@ -351,9 +351,9 @@ async function updateGameStats(){
         const newHomeCell = document.createElement('td'); newHomeCell.textContent = '0';
 
         if (document.getElementById('headerPoint') !== undefined){
-            linescoreHeaders.insertBefore(rowHeader, document.getElementById('headerPoint'));
-            awayLinescoreRow.insertBefore(newAwayCell, document.getElementById('awayPoint'));
-            homeLinescoreRow.insertBefore(newHomeCell, document.getElementById('homePoint'));
+            document.getElementById('headerPoint').before(rowHeader);
+            document.getElementById('awayPoint').before(newAwayCell);
+            document.getElementById('homePoint').before(newHomeCell);
         } else {
             linescoreHeaders.appendChild(rowHeader);
             awayLinescoreRow.appendChild(newAwayCell);
