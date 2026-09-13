@@ -9,7 +9,7 @@ import gameRoutes from './routes/games';
 //interfaces
 import type { LeagueStats } from './interfaces/types/LeagueStats.types';
 import type { News } from './interfaces/types/News.types';
-import type { LeagueStandings } from './interfaces/types/Standings.types';
+import type { ConferenceStandings, TeamRecord } from './interfaces/types/Standings.types';
 import type { BasicPlayerStats, PlayerSplits, PlayerStatsOverview } from './interfaces/types/PlayerStats.types';
 import type { Transactions } from './interfaces/types/Transactions.types';
 
@@ -17,9 +17,10 @@ import type { Transactions } from './interfaces/types/Transactions.types';
 import { parseLeageStatsResponse } from './interfaces/transformations/LeagueStats';
 import { parseBasicPlayerStats, parseMainPlayerStats, parsePlayerSplits } from './interfaces/transformations/PlayerStats';
 import { parseLeaderData } from './interfaces/transformations/Leaders';
-import { parseStandingsResponse } from './interfaces/transformations/Standings';
+import { parseConferenceStandingsResponse } from './interfaces/transformations/Standings';
 import { parseNewsResponse } from './interfaces/transformations/TeamInfo';
 import { parseTransactionResponse } from './interfaces/transformations/Transactions';
+import { Team } from './interfaces/types/Team.types';
 
 
 const app = express();
@@ -125,20 +126,41 @@ app.get('/:sport/:league/standings', async function(req: Request, res: Response)
 
     const sport = req.params.sport;
     const league = req.params.league;
+
     //check request params
     if (!checkRequestParams(sport, league)){
         res.status(400).send("Invalid sport or league");
         return;
     }
 
-    //get correct team array that contains string values of the team abbreviations
-    const teamIDs = (league.toUpperCase() == "NFL") ? nflTeams : (league.toUpperCase() == "NBA") ? nbaTeams :
-        (league.toUpperCase() == "MLB") ? mlbTeams : nhlTeams;
+    //get the current year to use in case query params aren't provided
+    if (req.query.year !== undefined){
+        if (isNaN(Number(req.query.year))){
+            res.status(400).send("Invalid query params");
+            return;
+        }
+    }
 
-    //the standings data of all the teams
-    const teamStandings: LeagueStandings = await parseStandingsResponse(league.toUpperCase(), sport, teamIDs);
+    //conference ID numbers for API. 5 and 6 for NBA conferences, 7 and 8 for other 3 leagues
+    const conferenceIDs = league.toUpperCase() == "NBA" ? [5, 6] : [7, 8];
 
-    res.render('league_standings', {port: port, sport: sport, league: league.toUpperCase(), teamStandings: teamStandings});
+    //the standings data of first conference teams
+    const firstConferenceDivisionStandings: ConferenceStandings = req.query.year ? await parseConferenceStandingsResponse(league.toUpperCase(), sport, conferenceIDs[0], Number(req.query.year))
+    : await parseConferenceStandingsResponse(league.toUpperCase(), sport, conferenceIDs[0]);
+
+    const secondConferenceDivisionStandings: ConferenceStandings = req.query.year ? await parseConferenceStandingsResponse(league.toUpperCase(), sport, conferenceIDs[1], Number(req.query.year))
+    : await parseConferenceStandingsResponse(league.toUpperCase(), sport, conferenceIDs[1]);
+
+    const firstConferenceStandings: TeamRecord[] = firstConferenceDivisionStandings.divisions.flatMap(division => division.teams).sort();
+
+    const secondConferenceStandings: TeamRecord[] = secondConferenceDivisionStandings.divisions.flatMap(division => division.teams);
+
+    res.render('league_standings', {port: port, sport: sport, league: league.toUpperCase(), 
+        firstConferenceDivisionStandings: firstConferenceDivisionStandings, 
+        secondConferenceDivisionStandings: secondConferenceDivisionStandings,
+        firstConferenceStandings: firstConferenceStandings,
+        secondConferenceStandings: secondConferenceStandings
+    });
 })
 
 

@@ -23,186 +23,36 @@
             <h1><%= league %> Standings</h1>
         </div>
 
-        <% if (teamStandings.firstConferenceTeams === undefined){ %>
+        <% if (firstConferenceStandings.divisions.length == 0){ %>
             <h2 class="errorMessage">No standings data available at this time.</h2>    
         <% } else { %>
 
-            <!--This portion will be dedicated to division focused standings. Dividing teams by divisions-->
-            <div id="basicStandingsDiv">
+           
+            <div id="standingsDiv">
 
-                <div class="conferenceDiv">
-                    <% teamStandings.firstConferenceDivisions.forEach(division => { %>
-                        <div class="divisionDiv">
-                            <h2 class="importantHeadline"><%= division %></h2>
-                            <table>
-                                <!--Header section for table-->
-                                <tr>
-                                    <th>Rank</th>
-                                    <th>Team</th>
-                                    <th>GP</th>
-                                    <th>W</th>
-                                    <th>L</th>
-                                    <% if (league == "NFL"){ %>
-                                        <th>T</th>
-                                    <% } else if (league == "NHL"){ %>
-                                        <th>OTL</th>
-                                        <th>P</th>
-                                    <% } %>
-                                    <th>PCT</th>
-                                </tr>
-                                <% const divisionTeams = teamStandings.firstConferenceTeams.filter(team => team.standingSummary.includes(division)); %>
-                                <% divisionTeams.forEach((team, index) => { %>
-                                    <tr class="<% if (team.playoffState) { %><%= team.playoffState %><% } %>">
-                                        <th><%= index + 1 %></th>
-                                        <td class="teamTD">
-                                            <img src="<%= team.logo %>" class="teamLogo">
-                                            <%= team.abbreviation %>
-                                        </td>
-                                        <td><%= Math.trunc(team.gamesPlayed) %></td>
-                                        <td><%= Math.trunc(team.wins) %></td>
-                                        <td><%= Math.trunc(team.losses) %></td>
-                                        <% if (league == "NFL"){ %>
-                                            <td><%= Math.trunc(team.ties) %></td>
-                                        <% } else if (league == "NHL"){ %>
-                                            <td><%= Math.trunc(team.otLosses) %></td>
-                                            <td><%= Math.trunc(team.points) %></td>
-                                        <% } %>
-                                        <td><%= Math.trunc(team.winPercent * 100) %>%</td>
-                                    </tr>
-                                <% }) %>
-                            </table>
+                <div id="divisionStandingsContainer">
+
+                    <% firstConferenceStandings.divisions.forEach(division => { %>
+
+                        <div>
+                            
                         </div>
-                    <% }) %>
-                </div>
 
-                <div class="conferenceDiv">
-                    <% teamStandings.secondConferenceDivisions.forEach(division => { %>
-                        <div class="divisionDiv">
-                            <h2 class="importantHeadline"><%= division %></h2>
-                            <table>
-                                <!--Header section for table-->
-                                <tr>
-                                    <th>Rank</th>
-                                    <th>Team</th>
-                                    <th>GP</th>
-                                    <th>W</th>
-                                    <th>L</th>
-                                    <% if (league == "NFL"){ %>
-                                        <th>T</th>
-                                    <% } else if (league == "NHL"){ %>
-                                        <th>OTL</th>
-                                        <th>P</th>
-                                    <% } %>
-                                    <th>PCT</th>
-                                </tr>
-                                <% const divisionTeams = teamStandings.secondConferenceTeams.filter(team => team.standingSummary.includes(division)); %>
-                                <% divisionTeams.forEach((team, index) => { %>
-                                    <tr class="<% if (team.playoffState) { %><%= team.playoffState %><% } %>">
-                                        <th><%= index + 1 %></th>
-                                        <td class="teamTD">
-                                            <img src="<%= team.logo %>" class="teamLogo">
-                                            <%= team.abbreviation %>
-                                        </td>
-                                        <td><%= Math.trunc(team.gamesPlayed) %></td>
-                                        <td><%= Math.trunc(team.wins) %></td>
-                                        <td><%= Math.trunc(team.losses) %></td>
-                                        <% if (league == "NFL"){ %>
-                                            <td><%= Math.trunc(team.ties) %></td>
-                                        <% } else if (league == "NHL"){ %>
-                                            <td><%= Math.trunc(team.otLosses) %></td>
-                                            <td><%= Math.trunc(team.points) %></td>
-                                        <% } %>
-                                        <td><%= Math.trunc(team.winPercent * 100) %>%</td>
-                                    </tr>
-                                <% }) %>
-                            </table>
+                    <% }) %>
+
+
+                    <div id="conferenceStandingsContainer">
+
+                        <div class="conferenceStandings">
+                            <% firstConferenceStandings.forEach(team => )
                         </div>
-                    <% }) %>
-                </div>
-            </div>
 
-            <!--This portion will be dedicated to conference focused standings. Dividing teams by conferences-->
-            <h1 class="importantHeadline">Conference Standings</h1>
+                        <div class="conferenceStandings">
+                            
+                        </div>
+                    </div>
 
-            <!--Overall conference standings here-->
-            <div id="overallStandingsDiv">
-                <!--choose the conference teams-->
-                <div class="conferenceDiv">
-                    <h2 class="importantHeadline"><%= teamStandings.firstConferenceName %></h2>
-                    <table>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Team</th>
-                            <th>GP</th>
-                            <th>W</th>
-                            <th>L</th>
-                            <% if (league == "NFL"){ %>
-                                <th>T</th>
-                            <% } else if (league == "NHL"){ %>
-                                <th>OTL</th>
-                                <th>P</th>
-                            <% } %>
-                            <th>PCT</th>
-                        </tr>
-                        <% teamStandings.firstConferenceTeams.forEach((team, index) => { %>
-                            <tr class="<% if (team.playoffState) { %><%= team.playoffState %><% } %>">
-                                <td><%= index + 1 %></td>
-                                <td class="teamTD">
-                                    <img src="<%= team.logo %>" class="teamLogo">
-                                    <%= team.abbreviation %>
-                                </td>
-                                <td><%= Math.trunc(team.gamesPlayed) %></td>
-                                <td><%= Math.trunc(team.wins) %></td>
-                                <td><%= Math.trunc(team.losses) %></td>
-                                <% if (league == "NFL"){ %>
-                                    <td><%= Math.trunc(team.ties) %></td>
-                                <% } else if (league == "NHL"){ %>
-                                    <td><%= Math.trunc(team.otLosses) %></td>
-                                    <td><%= Math.trunc(team.points) %></td>
-                                <% } %>
-                                <td><%= Math.trunc(team.winPercent * 100) %>%</td>
-                            </tr>
-                        <% }) %>
-                    </table>
-                </div>
 
-                <div class="conferenceDiv">
-                    <h2 class="importantHeadline"><%= teamStandings.secondConferenceName %></h2>
-                    <table>
-                        <tr>
-                            <th>Rank</th>
-                            <th>Team</th>
-                            <th>GP</th>
-                            <th>W</th>
-                            <th>L</th>
-                            <% if (league == "NFL"){ %>
-                                <th>T</th>
-                            <% } else if (league == "NHL"){ %>
-                                <th>OTL</th>
-                                <th>P</th>
-                            <% } %>
-                            <th>PCT</th>
-                        </tr>
-                        <% teamStandings.secondConferenceTeams.forEach((team, index) => { %>
-                            <tr class="<% if (team.playoffState) { %><%= team.playoffState %><% } %>">
-                                <td><%= index + 1 %></td>
-                                <td class="teamTD">
-                                    <img src="<%= team.logo %>" class="teamLogo">
-                                    <%= team.abbreviation %>
-                                </td>
-                                <td><%= Math.trunc(team.gamesPlayed) %></td>
-                                <td><%= Math.trunc(team.wins) %></td>
-                                <td><%= Math.trunc(team.losses) %></td>
-                                <% if (league == "NFL"){ %>
-                                    <td><%= Math.trunc(team.ties) %></td>
-                                <% } else if (league == "NHL"){ %>
-                                    <td><%= Math.trunc(team.otLosses) %></td>
-                                    <td><%= Math.trunc(team.points) %></td>
-                                <% } %>
-                                <td><%= Math.trunc(team.winPercent * 100) %>%</td>
-                            </tr>
-                        <% }) %>
-                    </table>
                 </div>
             </div>
         <% } %>
