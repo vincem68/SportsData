@@ -41,50 +41,55 @@
                     <% } %>
                 </p>
 
-                <p id="gameAction">
-                    <% if (overview.situation){ %>
-                        <%= overview.situation.play %>
-                    <% } %>
-                </p>
+                <div id="situationDiv">
 
-                <div id="footballInfo"> <!--have this dive for football specific info-->
-                    <img id="footballPossessionArrow" src="/images/left_arrow.png">
-                    <p id="footballMarker"><!--shows what down and yard marker football game is at-->
-                        <% if (league == "NFL" && overview.situation !== undefined){ %>
-                            <%= overview.situation.downDistanceText %>
+                    <div id="footballInfo"> <!--have this dive for football specific info-->
+                        <h3 id="footballMarker"><!--shows what down and yard marker football game is at-->
+                            <% if (league == "NFL" && overview.situation !== undefined){ %>
+                                <%= overview.situation.downDistanceText %>
+                            <% } %>
+                        </h3>
+                        <img id="footballPossessionArrow" src="/images/left_arrow.png">
+                    </div>
+
+                    <div id="atBat"> <!--for baseball, shows count, outs, and pitcher/batter-->
+                        <div class="atBatPlayer">
+                            <p>Pitcher</p>
+                            <img id="pitcherHeadshot" src="<%= overview.situation && overview.situation.pitcher ? overview.situation.pitcher.headshot : '' %>">
+                            <p id="pitcherName">
+                                <% if (overview.situation && overview.situation.pitcher){ %>
+                                    <%= overview.situation.pitcher.name %>
+                                <% } %>
+                            </p>
+                        </div>
+                        <div id="baseballScorebug">
+                            <img id="bases" src="">
+                            <p id="count"><!--Keeps track of ball and strike count in baseball game-->
+                                <% if (overview.situation && overview.situation.batter){ %>
+                                    <%= overview.situation.count %>
+                                <% } %>
+                            </p>
+                            <img id="outs" src="">
+                        </div>
+                        <div class="atBatPlayer">
+                            <p>Batter</p>
+                            <img id="batterHeadshot" src="<%= overview.situation && overview.situation.batter ? overview.situation.batter.headshot : '' %>">
+                            <p id="batterName">
+                                <% if (overview.situation && overview.situation.batter){ %>
+                                    <%= overview.situation.batter.name %>
+                                <% } %>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <p id="gameAction">
+                        <% if (overview.situation){ %>
+                            <%= overview.situation.play %>
                         <% } %>
                     </p>
+
                 </div>
 
-                <div id="atBat"> <!--for baseball, shows count, outs, and pitcher/batter-->
-                    <div class="atBatPlayer">
-                        <p>Pitcher</p>
-                        <img id="pitcherHeadshot" src="<%= overview.situation && overview.situation.pitcher ? overview.situation.pitcher.headshot : '' %>">
-                        <p id="pitcherName">
-                            <% if (overview.situation && overview.situation.pitcher){ %>
-                                <%= overview.situation.pitcher.name %>
-                            <% } %>
-                        </p>
-                    </div>
-                    <div id="baseballScorebug">
-                        <img id="bases" src="">
-                        <p id="count"><!--Keeps track of ball and strike count in baseball game-->
-                            <% if (overview.situation && overview.situation.batter){ %>
-                                <%= overview.situation.count %>
-                            <% } %>
-                        </p>
-                        <img id="outs" src="">
-                    </div>
-                    <div class="atBatPlayer">
-                        <p>Batter</p>
-                        <img id="batterHeadshot" src="<%= overview.situation && overview.situation.batter ? overview.situation.batter.headshot : '' %>">
-                        <p id="batterName">
-                            <% if (overview.situation && overview.situation.batter){ %>
-                                <%= overview.situation.batter.name %>
-                            <% } %>
-                        </p>
-                    </div>
-                </div>      
             </div>
 
             <!--home team overview, with name, logo and record-->

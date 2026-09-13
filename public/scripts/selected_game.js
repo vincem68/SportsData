@@ -10,6 +10,7 @@ const awayTeamLeadersDiv = document.getElementById('awayTeamLeaders');
 const homeTeamLeadersDiv = document.getElementById('homeTeamLeaders');
 const linescoreHeaders = document.getElementById('linescoreHeaders');
 const startingPitchersDiv = document.getElementById("startingPitchersDiv");
+const situationDiv = document.getElementById('situationDiv');
 
 //specific stat keepers
 const score = document.getElementById('score');
@@ -38,12 +39,12 @@ const buttonSection = document.getElementById('buttonSection');
 homePlayerStatsDiv.style.display = "none";
 
 //hide any stat divs if the game has not started yet
+situationDiv.style.display = gameState == "in" ? 'flex' : 'none';
 buttonSection.style.display = gameState == "pre" ? 'none' : 'flex';
 linescoreDiv.style.display = gameState == "pre" ? 'none' : 'flex';
 atBatSection.style.display = league == "MLB" && overview.situation ? 'flex' : 'none';
 footballSection.style.display = league == "NFL" && gameState == "in" ? 'flex' : 'none';
 leaderSection.style.display = gameState == "in" ? 'none' : 'flex';
-gamePlay.style.display = gameState == "in" ? 'flex' : 'none';
 
 document.getElementById('boxscore').style.display = league == "MLB" || awayTeamBoxscore.querySelectorAll('td').length == 0 ? 'none' : 'flex';
 
@@ -167,6 +168,7 @@ async function initializeStats() {
         score.style.display = 'flex';
         score.textContent = "0 - 0";
         //if its a baseball game
+        situationDiv.style.display = 'flex';
         atBatSection.style.display = league == "MLB" ? 'flex' : 'none';
         bases.style.display = league == "MLB" ? 'flex' : 'none';
         bases.src = "/images/empty.png";
@@ -409,10 +411,8 @@ async function updateGameStats(){
             document.getElementById('seriesStatus').textContent = updateOverview.seriesSummary;
         }
 
-        //hide these
-        footballSection.style.display = 'none';
-        atBatSection.style.display = 'none';
-        gamePlay.style.display = 'none';
+        //hide all the situation stuff
+        situationDiv.style.display = 'none';
 
         //make the leader headlines visible again
         document.querySelectorAll('.leaderHeadline').forEach(headline => headline.style.display = 'flex');
