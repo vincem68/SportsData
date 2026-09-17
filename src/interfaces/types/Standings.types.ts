@@ -7,6 +7,10 @@ export interface ConferenceStandingsResponse {
     year: number
   }
 
+  seasons: {
+    year: number
+  }[]
+
   children: {
 
     name: string
@@ -26,8 +30,9 @@ export interface ConferenceStandingsResponse {
         }
 
         stats: {
-          abbreviation: string
-          description: string
+          abbreviation?: string
+          shortDisplayName?: string
+          description?: string
           displayValue: string
         }[]
       }[]
@@ -39,7 +44,8 @@ export interface ConferenceStandingsResponse {
 export interface ConferenceStandings {
 
   abbr: string
-  season: number
+  currentSeason: number
+  maxSeason: number
 
   divisions: {
 
@@ -52,11 +58,11 @@ export interface ConferenceStandings {
 export interface TeamRecord {
   
   abbr: string
-      logo: string
+  logo: string
 
-      stats: {
-        abbr: string
-        desc: string
-        value: string
-      }[]
+  stats: {
+    abbr: string
+    desc: string
+    value: string
+  }[]
 }

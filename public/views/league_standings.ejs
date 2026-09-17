@@ -10,50 +10,132 @@
 
         <%- include ('menu_header') %>
 
-        <div id="titleSection">
-            <% if (league == "MLB"){ %>
-                <img src = '/images/mlb_logo.png' id='mainLogo' alt = 'MLB Logo'>
-            <% } else if (league == "NBA"){ %>
-                <img src = '/images/nba_logo.png' id='mainLogo' alt = 'NBA Logo'>
-            <% } else if (league == "NFL"){ %>
-                <img src = '/images/nfl_logo.png' id='mainLogo' alt = 'NFL Logo'>
-            <% } else { %>
-                <img src = '/images/nhl_logo.png' id='mainLogo' alt = 'NHL Logo'>
-            <% } %>
-            <h1><%= league %> Standings</h1>
+        <div id="class">
+
         </div>
 
-        <% if (firstConferenceStandings.divisions.length == 0){ %>
+            <div id="titleSection">
+                <% if (league == "MLB"){ %>
+                    <img src = '/images/mlb_logo.png' id='mainLogo' alt = 'MLB Logo'>
+                <% } else if (league == "NBA"){ %>
+                    <img src = '/images/nba_logo.png' id='mainLogo' alt = 'NBA Logo'>
+                <% } else if (league == "NFL"){ %>
+                    <img src = '/images/nfl_logo.png' id='mainLogo' alt = 'NFL Logo'>
+                <% } else { %>
+                    <img src = '/images/nhl_logo.png' id='mainLogo' alt = 'NHL Logo'>
+                <% } %>
+                <h1><%= league %> Standings</h1>
+            </div>
+
+            <div class="form-container">
+                    <form method="GET">
+
+                        <div class="form-group">
+                            <label for="season">Select Year</label>
+                            <select name="season">
+                                <% for (let i = firstConferenceDivisionStandings.maxSeason; i >= 2000; i--){ %>
+                                    <option value="<%= i %>"><%= i %></option>
+                                <% } %>
+                            </select>
+                        </div>
+
+                        <button>Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <% if (firstConferenceDivisionStandings.divisions.length == 0){ %>
             <h2 class="errorMessage">No standings data available at this time.</h2>    
         <% } else { %>
 
-           
+           <!--overall container for the standings in general-->
             <div id="standingsDiv">
 
+                <!--container for the divisions standings portion-->
                 <div id="divisionStandingsContainer">
 
-                    <% firstConferenceStandings.divisions.forEach(division => { %>
+                    <div class="divisionByConferenceContainer">
+                        <% firstConferenceDivisionStandings.divisions.forEach(division => { %>
 
-                        <div>
-                            
-                        </div>
+                            <div class="divisionDiv">
+                                <h4><%= division.name %></h4>
+                                <table>
+                                    <tr>
+                                        <th>Team</th>
+                                        <% division.teams[0].stats.forEach(stat => { %>
+                                            <th>
+                                                <div class="tooltip">
+                                                    <%= stat.abbr %>
+                                                    <span class="tooltip-text">
+                                                        <%= stat.desc %>
+                                                    </span>
+                                                </div>
+                                            </th>
+                                        <% }) %>
+                                    </tr>
 
-                    <% }) %>
+                                    <% division.teams.forEach(team => { %>
+                                        <tr>
+                                            <td class="teamTD">
+                                                <img class="teamLogo" src="<%= team.logo %>">
+                                                <%= team.abbr %>
+                                            </td>
+                                            <% team.stats.forEach(stat => { %>
+                                                <td><%= stat.value %></td>
+                                            <% }) %>
+                                        </tr>
+                                    <% }) %>
+                                </table>
+                            </div>
 
-
-                    <div id="conferenceStandingsContainer">
-
-                        <div class="conferenceStandings">
-                            <% firstConferenceStandings.forEach(team => )
-                        </div>
-
-                        <div class="conferenceStandings">
-                            
-                        </div>
+                        <% }) %>
                     </div>
 
+                    <div class="divisionByConferenceContainer">
+                        <% secondConferenceDivisionStandings.divisions.forEach(division => { %>
+
+                            <div class="divisionDiv">
+                                <h4><%= division.name %></h4>
+                                <table>
+                                    <tr>
+                                        <th>Team</th>
+                                        <% division.teams[0].stats.forEach(stat => { %>
+                                            <th>
+                                                <div class="tooltip">
+                                                    <%= stat.abbr %>
+                                                    <span class="tooltip-text">
+                                                        <%= stat.desc %>
+                                                    </span>
+                                                </div>
+                                            </th>
+                                        <% }) %>
+                                    </tr>
+
+                                    <% division.teams.forEach(team => { %>
+                                        <tr>
+                                            <td class="teamTD">
+                                                <img class="teamLogo" src="<%= team.logo %>">
+                                                <%= team.abbr %>
+                                            </td>
+                                            <% team.stats.forEach(stat => { %>
+                                                <td><%= stat.value %></td>
+                                            <% }) %>
+                                        </tr>
+                                    <% }) %>
+                                </table>
+                            </div>
+
+                        <% }) %>
+                    </div>
 
                 </div>
+
+                <!--This will be the container div for the overall conference standings-->
+                <div id="conferenceStandingsContainer">
+
+                </div>
+
             </div>
         <% } %>
     </body>

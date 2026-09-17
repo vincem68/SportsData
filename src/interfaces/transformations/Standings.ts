@@ -22,7 +22,8 @@ export async function parseConferenceStandingsResponse(league: string, sport: st
     return {
 
         abbr: conferenceStandings.abbreviation,
-        season: conferenceStandings.season.year,
+        currentSeason: conferenceStandings.season.year,
+        maxSeason: conferenceStandings.seasons[0].year,
 
         divisions: conferenceStandings.children[0].standings.entries ? conferenceStandings.children.map(division => {
 
@@ -38,8 +39,8 @@ export async function parseConferenceStandingsResponse(league: string, sport: st
 
                         stats: team.stats.map(stat => {
                             return {
-                                abbr: stat.abbreviation,
-                                desc: stat.description,
+                                abbr: stat.abbreviation ? stat.abbreviation : stat.shortDisplayName!,
+                                desc: stat.description ? stat.description : "Overall",
                                 value: stat.displayValue
                             }
                         })

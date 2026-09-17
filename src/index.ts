@@ -151,7 +151,7 @@ app.get('/:sport/:league/standings', async function(req: Request, res: Response)
     const secondConferenceDivisionStandings: ConferenceStandings = req.query.year ? await parseConferenceStandingsResponse(league.toUpperCase(), sport, conferenceIDs[1], Number(req.query.year))
     : await parseConferenceStandingsResponse(league.toUpperCase(), sport, conferenceIDs[1]);
 
-    const firstConferenceStandings: TeamRecord[] = firstConferenceDivisionStandings.divisions.flatMap(division => division.teams).sort();
+    const firstConferenceStandings: TeamRecord[] = firstConferenceDivisionStandings.divisions.flatMap(division => division.teams);
 
     const secondConferenceStandings: TeamRecord[] = secondConferenceDivisionStandings.divisions.flatMap(division => division.teams);
 
