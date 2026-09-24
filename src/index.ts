@@ -134,14 +134,14 @@ app.get('/:sport/:league/standings', async function(req: Request, res: Response)
     }
 
     //get the current year to use in case query params aren't provided
-    if (req.query.year !== undefined){
-        if (isNaN(Number(req.query.year))){
+    if (req.query.season !== undefined){
+        if (isNaN(Number(req.query.season))){
             res.status(400).send("Invalid query params");
             return;
         }
     }
 
-    const standings = req.query.year ? await parseStandingsResponse(league.toUpperCase(), sport, Number(req.query.year))
+    const standings = req.query.season ? await parseStandingsResponse(league.toUpperCase(), sport, Number(req.query.season))
         : await parseStandingsResponse(league.toUpperCase(), sport);
 
     console.log(standings);

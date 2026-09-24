@@ -93,11 +93,13 @@ function parseStandingsByGroup(groups: Group[]) {
                     const data = team.stats.find(stat => stat.type == type); //find the stat. Should exist
                     const parsedData = {
                         abbr: data!.abbreviation ? data!.abbreviation : data!.shortDisplayName!,
-                        desc: data!.description ? data!.description : "Overall",
+                        desc: data!.description ? data!.description : "Overall Record",
                         value: data!.displayValue
                     }
                     orderedStats.push(parsedData);
                 })
+
+                orderedStats[0].abbr = "Record"; //rename overall record stat from any to record
 
                 return {
                     abbr: team.team.abbreviation + (clinched != "" ? clinched : ""), //if clinched, put it next to team abbr
@@ -105,7 +107,7 @@ function parseStandingsByGroup(groups: Group[]) {
                     stats: orderedStats
                 }
 
-            })
+            }).sort((a, b) => Number(a.stats[2].value) - Number(b.stats[2].value)) //sort to make sure teams are in right order
         }
     })
 }
