@@ -1,4 +1,4 @@
-export interface ConferenceStandingsResponse {
+export interface StandingsResponse {
 
   abbreviation: string
   name: string
@@ -11,48 +11,63 @@ export interface ConferenceStandingsResponse {
     year: number
   }[]
 
-  children: {
-
-    name: string
-
-    standings: {
-
-      entries: {
-
-        team: {
-
-          abbreviation: string
-          name: string
-
-          logos: {
-            href: string
-          }[]
-        }
-
-        stats: {
-          abbreviation?: string
-          shortDisplayName?: string
-          description?: string
-          displayValue: string
-        }[]
-      }[]
-    }
-
-  }[]
+  children: Group[]
 }
 
-export interface ConferenceStandings {
+export interface Group {
 
-  abbr: string
+  name: string
+
+  standings: {
+
+    entries: {
+
+      team: {
+
+        abbreviation: string
+        name: string
+
+        logos: {
+          href: string
+        }[]
+      }
+
+      stats: {
+        type: string
+        abbreviation?: string
+        shortDisplayName?: string
+        description?: string
+        displayValue: string
+      }[]
+    }[]
+  }
+}
+
+export interface Standings {
+
   currentSeason: number
   maxSeason: number
 
-  divisions: {
+  //array of first conf division teams
+  firstConferenceDivisions: {
+
+    name: string //division name
+    teams: TeamRecord[] //divison team
+  }[]
+
+  //array of second conf division teams 
+  secondConferenceDivisions: {
 
     name: string
-
     teams: TeamRecord[]
   }[]
+
+  conferenceStandings: {
+
+    name: string
+    teams: TeamRecord[]
+  }[]
+
 }
 
 export interface TeamRecord {
@@ -60,9 +75,11 @@ export interface TeamRecord {
   abbr: string
   logo: string
 
-  stats: {
-    abbr: string
-    desc: string
-    value: string
-  }[]
+  stats: Stats[]
+}
+
+export interface Stats {
+  abbr: string
+  desc: string
+  value: string
 }

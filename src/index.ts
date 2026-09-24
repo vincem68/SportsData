@@ -9,7 +9,7 @@ import gameRoutes from './routes/games';
 //interfaces
 import type { LeagueStats } from './interfaces/types/LeagueStats.types';
 import type { News } from './interfaces/types/News.types';
-import type { ConferenceStandings, TeamRecord } from './interfaces/types/Standings.types';
+import type { Standings, TeamRecord } from './interfaces/types/Standings.types';
 import type { BasicPlayerStats, PlayerSplits, PlayerStatsOverview } from './interfaces/types/PlayerStats.types';
 import type { Transactions } from './interfaces/types/Transactions.types';
 
@@ -17,7 +17,7 @@ import type { Transactions } from './interfaces/types/Transactions.types';
 import { parseLeageStatsResponse } from './interfaces/transformations/LeagueStats';
 import { parseBasicPlayerStats, parseMainPlayerStats, parsePlayerSplits } from './interfaces/transformations/PlayerStats';
 import { parseLeaderData } from './interfaces/transformations/Leaders';
-import { parseConferenceStandingsResponse } from './interfaces/transformations/Standings';
+import { parseStandingsResponse } from './interfaces/transformations/Standings';
 import { parseNewsResponse } from './interfaces/transformations/TeamInfo';
 import { parseTransactionResponse } from './interfaces/transformations/Transactions';
 import { Team } from './interfaces/types/Team.types';
@@ -141,26 +141,12 @@ app.get('/:sport/:league/standings', async function(req: Request, res: Response)
         }
     }
 
-    //conference ID numbers for API. 5 and 6 for NBA conferences, 7 and 8 for other 3 leagues
-    const conferenceIDs = league.toUpperCase() == "NBA" ? [5, 6] : [7, 8];
+    const standings = req.query.year ? await parseStandingsResponse(league.toUpperCase(), sport, Number(req.query.year))
+        : await parseStandingsResponse(league.toUpperCase(), sport);
 
-    //the standings data of first conference teams
-    const firstConferenceDivisionStandings: ConferenceStandings = req.query.year ? await parseConferenceStandingsResponse(league.toUpperCase(), sport, conferenceIDs[0], Number(req.query.year))
-    : await parseConferenceStandingsResponse(league.toUpperCase(), sport, conferenceIDs[0]);
+    console.log(standings);
 
-    const secondConferenceDivisionStandings: ConferenceStandings = req.query.year ? await parseConferenceStandingsResponse(league.toUpperCase(), sport, conferenceIDs[1], Number(req.query.year))
-    : await parseConferenceStandingsResponse(league.toUpperCase(), sport, conferenceIDs[1]);
-
-    const firstConferenceStandings: TeamRecord[] = firstConferenceDivisionStandings.divisions.flatMap(division => division.teams);
-
-    const secondConferenceStandings: TeamRecord[] = secondConferenceDivisionStandings.divisions.flatMap(division => division.teams);
-
-    res.render('league_standings', {port: port, sport: sport, league: league.toUpperCase(), 
-        firstConferenceDivisionStandings: firstConferenceDivisionStandings, 
-        secondConferenceDivisionStandings: secondConferenceDivisionStandings,
-        firstConferenceStandings: firstConferenceStandings,
-        secondConferenceStandings: secondConferenceStandings
-    });
+    res.render('league_standings', { port: port, sport: sport, league: league.toUpperCase(), standings: standings });
 })
 
 

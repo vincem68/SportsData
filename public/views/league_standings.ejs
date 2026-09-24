@@ -10,9 +10,7 @@
 
         <%- include ('menu_header') %>
 
-        <div id="class">
-
-        </div>
+        <div class="topSection">
 
             <div id="titleSection">
                 <% if (league == "MLB"){ %>
@@ -33,7 +31,7 @@
                         <div class="form-group">
                             <label for="season">Select Year</label>
                             <select name="season">
-                                <% for (let i = firstConferenceDivisionStandings.maxSeason; i >= 2000; i--){ %>
+                                <% for (let i = standings.maxSeason; i >= 2000; i--){ %>
                                     <option value="<%= i %>"><%= i %></option>
                                 <% } %>
                             </select>
@@ -45,7 +43,7 @@
             </div>
         </div>
 
-        <% if (firstConferenceDivisionStandings.divisions.length == 0){ %>
+        <% if (standings.firstConferenceDivisions[0].teams.length == 0){ %>
             <h2 class="errorMessage">No standings data available at this time.</h2>    
         <% } else { %>
 
@@ -56,7 +54,7 @@
                 <div id="divisionStandingsContainer">
 
                     <div class="divisionByConferenceContainer">
-                        <% firstConferenceDivisionStandings.divisions.forEach(division => { %>
+                        <% standings.firstConferenceDivisions.forEach(division => { %>
 
                             <div class="divisionDiv">
                                 <h4><%= division.name %></h4>
@@ -93,7 +91,7 @@
                     </div>
 
                     <div class="divisionByConferenceContainer">
-                        <% secondConferenceDivisionStandings.divisions.forEach(division => { %>
+                        <% standings.secondConferenceDivisions.forEach(division => { %>
 
                             <div class="divisionDiv">
                                 <h4><%= division.name %></h4>
