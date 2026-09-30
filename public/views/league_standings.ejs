@@ -53,75 +53,82 @@
                 <!--container for the divisions standings portion-->
                 <div id="divisionStandingsContainer">
 
-                    <div class="divisionByConferenceContainer">
+                    <div class="conferenceContainer">
                         <% standings.firstConferenceDivisions.forEach(division => { %>
 
-                            <div class="divisionDiv">
-                                <h4><%= division.name %></h4>
-                                <table>
-                                    <tr>
-                                        <th>Team</th>
-                                        <% division.teams[0].stats.forEach(stat => { %>
-                                            <th>
-                                                <div class="tooltip">
-                                                    <%= stat.abbr %>
-                                                    <span class="tooltip-text">
-                                                        <%= stat.desc %>
-                                                    </span>
-                                                </div>
-                                            </th>
-                                        <% }) %>
-                                    </tr>
+                            <h3 class="divName"><%= division.name %></h3>
+                            <div class="scroll-container">
 
-                                    <% division.teams.forEach(team => { %>
+                                <div class="divisionDiv">
+                                    <table>
                                         <tr>
-                                            <td class="teamTD">
-                                                <img class="teamLogo" src="<%= team.logo %>">
-                                                <%= team.abbr %>
-                                            </td>
-                                            <% team.stats.forEach(stat => { %>
-                                                <td><%= stat.value %></td>
+                                            <th>Team</th>
+                                            <% division.teams[0].stats.forEach(stat => { %>
+                                                <th>
+                                                    <div class="tooltip">
+                                                        <%= stat.abbr %>
+                                                        <span class="tooltip-text">
+                                                            <%= stat.desc %>
+                                                        </span>
+                                                    </div>
+                                                </th>
                                             <% }) %>
                                         </tr>
-                                    <% }) %>
-                                </table>
+
+                                        <% division.teams.forEach(team => { %>
+                                            <tr>
+                                                <td class="teamTD">
+                                                    <img class="teamLogo" src="<%= team.logo %>">
+                                                    <%= team.abbr %>
+                                                </td>
+                                                <% team.stats.forEach(stat => { %>
+                                                    <td><%= stat.value %></td>
+                                                <% }) %>
+                                            </tr>
+                                        <% }) %>
+                                    </table>
+                                </div>
                             </div>
 
                         <% }) %>
                     </div>
 
-                    <div class="divisionByConferenceContainer">
+                    <div class="conferenceContainer">
+                        
                         <% standings.secondConferenceDivisions.forEach(division => { %>
 
-                            <div class="divisionDiv">
-                                <h4><%= division.name %></h4>
-                                <table>
-                                    <tr>
-                                        <th>Team</th>
-                                        <% division.teams[0].stats.forEach(stat => { %>
-                                            <th>
-                                                <div class="tooltip">
-                                                    <%= stat.abbr %>
-                                                    <span class="tooltip-text">
-                                                        <%= stat.desc %>
-                                                    </span>
-                                                </div>
-                                            </th>
-                                        <% }) %>
-                                    </tr>
+                            <h3 class="divName"><%= division.name %></h3>
 
-                                    <% division.teams.forEach(team => { %>
+                            <div class="scroll-container">
+                                <div class="divisionDiv">
+                                    <table>
                                         <tr>
-                                            <td class="teamTD">
-                                                <img class="teamLogo" src="<%= team.logo %>">
-                                                <%= team.abbr %>
-                                            </td>
-                                            <% team.stats.forEach(stat => { %>
-                                                <td><%= stat.value %></td>
+                                            <th>Team</th>
+                                            <% division.teams[0].stats.forEach(stat => { %>
+                                                <th>
+                                                    <div class="tooltip">
+                                                        <%= stat.abbr %>
+                                                        <span class="tooltip-text">
+                                                            <%= stat.desc %>
+                                                        </span>
+                                                    </div>
+                                                </th>
                                             <% }) %>
                                         </tr>
-                                    <% }) %>
-                                </table>
+
+                                        <% division.teams.forEach(team => { %>
+                                            <tr>
+                                                <td class="teamTD">
+                                                    <img class="teamLogo" src="<%= team.logo %>">
+                                                    <%= team.abbr %>
+                                                </td>
+                                                <% team.stats.forEach(stat => { %>
+                                                    <td><%= stat.value %></td>
+                                                <% }) %>
+                                            </tr>
+                                        <% }) %>
+                                    </table>
+                                </div>
                             </div>
 
                         <% }) %>
@@ -131,6 +138,43 @@
 
                 <!--This will be the container div for the overall conference standings-->
                 <div id="conferenceStandingsContainer">
+
+                    <% standings.conferenceStandings.forEach(conf => { %>
+
+                        <div class="conferenceContainer">
+
+                            <h3><%= conf.name %></h3>
+
+                            <table>
+                                <tr>
+                                    <th>Team</th>
+                                    <% conf.teams[0].stats.forEach(stat => { %>
+                                        <th>
+                                            <div class="tooltip">
+                                                <%= stat.abbr %>
+                                                <span class="tooltip-text">
+                                                    <%= stat.desc %>
+                                                </span>
+                                            </div>
+                                        </th>
+                                    <% }) %>
+                                </tr>
+
+                                <% conf.teams.forEach(team => { %>
+                                    <tr>
+                                        <td class="teamTD">
+                                            <img class="teamLogo" src="<%= team.logo %>">
+                                            <%= team.abbr %>
+                                        </td>
+                                        <% team.stats.forEach(stat => { %>
+                                            <td><%= stat.value %></td>
+                                        <% }) %>
+                                    </tr>
+                                <% }) %>
+                            </table>
+                        </div>
+
+                    <% }) %>
 
                 </div>
 

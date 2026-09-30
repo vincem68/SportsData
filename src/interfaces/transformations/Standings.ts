@@ -39,13 +39,13 @@ export async function parseStandingsResponse(league: string, sport: string, seas
         maxSeason: confStandings.seasons[0].year,
 
         firstConferenceDivisions: firstConfDivisionStandings.children[0].standings.entries ?
-            parseStandingsByGroup(firstConfDivisionStandings.children) : [],
+            parseStandingsByGroup(firstConfDivisionStandings.children, sport) : [],
 
         secondConferenceDivisions: secondConfDivisionStandings.children[0].standings.entries ?
-            parseStandingsByGroup(secondConfDivisionStandings.children) : [],
+            parseStandingsByGroup(secondConfDivisionStandings.children, sport) : [],
 
         conferenceStandings: confStandings.children[0].standings.entries ?
-            parseStandingsByGroup(confStandings.children) : []
+            parseStandingsByGroup(confStandings.children, sport) : []
     }
 }
 
@@ -54,23 +54,32 @@ export async function parseStandingsResponse(league: string, sport: string, seas
  * helper function to minimize code and parse the division standings data into what we want
  * @param groups group data for each division
  */
-function parseStandingsByGroup(groups: Group[]) {
+function parseStandingsByGroup(groups: Group[], sport: string) {
 
-    const statsOrder = [
-        "total",
-        "gamesbehind",
-        "playoffseed",
-        "streak",
-        "winpercent",
-        "differential",
-        "pointsfor",
-        "pointsagainst",
-        "divisionrecord",
-        "divisionwins",
-        "divisionlosses",
-        "home",
-        "road",
-        "vsconf"
+    const statsOrder = sport == "football" ? [
+
+        "total", "gamesbehind", "playoffseed", "streak", "winpercent", "differential", "pointsfor", "pointsagainst",
+        "divisionrecord", "divisionwins", "divisionlosses", "home", "road", "vsconf"
+
+    ] : sport == "hockey" ? [
+
+        "total", "playoffseed", "gamesplayed", "gamesbehind", "streak", "lasttengames", "regwins", "reglosses", 
+        "overtimewins", "overtimelosses", "rotwins", "rotlosses", "shootoutwins", "shootoutlosses", "home", 
+        "road", "vsdiv", "differential", "pointsfor", "pointsagainst"
+
+    ] : sport == "baseball" ? [
+
+        "total", "winpercent", "playoffseed", "gamesbehind", "streak", "lasttengames", "playoffpercent", "leaguewinpercent", 
+        "divisionpercent", "wildcardpercent", "magicnumberdivision", "magicnumberwildcard",
+        "otwins", "otlosses", "home", "road", "intradivision", "intraleague", "differential", "pointsfor", "pointsagainst",
+        "avgpointsfor", "avgpointsagainst" 
+
+    ] : [
+
+        "total", "playoffseed", "gamesahead", "gamesbehind", "streak", "leaguewinpercent", 
+        "home", "road", "vsdiv", "vsconf", "differential", "pointsfor", "pointsagainst", "avgpointsfor",
+        "avgpointsagainst"
+
     ];
 
     return groups.map(group => { //groups are either division or conference
@@ -81,16 +90,16 @@ function parseStandingsByGroup(groups: Group[]) {
 
             teams: group.standings.entries.map(team => { //for each team in group
 
-                let clinched = "";
-
-                //if a team has clinched a postseason spot or division, or eliminated, bonus stat entry will be at the front
-                if (team.stats[0].shortDisplayName && team.stats[0].shortDisplayName == "CLINCH"){
-                    clinched = " - " + team.stats[0].displayValue;
+                //if a team has clinched a postseason spot or division, or eliminated, will be bonus entry
+                const clinched = team.stats.find(stat => stat.type == "clincher");
+                if (clinched){
+                    team.team.abbreviation += " - " + clinched.displayValue;
                 }
 
                 const orderedStats: Stats[] = []; //empty array to put parsed and sorted data into
                 statsOrder.forEach(type => { //for each picked statistic we want above
                     const data = team.stats.find(stat => stat.type == type); //find the stat. Should exist
+                    console.log(type);
                     const parsedData = {
                         abbr: data!.abbreviation ? data!.abbreviation : data!.shortDisplayName!,
                         desc: data!.description ? data!.description : "Overall Record",
@@ -102,12 +111,12 @@ function parseStandingsByGroup(groups: Group[]) {
                 orderedStats[0].abbr = "Record"; //rename overall record stat from any to record
 
                 return {
-                    abbr: team.team.abbreviation + (clinched != "" ? clinched : ""), //if clinched, put it next to team abbr
+                    abbr: team.team.abbreviation, //if clinched, put it next to team abbr
                     logo: team.team.logos[0].href,
                     stats: orderedStats
                 }
 
-            }).sort((a, b) => Number(a.stats[2].value) - Number(b.stats[2].value)) //sort to make sure teams are in right order
+            }).sort((a, b) => Number(b.stats.find(val => val.abbr == "PCT")!.value) - Number(a.stats.find(val => val.abbr == "PCT")!.value)) //sort to make sure teams are in right order
         }
     })
 }
