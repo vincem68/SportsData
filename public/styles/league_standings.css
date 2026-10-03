@@ -1,34 +1,53 @@
 @import "general_styles/general_styles.css";
 @import "general_styles/table_styles.css";
+@import "general_styles/form_styles.css";
 
 .teamLogo {
     height: 50px;
     width: 50px;
 }
 
-#basicStandingsDiv {
+#standingsDiv {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: center;
 }
 
-.conferenceDiv {
-    align-items: center;
+#divisionStandingsContainer {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    margin: 10px;
+}
+
+.conferenceContainer {
     display: flex;
     flex-direction: column;
-    margin: 50px
+    width: 50%;
+}
+
+.scroll-container {
+    overflow-x: auto;
 }
 
 .teamTD {
     display: flex;
+    left: 0px;
     flex-direction: row;
     align-items: center;
+    position: sticky;
+    z-index: 2;
 }
 
 #overallStandingsDiv {
     display: flex;
     flex-direction: row;
     justify-content: center;
+}
+
+.divisionDiv {
+    margin: 20px;
+    max-width: 800px;
 }
 
 #titleSection {
@@ -44,14 +63,6 @@
     max-width: 200px;
 }
 
-.playoffs td {
-    background-color: lightgreen;
-}
-
-.wildcard td {
-    background-color: lightyellow;
-}
-
-.nonplayoffTeam td {
-    background-color: lightgray;
+.divName {
+    text-align: center;
 }

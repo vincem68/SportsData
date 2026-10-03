@@ -1,4 +1,5 @@
-import { StandingsResponse, LeagueStandings, TeamRecord } from "../types/Standings.types";
+import { takeCoverage } from "v8";
+import type { StandingsResponse, Standings, Group, Stats } from "../types/Standings.types";
 
 
 /**
@@ -8,125 +9,114 @@ import { StandingsResponse, LeagueStandings, TeamRecord } from "../types/Standin
  * @param league string name of the league
  * @returns an object of LeagueStandings tha contains all the necessary data for the file rendering
  */
-export async function parseStandingsResponse(league: string, sport: string, teamIDs: string[]): Promise<LeagueStandings> {
+export async function parseStandingsResponse(league: string, sport: string, season?: number): Promise<Standings> {
 
-    const endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league.toLowerCase()}/teams/`;
+    //conference ID numbers for API. 5 and 6 for NBA conferences, 7 and 8 for other 3 leagues
+    const conferenceIDs = league == "NBA" ? [5, 6] : [7, 8];
 
     //check to see if the data is available. If not, return empty object
-    const testResponse = await (await fetch(endpoint + teamIDs[0])).json();
-    if (testResponse.team.record.items === undefined){
-        return {};
+    const firstConfDivisionStandings: StandingsResponse = await (
+        await fetch(
+            `https://site.api.espn.com/apis/v2/sports/${sport}/${league.toLowerCase()}/standings?group=${conferenceIDs[0]}` + (season ? `&season=${season}` : "")
+        )
+    ).json();
+
+    const secondConfDivisionStandings: StandingsResponse = await (
+        await fetch(
+            `https://site.api.espn.com/apis/v2/sports/${sport}/${league.toLowerCase()}/standings?group=${conferenceIDs[1]}` + (season ? `&season=${season}` : "")
+        )
+    ).json();
+
+    const confStandings: StandingsResponse = await (
+        await fetch(
+            `https://site.api.espn.com/apis/v2/sports/${sport}/${league.toLowerCase()}/standings` + (season ? `?season=${season}` : "")
+        )
+    ).json();
+
+    return {
+
+        currentSeason: confStandings.season.year,
+        maxSeason: confStandings.seasons[0].year,
+
+        firstConferenceDivisions: firstConfDivisionStandings.children[0].standings.entries ?
+            parseStandingsByGroup(firstConfDivisionStandings.children, sport) : [],
+
+        secondConferenceDivisions: secondConfDivisionStandings.children[0].standings.entries ?
+            parseStandingsByGroup(secondConfDivisionStandings.children, sport) : [],
+
+        conferenceStandings: confStandings.children[0].standings.entries ?
+            parseStandingsByGroup(confStandings.children, sport) : []
     }
-
-    //fetch the data for each team in the league and store it in an array of TeamRecord objects
-    const teamStandings: TeamRecord[] = await Promise.all(teamIDs.map(teamID => fetchTeamData(endpoint, teamID, league)));
-
-    const firstConferenceDivisions = //the division names in the first conference of league
-        (league == "NFL") ? ["AFC East", "AFC North", "AFC South", "AFC West"] 
-        : (league == "NBA") ? ["Atlantic", "Central", "Southeast"] 
-        : (league == "NHL") ? ["Atlantic", "Metropolitan"] 
-        : ["AL East", "AL Cent", "AL West"];
-
-    const secondConferenceDivisions = //the division names in the second conference of league
-        (league == "NFL") ? ["NFC East", "NFC North", "NFC South", "NFC West"] 
-        : (league == "NBA") ? ["Northwest", "Pacific", "Southwest"] 
-        : (league == "NHL") ? ["Central", "Pacific"] 
-        : ["NL East", "NL Cent", "NL West"];
-
-    return { //this will be the returned data from this function which will be used to render the standings file
-
-        firstConferenceDivisions: firstConferenceDivisions,
-        
-        secondConferenceDivisions: secondConferenceDivisions,
-        //the conference names depend on the league, so we set them based on the league parameter
-        firstConferenceName:
-            (league == "NFL") ? "AFC"
-            : (league == "MLB") ? "American League"
-            : "Eastern Conference",
-        //the conference names depend on the league, so we set them based on the league parameter
-        secondConferenceName:
-            (league == "NFL") ? "NFC" 
-            : (league == "MLB") ? "National League" 
-            : "Western Conference",
-        //filtered teams in first conference sorted by their playoff seed
-        firstConferenceTeams: (teamStandings[0].standingSummary) 
-            ? teamStandings.filter(team => firstConferenceDivisions.some(division => team.standingSummary!.includes(division)))
-            .sort((a, b) => a.playoffSeed - b.playoffSeed) : undefined,
-        //filtered teams in second conference sorted by their playoff seed
-        secondConferenceTeams: (teamStandings[0].standingSummary) 
-            ? teamStandings.filter(team =>secondConferenceDivisions.some(division => team.standingSummary!.includes(division)))
-            .sort((a, b) => a.playoffSeed - b.playoffSeed) : undefined,
-    };
 }
 
 
 /**
- * 
- * @param endpoint base endpoint where we will send requests to for each team's standing data. Just add team abbr at end
- * @param teamID string which is the team's shorthand abbreviation (e.g. "NYG" for New York Giants) which we will use to send request to get the team's data
- * @returns a promise that resolves to a TeamRecord object which contains the team's record data and other relevant info we need to render the standings file
+ * helper function to minimize code and parse the division standings data into what we want
+ * @param groups group data for each division
  */
-async function fetchTeamData(endpoint: string, teamID: string, league: string): Promise<TeamRecord> {
+function parseStandingsByGroup(groups: Group[], sport: string) {
 
-    const teamData: TeamRecord = await fetch(endpoint + teamID)
-        .then(res => res.json())
-        .then(data => data as StandingsResponse)
-        .then(teamData => {
-            return {
-                abbreviation: teamData.team.abbreviation,
-                logo: teamData.team.logos[0].href,
-                gamesPlayed: teamData.team.record.items[0].stats.find(stat => stat.name === "gamesPlayed")?.value || 0,
-                playoffSeed: teamData.team.record.items[0].stats.find(stat => stat.name === "playoffSeed")?.value || 0,
-                wins: teamData.team.record.items[0].stats.find(stat => stat.name === "wins")?.value || 0,
-                losses: teamData.team.record.items[0].stats.find(stat => stat.name === "losses")?.value || 0,
-                ties: teamData.team.record.items[0].stats.find(stat => stat.name === "ties")?.value,
-                otLosses: teamData.team.record.items[0].stats.find(stat => stat.name === "otLosses")?.value,
-                points: teamData.team.record.items[0].stats.find(stat => stat.name === "points")?.value,
-                winPercent: teamData.team.record.items[0].stats.find(stat => stat.name === "winPercent")?.value,
-                standingSummary: teamData.team.standingSummary,
-                nhlDivisionStandings: (league == "NHL" && teamData.team.standingSummary) ? teamData.team.standingSummary[0] : undefined,
-                playoffState: 
-                    (league == "NHL" && teamData.team.standingSummary) ?
-                    getPlayoffState(teamData.team.record.items[0].stats.find(stat => stat.name === "playoffSeed")!.value, league, teamData.team.standingSummary[0])
-                    : getPlayoffState(teamData.team.record.items[0].stats.find(stat => stat.name === "playoffSeed")!.value, league)
-                    
-            } as TeamRecord;
-        })
-        .catch(err => {
-            console.error(`Error fetching data for team ${teamID}:`, err);
-            throw err;
-        });
-    return teamData;
-}
+    const statsOrder = sport == "football" ? [
 
-function getPlayoffState(playoffSeed: number, league: string, nhlSeed?: string): string | undefined {
+        "total", "gamesbehind", "playoffseed", "streak", "winpercent", "differential", "pointsfor", "pointsagainst",
+        "divisionrecord", "divisionwins", "divisionlosses", "home", "road", "vsconf"
 
-    if (playoffSeed == 0) return undefined; //if playoff seed is undefined, we can't determine playoff state, so return undefined
+    ] : sport == "hockey" ? [
 
-    const playoffSeedCutoff = (league: string) => {
-        if (league === "NFL") return 4;
-        if (league === "NBA") return 6;
-        if (league === "MLB") return 3;
-        return 0; //default case, should not happen
-    };
+        "total", "playoffseed", "gamesplayed", "gamesbehind", "streak", "lasttengames", "regwins", "reglosses", 
+        "overtimewins", "overtimelosses", "rotwins", "rotlosses", "shootoutwins", "shootoutlosses", "home", 
+        "road", "vsdiv", "differential", "pointsfor", "pointsagainst"
 
-    const wildcardSeedCutoff = (league: string) => {
-        if (league === "NFL") return 7;
-        if (league === "NBA") return 10;
-        if (league === "NHL") return 8;
-        if (league === "MLB") return 6;
-        return 0; //default case, should not happen
-    }
+    ] : sport == "baseball" ? [
 
-    if (league === "NHL" && Number(nhlSeed) <= 3){
-        return "playoffs";
-    }
+        "total", "winpercent", "playoffseed", "gamesbehind", "streak", "lasttengames", "playoffpercent", "leaguewinpercent", 
+        "divisionpercent", "wildcardpercent", "magicnumberdivision", "magicnumberwildcard",
+        "otwins", "otlosses", "home", "road", "intradivision", "intraleague", "differential", "pointsfor", "pointsagainst",
+        "avgpointsfor", "avgpointsagainst" 
 
-    if (playoffSeed <= playoffSeedCutoff(league)) {
-        return "playoffs";
-    }
+    ] : [
 
-    if (playoffSeed <= wildcardSeedCutoff(league)) {
-        return "wildcard";
-    }
+        "total", "playoffseed", "gamesahead", "gamesbehind", "streak", "leaguewinpercent", 
+        "home", "road", "vsdiv", "vsconf", "differential", "pointsfor", "pointsagainst", "avgpointsfor",
+        "avgpointsagainst"
+
+    ];
+
+    return groups.map(group => { //groups are either division or conference
+
+        return {
+
+            name: group.name,
+
+            teams: group.standings.entries.map(team => { //for each team in group
+
+                //if a team has clinched a postseason spot or division, or eliminated, will be bonus entry
+                const clinched = team.stats.find(stat => stat.type == "clincher");
+                if (clinched){
+                    team.team.abbreviation += " - " + clinched.displayValue;
+                }
+
+                const orderedStats: Stats[] = []; //empty array to put parsed and sorted data into
+                statsOrder.forEach(type => { //for each picked statistic we want above
+                    const data = team.stats.find(stat => stat.type == type); //find the stat. Should exist
+                    console.log(type);
+                    const parsedData = {
+                        abbr: data!.abbreviation ? data!.abbreviation : data!.shortDisplayName!,
+                        desc: data!.description ? data!.description : "Overall Record",
+                        value: data!.displayValue
+                    }
+                    orderedStats.push(parsedData);
+                })
+
+                orderedStats[0].abbr = "Record"; //rename overall record stat from any to record
+
+                return {
+                    abbr: team.team.abbreviation, //if clinched, put it next to team abbr
+                    logo: team.team.logos[0].href,
+                    stats: orderedStats
+                }
+
+            }).sort((a, b) => Number(b.stats.find(val => val.abbr == "PCT")!.value) - Number(a.stats.find(val => val.abbr == "PCT")!.value)) //sort to make sure teams are in right order
+        }
+    })
 }

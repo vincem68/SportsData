@@ -1,60 +1,85 @@
-
 export interface StandingsResponse {
-  team: Team
-}
 
-interface Team {
   abbreviation: string
-  color: string
-  logos: Logo[]
-  record: Record
-  standingSummary: string
-}
-
-interface Logo {
-  href: string
-}
-
-interface Record {
-  items: Item[]
-}
-
-interface Item {
-  summary: string
-  stats: Stat[]
-  description?: string
-}
-
-interface Stat {
   name: string
-  value: number
+
+  season: {
+    year: number
+  }
+
+  seasons: {
+    year: number
+  }[]
+
+  children: Group[]
 }
 
+export interface Group {
+
+  name: string
+
+  standings: {
+
+    entries: {
+
+      team: {
+
+        abbreviation: string
+        name: string
+
+        logos: {
+          href: string
+        }[]
+      }
+
+      stats: {
+        type: string
+        abbreviation?: string
+        shortDisplayName?: string
+        description?: string
+        displayValue: string
+      }[]
+    }[]
+  }
+}
+
+export interface Standings {
+
+  currentSeason: number
+  maxSeason: number
+
+  //array of first conf division teams
+  firstConferenceDivisions: {
+
+    name: string //division name
+    teams: TeamRecord[] //divison team
+  }[]
+
+  //array of second conf division teams 
+  secondConferenceDivisions: {
+
+    name: string
+    teams: TeamRecord[]
+  }[]
+
+  conferenceStandings: {
+
+    name: string
+    teams: TeamRecord[]
+  }[]
+
+}
 
 export interface TeamRecord {
-    abbreviation: string
-    logo: string;
-    gamesPlayed: number
-    playoffSeed: number
-    wins: number
-    losses: number
-    ties?: number
-    otLosses?: number
-    points?: number
-    winPercent?: number
-    standingSummary?: string
-    nhlDivisionStanding?: string
-    playoffState?: string
+  
+  abbr: string
+  logo: string
+
+  stats: Stats[]
 }
 
-
-export interface LeagueStandings {
-
-  firstConferenceName?: string //name of first conference
-  secondConferenceName?: string //name of second conference
-  firstConferenceDivisions?: string[] //array names of divisions in first conference 
-  secondConferenceDivisions?: string[] // array names of divisions in second conference
-  firstConferenceTeams?: TeamRecord[] //array of team records for teams in first conference, should be sorted by playoff seed already
-  secondConferenceTeams?: TeamRecord[] //array of team records for teams in second conference, should be sorted by playoff seed already
-
+export interface Stats {
+  abbr: string
+  desc: string
+  value: string
 }

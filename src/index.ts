@@ -9,7 +9,7 @@ import gameRoutes from './routes/games';
 //interfaces
 import type { LeagueStats } from './interfaces/types/LeagueStats.types';
 import type { News } from './interfaces/types/News.types';
-import type { LeagueStandings } from './interfaces/types/Standings.types';
+import type { Standings, TeamRecord } from './interfaces/types/Standings.types';
 import type { BasicPlayerStats, PlayerSplits, PlayerStatsOverview } from './interfaces/types/PlayerStats.types';
 import type { Transactions } from './interfaces/types/Transactions.types';
 
@@ -20,6 +20,7 @@ import { parseLeaderData } from './interfaces/transformations/Leaders';
 import { parseStandingsResponse } from './interfaces/transformations/Standings';
 import { parseNewsResponse } from './interfaces/transformations/TeamInfo';
 import { parseTransactionResponse } from './interfaces/transformations/Transactions';
+import { Team } from './interfaces/types/Team.types';
 
 
 const app = express();
@@ -125,20 +126,27 @@ app.get('/:sport/:league/standings', async function(req: Request, res: Response)
 
     const sport = req.params.sport;
     const league = req.params.league;
+
     //check request params
     if (!checkRequestParams(sport, league)){
         res.status(400).send("Invalid sport or league");
         return;
     }
 
-    //get correct team array that contains string values of the team abbreviations
-    const teamIDs = (league.toUpperCase() == "NFL") ? nflTeams : (league.toUpperCase() == "NBA") ? nbaTeams :
-        (league.toUpperCase() == "MLB") ? mlbTeams : nhlTeams;
+    //get the current year to use in case query params aren't provided
+    if (req.query.season !== undefined){
+        if (isNaN(Number(req.query.season))){
+            res.status(400).send("Invalid query params");
+            return;
+        }
+    }
 
-    //the standings data of all the teams
-    const teamStandings: LeagueStandings = await parseStandingsResponse(league.toUpperCase(), sport, teamIDs);
+    const standings = req.query.season ? await parseStandingsResponse(league.toUpperCase(), sport, Number(req.query.season))
+        : await parseStandingsResponse(league.toUpperCase(), sport);
 
-    res.render('league_standings', {port: port, sport: sport, league: league.toUpperCase(), teamStandings: teamStandings});
+    console.log(standings);
+
+    res.render('league_standings', { port: port, sport: sport, league: league.toUpperCase(), standings: standings });
 })
 
 
