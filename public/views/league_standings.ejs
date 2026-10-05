@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <% if (standings.firstConferenceDivisions[0].teams.length == 0){ %>
+        <% if (!standings.firstConferenceDivisions){ %>
             <h2 class="errorMessage">No standings data available at this time.</h2>    
         <% } else { %>
 

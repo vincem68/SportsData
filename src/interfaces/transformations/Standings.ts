@@ -21,6 +21,14 @@ export async function parseStandingsResponse(league: string, sport: string, seas
         )
     ).json();
 
+    //check to see if the season has begun yet, if not, return just season list and current season
+    if (!firstConfDivisionStandings.children[0].standings.entries[0].stats.find(stat => stat.type == "total")){
+        return {
+            currentSeason: firstConfDivisionStandings.season.year,
+            maxSeason: firstConfDivisionStandings.seasons[0].year
+        }
+    }
+
     const secondConfDivisionStandings: StandingsResponse = await (
         await fetch(
             `https://site.api.espn.com/apis/v2/sports/${sport}/${league.toLowerCase()}/standings?group=${conferenceIDs[1]}` + (season ? `&season=${season}` : "")
@@ -63,7 +71,7 @@ function parseStandingsByGroup(groups: Group[], sport: string) {
 
     ] : sport == "hockey" ? [
 
-        "total", "playoffseed", "gamesplayed", "gamesbehind", "streak", "lasttengames", "regwins", "reglosses", 
+        "total", "points", "playoffseed", "gamesplayed", "gamesbehind", "streak", "lasttengames", "regwins", "reglosses", 
         "overtimewins", "overtimelosses", "rotwins", "rotlosses", "shootoutwins", "shootoutlosses", "home", 
         "road", "vsdiv", "differential", "pointsfor", "pointsagainst"
 
@@ -76,7 +84,7 @@ function parseStandingsByGroup(groups: Group[], sport: string) {
 
     ] : [
 
-        "total", "playoffseed", "gamesahead", "gamesbehind", "streak", "leaguewinpercent", 
+        "total", "winpercent", "playoffseed", "gamesahead", "gamesbehind", "streak", 
         "home", "road", "vsdiv", "vsconf", "differential", "pointsfor", "pointsagainst", "avgpointsfor",
         "avgpointsagainst"
 
@@ -97,9 +105,11 @@ function parseStandingsByGroup(groups: Group[], sport: string) {
                 }
 
                 const orderedStats: Stats[] = []; //empty array to put parsed and sorted data into
+                //console.log(team.stats);
                 statsOrder.forEach(type => { //for each picked statistic we want above
                     const data = team.stats.find(stat => stat.type == type); //find the stat. Should exist
                     console.log(type);
+                    //console.log(data);
                     const parsedData = {
                         abbr: data!.abbreviation ? data!.abbreviation : data!.shortDisplayName!,
                         desc: data!.description ? data!.description : "Overall Record",
@@ -109,6 +119,9 @@ function parseStandingsByGroup(groups: Group[], sport: string) {
                 })
 
                 orderedStats[0].abbr = "Record"; //rename overall record stat from any to record
+                if (sport == "hockey"){
+                    orderedStats[0].value = orderedStats[0].value.substring(0, orderedStats[0].value.indexOf(','));
+                }
 
                 return {
                     abbr: team.team.abbreviation, //if clinched, put it next to team abbr
@@ -116,7 +129,10 @@ function parseStandingsByGroup(groups: Group[], sport: string) {
                     stats: orderedStats
                 }
 
-            }).sort((a, b) => Number(b.stats.find(val => val.abbr == "PCT")!.value) - Number(a.stats.find(val => val.abbr == "PCT")!.value)) //sort to make sure teams are in right order
+            }).sort((a, b) => (sport != "hockey") ? Number(b.stats.find(val => val.abbr == "PCT")!.value) - Number(a.stats.find(val => val.abbr == "PCT")!.value)
+                :  Number(b.stats.find(val => val.abbr == "PTS")!.value) - Number(a.stats.find(val => val.abbr == "PTS")!.value)) //sort to make sure teams are in right order
         }
-    })
+    });
+
+    
 }

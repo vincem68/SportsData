@@ -49,20 +49,20 @@ export interface Standings {
   maxSeason: number
 
   //array of first conf division teams
-  firstConferenceDivisions: {
+  firstConferenceDivisions?: {
 
     name: string //division name
     teams: TeamRecord[] //divison team
   }[]
 
   //array of second conf division teams 
-  secondConferenceDivisions: {
+  secondConferenceDivisions?: {
 
     name: string
     teams: TeamRecord[]
   }[]
 
-  conferenceStandings: {
+  conferenceStandings?: {
 
     name: string
     teams: TeamRecord[]
