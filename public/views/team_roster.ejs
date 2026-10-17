@@ -2,7 +2,7 @@
 
 <html>
     <head>
-        <title><%= data.team.name %></title>
+        <title><%= rosterData.team.name %></title>
         <link rel="stylesheet" href="/styles/roster.css">
     </head>
     <body>
@@ -12,81 +12,164 @@
         <div id = 'teamTitleDiv'> <!--Shows the general info of the team-->
 
             <div>
-                <img id="teamLogo" src="<%= data.team.logo %>" alt="Logo of <%= data.team.name %>">
-                <h1><%= data.team.name %></h1>
+                <img id="teamLogo" src="<%= rosterData.team.logo %>" alt="Logo of <%= rosterData.team.name %>">
+                <h1><%= rosterData.team.name %></h1>
             </div>
             <div>
-                <h2><%= data.season.name %> Season</h2>
-                <h3>Head Coach: <% if (data.coach){ %> <%= data.coach %> <% } else { %> Vacant <% } %></h3>
-                <% if (data.team.record !== undefined || data.team.standings !== undefined){ %>
-                    <h3>Season Record: <%= data.team.record %>, <%= data.team.standings %></h3>
+                <h2><%= rosterData.season.name %> Season</h2>
+                <h3>Head Coach: <% if (rosterData.coach){ %> <%= rosterData.coach %> <% } else { %> Vacant <% } %></h3>
+                <% if (rosterData.team.record !== undefined || rosterData.team.standings !== undefined){ %>
+                    <h3>Season Record: <%= rosterData.team.record %>, <%= rosterData.team.standings %></h3>
                 <% } %>
             </div>
         </div>
 
-        <div id="rosterDiv">
+        <div id="data-container">
 
-            <% data.groups.forEach(group => { %>
+            <% if (sport != "hockey"){ %>
+                <div id="button-container">
 
-                <% if (league !== "NBA"){ %> <!--This will show the position name. Not for basketball since rosters aren't divided-->
-                    <h2 class="importantHeadline"><%= group.name %></h2>
-                <% } %>
+                    <button id="rosterBtn">Roster</button>
 
-                <div class="catDiv">
-
-                    <table>
-
-                        <tr>
-                            <th>Player</th>
-                            <th>Position</th>
-                            <th>Jersey No.</th>
-                            <% if (league == "MLB"){ %>
-                                <th>Bats</th>
-                                <th>Throws</th>
-                            <% } %>
-                            <th>Age</th>
-                            <th>Weight</th>
-                            <th>Height</th>
-                            <th>Years Exp.</th>
-                            <th>Status</th>
-                            <th>Player Page</th>
-                        </tr>
-
-                        <% group.athletes.forEach(athlete => { %>
-
-                            <tr>
-                                <td class="imgTD">
-                                    <img class="headshot" src="<%= athlete.headshot %>">
-                                    <%= athlete.fullName %>
-                                </td>
-                                <td><%= athlete.position.abbr %></td>
-                                <td><%= athlete.jersey %></td>
-                                <% if (league == "MLB"){ %>
-                                    <td><%= athlete.bats %></td>
-                                    <td><%= athlete.throws %></td>
-                                <% } %>
-                                <td><%= athlete.age %></td>
-                                <td><%= athlete.weight %></td>
-                                <td><%= athlete.height %></td>
-                                <td><%= athlete.yearsExperience %></td>
-                                <% const tdClass = athlete.status != "Active" ? "imgTD" : ""; %>
-                                <td class="<%= tdClass %>">
-                                    <% if (athlete.status != "Active"){ %>
-                                        <img class="injuredImg" src="/images/injured_symbol.png">
-                                    <% } %>
-                                    <%= athlete.status %></td>
-                                <td>
-                                    <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/player/<%= athlete.id %>">
-                                        Player Stats
-                                    </a>
-                                </td>
-                            </tr>
-
-                        <% }) %>
-                    </table>
+                    <button id="depthChartBtn">Depth Chart</button>
 
                 </div>
-            <% }) %>
+            <% } %>
+
+        
+            <div id="rosterDiv">
+
+                <% rosterData.groups.forEach(group => { %>
+
+                    <% if (league !== "NBA"){ %> <!--This will show the position name. Not for basketball since rosters aren't divided-->
+                        <h2 class="importantHeadline"><%= group.name %></h2>
+                    <% } %>
+
+                    <div class="catDiv">
+
+                        <table>
+
+                            <tr>
+                                <th>Player</th>
+                                <th>Position</th>
+                                <th>Jersey No.</th>
+                                <% if (league == "MLB"){ %>
+                                    <th>Bats</th>
+                                    <th>Throws</th>
+                                <% } %>
+                                <th>Age</th>
+                                <th>Weight</th>
+                                <th>Height</th>
+                                <th>Years Exp.</th>
+                                <th>Status</th>
+                                <th>Player Page</th>
+                            </tr>
+
+                            <% group.athletes.forEach(athlete => { %>
+
+                                <tr>
+                                    <td class="imgTD">
+                                        <img class="headshot" src="<%= athlete.headshot %>">
+                                        <%= athlete.fullName %>
+                                    </td>
+                                    <td><%= athlete.position.abbr %></td>
+                                    <td><%= athlete.jersey %></td>
+                                    <% if (league == "MLB"){ %>
+                                        <td><%= athlete.bats %></td>
+                                        <td><%= athlete.throws %></td>
+                                    <% } %>
+                                    <td><%= athlete.age %></td>
+                                    <td><%= athlete.weight %></td>
+                                    <td><%= athlete.height %></td>
+                                    <td><%= athlete.yearsExperience %></td>
+                                    <% const tdClass = athlete.status != "Active" ? "imgTD" : ""; %>
+                                    <td class="<%= tdClass %>">
+                                        <% if (athlete.status != "Active"){ %>
+                                            <img class="injuredImg" src="/images/injured_symbol.png">
+                                        <% } %>
+                                        <%= athlete.status %></td>
+                                    <td>
+                                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/player/<%= athlete.id %>">
+                                            Player Stats
+                                        </a>
+                                    </td>
+                                </tr>
+
+                            <% }) %>
+                        </table>
+
+                    </div>
+                <% }) %>
+            </div>
         </div>
+
+        <div id="depthChartDiv">
+
+            <% depthChartData.categories.forEach(cat => { %>
+
+                <h3><%= cat.name %></h3>
+
+                <table>
+                    <tr>
+                        <th>Position</th>
+                        <% for (let i = 1; i <= cat.maxColLength; i++){ %>
+                            <th><%= i %></th>
+                        <% } %>
+                    </tr>
+
+                    <% cat.positions.forEach(pos => { %>
+                        <tr>
+                            <td>
+                                <div class="tooltip">
+                                    <strong><%= pos.abbr %></strong>
+                                    <span class="tooltip-text">
+                                        <%= pos.name %>
+                                    </span>
+                                </div>
+                            </td>
+                            <% pos.athletes.forEach(athlete => { %>
+                                <td><%= athlete.name %></td>
+                            <% }) %>
+
+                            <!--Empty cells-->
+                            <% for (let i = pos.athletes.length; i < cat.maxColLength; i++){ %>
+                                <td></td>
+                            <% } %>
+                        </tr>
+                    <% }) %>
+                </table>
+
+            <% }) %>
+
+        </div>
+
+        <script>
+
+            const depthChartBtn = document.getElementById('depthChartBtn');
+            const rosterBtn = document.getElementById('rosterBtn')
+
+            document.getElementById('depthChartDiv').style.display = 'none';
+
+            rosterBtn.disabled = true;
+
+            function toggleRoster(){
+                document.getElementById('rosterDiv').style.display = 'flex';
+                document.getElementById('depthChartDiv').style.display = 'none';
+                depthChartBtn.disabled = false;
+                rosterBtn.disabled = true;
+            }
+
+            function toggleDepthChart(){
+                document.getElementById('rosterDiv').style.display = 'none';
+                document.getElementById('depthChartDiv').style.display = 'flex';
+                depthChartBtn.disabled = true;
+                rosterBtn.disabled = false;
+            }
+
+            depthChartBtn.addEventListener('click', toggleDepthChart);
+            rosterBtn.addEventListener('click', toggleRoster);
+
+        </script>
+
     </body>
 </html>

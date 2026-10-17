@@ -48,7 +48,7 @@ export async function parseRosterData(league: string, sport: string, team: strin
                             name: athlete.position.displayName, 
                             abbr: athlete.position.abbreviation
                         },
-                        yearsExperience: athlete.experience.years,
+                        yearsExperience: athlete.experience ? athlete.experience.years : 0,
                         headshot: athlete.headshot ? athlete.headshot.href : "/images/default_headshot.png",
                         status: athlete.injuries.length > 0 ? athlete.injuries[0].status : athlete.status.name,
                         bats: league == "MLB" ? athlete.bats!.abbreviation : undefined,
@@ -75,7 +75,7 @@ export async function parseRosterData(league: string, sport: string, team: strin
                             name: athlete.position.displayName, 
                             abbr: athlete.position.abbreviation
                         },
-                        yearsExperience: athlete.experience.years,
+                        yearsExperience: athlete.experience ? athlete.experience.years : 0,
                         headshot: athlete.headshot ? athlete.headshot.href : "/images/default_headshot.png",
                         status: athlete.injuries.length > 0 ? athlete.injuries[0].status : athlete.status.name,
                     }

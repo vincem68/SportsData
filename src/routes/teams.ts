@@ -11,6 +11,7 @@ import type { NFLSchedule } from '../interfaces/types/NFLSchedules.types';
 import type { Calendar } from '../interfaces/types/Calendar.types';
 import type { PostseasonSchedule } from '../interfaces/types/PostseasonSeries.types';
 import type { RosterData } from '../interfaces/types/Roster.types';
+import type { DepthChart } from '../interfaces/types/DepthChart.types';
 
 import { parseNFLScheduleResponse } from '../interfaces/transformations/NFLSchedules';
 import { parseTeamStatsResponse } from '../interfaces/transformations/TeamStats';
@@ -19,6 +20,7 @@ import { parseCalendarResponse } from '../interfaces/transformations/Calendar';
 import { parsePostseasonScheduleResponse } from '../interfaces/transformations/PostseasonSeries';
 import { parseRosterData } from '../interfaces/transformations/Roster';
 import { parseTeamInfoResponse, parseNewsResponse } from '../interfaces/transformations/TeamInfo';
+import { parseDepthChartResponse } from '../interfaces/transformations/DepthChart';
 
 const router = Router({ mergeParams: true });
 
@@ -38,7 +40,12 @@ router.get('/:team/roster', async function(req: Request, res: Response){
 
     const rosterData: RosterData = await parseRosterData(league.toUpperCase(), sport, team);
 
-    res.render('team_roster', {port: port, league: league, sport: sport, team: team, data: rosterData});
+    const depthChartData: DepthChart | null = sport != "hockey" ? 
+        await parseDepthChartResponse(league.toLowerCase(), sport, team) : null;
+
+    res.render('team_roster', {port: port, league: league, sport: sport, team: team, rosterData: rosterData,
+        depthChartData: depthChartData
+    });
 })
 
 /**

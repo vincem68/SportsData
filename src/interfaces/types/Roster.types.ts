@@ -36,7 +36,7 @@ export interface NBA_Player { //for the NBA rosters. There's no positions listed
         abbreviation: string
     }
 
-    experience: {
+    experience?: {
         years: number
     }
 
