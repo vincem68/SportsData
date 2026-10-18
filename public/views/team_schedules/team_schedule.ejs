@@ -16,9 +16,7 @@
         <div class="topSection">
             <div id="titleSection">
                 <img class="mainLogo" src="<%= data.team.logo %>">
-                <h1><%= data.team.name %></h1>
-                <h4>Schedule for the <%= data.requestedSeason.year + " " + data.requestedSeason.name %></h4>
-                <h4>Currently in the <%= data.season.name %></h4>
+                <h1><%= data.team.name + " " + data.requestedSeason.year + " " + data.requestedSeason.name %></h1>
             </div>
 
             <div class="form-container">

@@ -18,7 +18,11 @@ export async function parseNFLScheduleResponse(team: string, season: number, sea
             home: event.competitions[0].competitors[0].homeAway == "home" ? true : false,
             week: event.week.text,
             state: event.competitions[0].status.type.state,
-            detail: event.competitions[0].status.type.detail,
+
+            detail: event.competitions[0].status.type.state == "pre" ?
+             event.competitions[0].status.type.detail.substring(0, event.competitions[0].status.type.detail.indexOf(",")) + " " + event.competitions[0].status.type.shortDetail
+             : event.competitions[0].status.type.detail,
+
             winner: event.competitions[0].status.type.state == "post" ? event.competitions[0].competitors[0].winner : undefined,
             score: event.competitions[0].status.type.state != "pre" ?
                  event.competitions[0].competitors[0].score.displayValue + "-" + event.competitions[0].competitors[1].score.displayValue
