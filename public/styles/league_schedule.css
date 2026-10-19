@@ -185,3 +185,7 @@
   box-shadow: 0 0 0 3px rgba(41,98,255,0.25);
   outline: none;
 }
+
+h3 {
+  text-align: center;
+}

@@ -35,60 +35,72 @@
                     <p id="status"><%= overview.status.shortDetail %></p>
                 </div>
 
-                <p id="seriesStatus"> <!--series score if in postseason and not NFL-->
+                <h2 id="seriesStatus"> <!--series score if in postseason and not NFL-->
                     <% if (overview.seasonType == 3 && league != "NFL" && overview.status.state != "in"){ %>
                         <%= overview.seriesSummary %>
                     <% } %>
-                </p>
+                </h2>
 
-                <div id="situationDiv">
 
-                    <div id="footballInfo"> <!--have this dive for football specific info-->
-                        <h3 id="footballMarker"><!--shows what down and yard marker football game is at-->
-                            <% if (league == "NFL" && overview.situation !== undefined){ %>
-                                <%= overview.situation.downDistanceText %>
+                <% if (league == "NFL" || league == "MLB"){ %>
+
+                    <div id="situationDiv">
+
+                        <div id="footballInfo"> <!--have this dive for football specific info-->
+                            <h3 id="footballMarker"><!--shows what down and yard marker football game is at-->
+                                <% if (league == "NFL" && overview.situation !== undefined){ %>
+                                    <%= overview.situation.downDistanceText %>
+                                <% } %>
+                            </h3>
+                            <img id="footballPossessionArrow" src="/images/left_arrow.png">
+                        </div>
+
+                        <div id="atBat"> <!--for baseball, shows count, outs, and pitcher/batter-->
+                            <div class="atBatPlayer">
+                                <p>Pitcher</p>
+                                <img id="pitcherHeadshot" src="<%= overview.situation && overview.situation.pitcher ? overview.situation.pitcher.headshot : '' %>">
+                                <p id="pitcherName">
+                                    <% if (overview.situation && overview.situation.pitcher){ %>
+                                        <%= overview.situation.pitcher.name %>
+                                    <% } %>
+                                </p>
+                            </div>
+                            <div id="baseballScorebug">
+                                <img id="bases" src="">
+                                <p id="count"><!--Keeps track of ball and strike count in baseball game-->
+                                    <% if (overview.situation && overview.situation.batter){ %>
+                                        <%= overview.situation.count %>
+                                    <% } %>
+                                </p>
+                                <img id="outs" src="">
+                            </div>
+                            <div class="atBatPlayer">
+                                <p>Batter</p>
+                                <img id="batterHeadshot" src="<%= overview.situation && overview.situation.batter ? overview.situation.batter.headshot : '' %>">
+                                <p id="batterName">
+                                    <% if (overview.situation && overview.situation.batter){ %>
+                                        <%= overview.situation.batter.name %>
+                                    <% } %>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <p id="gameAction">
+                            <% if (overview.situation){ %>
+                                <%= overview.situation.play %>
                             <% } %>
-                        </h3>
-                        <img id="footballPossessionArrow" src="/images/left_arrow.png">
-                    </div>
+                        </p>
 
-                    <div id="atBat"> <!--for baseball, shows count, outs, and pitcher/batter-->
-                        <div class="atBatPlayer">
-                            <p>Pitcher</p>
-                            <img id="pitcherHeadshot" src="<%= overview.situation && overview.situation.pitcher ? overview.situation.pitcher.headshot : '' %>">
-                            <p id="pitcherName">
-                                <% if (overview.situation && overview.situation.pitcher){ %>
-                                    <%= overview.situation.pitcher.name %>
-                                <% } %>
-                            </p>
-                        </div>
-                        <div id="baseballScorebug">
-                            <img id="bases" src="">
-                            <p id="count"><!--Keeps track of ball and strike count in baseball game-->
-                                <% if (overview.situation && overview.situation.batter){ %>
-                                    <%= overview.situation.count %>
-                                <% } %>
-                            </p>
-                            <img id="outs" src="">
-                        </div>
-                        <div class="atBatPlayer">
-                            <p>Batter</p>
-                            <img id="batterHeadshot" src="<%= overview.situation && overview.situation.batter ? overview.situation.batter.headshot : '' %>">
-                            <p id="batterName">
-                                <% if (overview.situation && overview.situation.batter){ %>
-                                    <%= overview.situation.batter.name %>
-                                <% } %>
-                            </p>
-                        </div>
                     </div>
-                    
-                    <p id="gameAction">
+                <% } else { %>
+
+                    <h4 id="gameAction">
                         <% if (overview.situation){ %>
                             <%= overview.situation.play %>
                         <% } %>
-                    </p>
+                    </h4>
 
-                </div>
+                <% } %>
 
             </div>
 

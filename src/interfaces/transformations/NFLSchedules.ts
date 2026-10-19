@@ -49,7 +49,11 @@ export async function parseNFLScheduleResponse(team: string, season: number, sea
             year: data.requestedSeason.year,
             type: data.requestedSeason.type,
             name: data.requestedSeason.name
-        } : undefined,
+        } : {
+            year: season,
+            type: seasonType,
+            name: seasonType == 1 ? "Preseason" : seasonType == 2 ? "Regular Season" : "Postseason"
+        },
 
         //if we request a previous season and there's no postseason games, or get the current postseason games where
         //the postseason is active, but still no games, team has not made postseason

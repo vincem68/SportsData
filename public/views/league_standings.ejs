@@ -56,7 +56,7 @@
                     <div class="conferenceContainer">
                         <% standings.firstConferenceDivisions.forEach(division => { %>
 
-                            <h3 class="divName"><%= division.name %></h3>
+                            <h3 class="divName importantHeadline"><%= division.name %></h3>
                             <div class="scroll-container">
 
                                 <div class="divisionDiv">
@@ -97,7 +97,7 @@
 
                         <% standings.secondConferenceDivisions.forEach(division => { %>
 
-                            <h3 class="divName"><%= division.name %></h3>
+                            <h3 class="divName importantHeadline"><%= division.name %></h3>
 
                             <div class="scroll-container">
                                 <div class="divisionDiv">
@@ -141,7 +141,7 @@
 
                     <% standings.conferenceStandings.forEach(conf => { %>
 
-                        <h3 class="divName"><%= conf.name %></h3>
+                        <h2 class="divName importantHeadline"><%= conf.name %></h2>
 
                         <div class="scroll-container">
 

@@ -39,11 +39,13 @@ const buttonSection = document.getElementById('buttonSection');
 homePlayerStatsDiv.style.display = "none";
 
 //hide any stat divs if the game has not started yet
-situationDiv.style.display = gameState == "in" ? 'flex' : 'none';
+if (league == "MLB" || league == "NFL"){ situationDiv.style.display = gameState == "in" ? 'flex' : 'none'; }
 buttonSection.style.display = gameState == "pre" ? 'none' : 'flex';
 linescoreDiv.style.display = gameState == "pre" ? 'none' : 'flex';
-atBatSection.style.display = league == "MLB" && overview.situation ? 'flex' : 'none';
-footballSection.style.display = league == "NFL" && gameState == "in" ? 'flex' : 'none';
+if (league == "MLB") { atBatSection.style.display = overview.situation ? 'flex' : 'none'; }
+if (league == "NFL"){ 
+    footballSection.style.display = league == "NFL" && gameState == "in" ? 'flex' : 'none'; 
+}
 leaderSection.style.display = gameState == "in" ? 'none' : 'flex';
 
 document.getElementById('boxscore').style.display = league == "MLB" || awayTeamBoxscore.querySelectorAll('td').length == 0 ? 'none' : 'flex';
@@ -57,7 +59,7 @@ if (league == "NFL" && gameState == "in"){ //set arrow to correct side
     footballPosArrow.src = (overview.situation.possession == overview.awayTeam.id) 
         ? '/images/left_arrow.png' : '/images/right_arrow.png';
     footballPosArrow.style.display = 'flex';
-} else {
+} else if (league == "NFL") {
     footballPosArrow.style.display = 'none';
 }
 
@@ -167,16 +169,20 @@ async function initializeStats() {
         gameStatus.textContent = updateOverview.status.shortDetail;
         score.style.display = 'flex';
         score.textContent = "0 - 0";
-        //if its a baseball game
-        situationDiv.style.display = 'flex';
-        atBatSection.style.display = league == "MLB" ? 'flex' : 'none';
-        bases.style.display = league == "MLB" ? 'flex' : 'none';
-        bases.src = "/images/empty.png";
-        outs.style.display = 'flex';
-        outs.src = '/images/out_0.png';
-        startingPitchersDiv.style.display = league == "MLB" ? 'flex' : 'none';
+        //if its a baseball/football game
+        if (league == "NFL" || league == "MLB"){
+            situationDiv.style.display = 'flex';
+        }
+        if (league == "MLB"){
+            atBatSection.style.display = 'flex';
+            bases.style.display = 'flex';
+            bases.src = "/images/empty.png";
+            outs.style.display = 'flex';
+            outs.src = '/images/out_0.png';
+            startingPitchersDiv.style.display = 'flex';
+        }
         //get yard marker and down
-        footballSection.style.display = league == "NFL" ? 'flex' : 'none';
+        if (league == "NFL"){ footballSection.style.display = 'flex'; }
         gamePlay.style.display = 'flex';
 
         //reset the season stats of teams to 0 for the game specific stats
@@ -412,7 +418,9 @@ async function updateGameStats(){
         }
 
         //hide all the situation stuff
-        situationDiv.style.display = 'none';
+        if (league == "NFL" || league == "MLB"){
+            situationDiv.style.display = 'none';
+        }
 
         //make the leader headlines visible again
         document.querySelectorAll('.leaderHeadline').forEach(headline => headline.style.display = 'flex');

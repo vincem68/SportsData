@@ -103,73 +103,77 @@
             </div>
         </div>
 
-        <div id="depthChartDiv">
+        <% if (sport != "hockey"){ %>
 
-            <% depthChartData.categories.forEach(cat => { %>
+            <div id="depthChartDiv">
 
-                <h3><%= cat.name %></h3>
+                <% depthChartData.categories.forEach(cat => { %>
 
-                <table>
-                    <tr>
-                        <th>Position</th>
-                        <% for (let i = 1; i <= cat.maxColLength; i++){ %>
-                            <th><%= i %></th>
-                        <% } %>
-                    </tr>
+                    <h3><%= cat.name %></h3>
 
-                    <% cat.positions.forEach(pos => { %>
+                    <table>
                         <tr>
-                            <td>
-                                <div class="tooltip">
-                                    <strong><%= pos.abbr %></strong>
-                                    <span class="tooltip-text">
-                                        <%= pos.name %>
-                                    </span>
-                                </div>
-                            </td>
-                            <% pos.athletes.forEach(athlete => { %>
-                                <td><%= athlete.name %></td>
-                            <% }) %>
-
-                            <!--Empty cells-->
-                            <% for (let i = pos.athletes.length; i < cat.maxColLength; i++){ %>
-                                <td></td>
+                            <th>Position</th>
+                            <% for (let i = 1; i <= cat.maxColLength; i++){ %>
+                                <th><%= i %></th>
                             <% } %>
                         </tr>
-                    <% }) %>
-                </table>
 
-            <% }) %>
+                        <% cat.positions.forEach(pos => { %>
+                            <tr>
+                                <td>
+                                    <div class="tooltip">
+                                        <strong><%= pos.abbr %></strong>
+                                        <span class="tooltip-text">
+                                            <%= pos.name %>
+                                        </span>
+                                    </div>
+                                </td>
+                                <% pos.athletes.forEach(athlete => { %>
+                                    <td><%= athlete.name %></td>
+                                <% }) %>
 
-        </div>
+                                <!--Empty cells-->
+                                <% for (let i = pos.athletes.length; i < cat.maxColLength; i++){ %>
+                                    <td></td>
+                                <% } %>
+                            </tr>
+                        <% }) %>
+                    </table>
 
-        <script>
+                <% }) %>
 
-            const depthChartBtn = document.getElementById('depthChartBtn');
-            const rosterBtn = document.getElementById('rosterBtn')
+            </div>
 
-            document.getElementById('depthChartDiv').style.display = 'none';
+            <script>
 
-            rosterBtn.disabled = true;
+                const depthChartBtn = document.getElementById('depthChartBtn');
+                const rosterBtn = document.getElementById('rosterBtn')
 
-            function toggleRoster(){
-                document.getElementById('rosterDiv').style.display = 'flex';
                 document.getElementById('depthChartDiv').style.display = 'none';
-                depthChartBtn.disabled = false;
+
                 rosterBtn.disabled = true;
-            }
 
-            function toggleDepthChart(){
-                document.getElementById('rosterDiv').style.display = 'none';
-                document.getElementById('depthChartDiv').style.display = 'flex';
-                depthChartBtn.disabled = true;
-                rosterBtn.disabled = false;
-            }
+                function toggleRoster(){
+                    document.getElementById('rosterDiv').style.display = 'flex';
+                    document.getElementById('depthChartDiv').style.display = 'none';
+                    depthChartBtn.disabled = false;
+                    rosterBtn.disabled = true;
+                }
 
-            depthChartBtn.addEventListener('click', toggleDepthChart);
-            rosterBtn.addEventListener('click', toggleRoster);
+                function toggleDepthChart(){
+                    document.getElementById('rosterDiv').style.display = 'none';
+                    document.getElementById('depthChartDiv').style.display = 'flex';
+                    depthChartBtn.disabled = true;
+                    rosterBtn.disabled = false;
+                }
 
-        </script>
+                depthChartBtn.addEventListener('click', toggleDepthChart);
+                rosterBtn.addEventListener('click', toggleRoster);
+
+            </script>
+
+        <% } %>
 
     </body>
 </html>
