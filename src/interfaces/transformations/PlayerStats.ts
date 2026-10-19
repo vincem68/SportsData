@@ -48,6 +48,12 @@ export async function parseMainPlayerStats(league: string, sport: string, player
     ).json();
 
     const data = res.statistics;
+    if (data.displayNames === undefined){
+        return {
+            statsDesc: undefined,
+            splits: undefined
+        }
+    }
     const statsDesc = data.displayNames.map((name, index) => ({
         label: data.labels[index],
         name: name
@@ -75,10 +81,17 @@ export async function parsePlayerSplits(league: string, sport: string, playerID:
         await fetch(`https://site.web.api.espn.com/apis/common/v3/sports/${sport}/${league.toLowerCase()}/athletes/${playerID}/splits`)
     ).json()
 
+    if (!response.displayNames){
+        return {
+            statsDesc: undefined,
+            categories: undefined
+        }
+    }
+
     const statsDesc = response.displayNames.map((name, index) => ({
-        label: response.labels[index],
+        label: response.labels![index],
         name: name,
-        description: response.descriptions[index]
+        description: response.descriptions![index]
     }));
 
     const data = response.splitCategories.filter(category => category.splits !== undefined); //filter out categories with no splits

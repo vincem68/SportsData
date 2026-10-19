@@ -34,7 +34,7 @@
         </div>
 
         <!--If the response returned null for the main stats, we have no stats to show for this player-->
-        <% if (playerOverview === null){ %>
+        <% if (!playerOverview.statsDesc){ %>
 
             <h1 class="errorMessage">Data is Not Available</h1>
 
@@ -79,6 +79,9 @@
                 <!--For the advanced splits section-->
                 <div id="advancedStatsSection">
 
+                    <!--Show the advanced split stats here-->
+                    <h3 class="importantHeadline">Advanced Splits %></h3>
+
                     <div class="select-wrapper">
 
                         <!--This will be for selecting the split category-->
@@ -105,8 +108,6 @@
                         <% }) %>
                     </div>
 
-                    <!--Show the advanced split stats here-->
-                    <h3 class="importantHeadline">Advanced Splits %></h3>
                     <div id="advancedStatsTables">
 
                         <table id="advancedSplitsTable">

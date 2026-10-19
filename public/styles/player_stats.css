@@ -36,7 +36,7 @@
 
 #headshot {
     height: 200px;
-    width: 250px;
+    width: 275px;
 }
 
 h3, h1 {
@@ -47,4 +47,9 @@ h3, h1 {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.select-wrapper > label {
+
+    margin-top: 15px;
 }

@@ -82,11 +82,11 @@ interface Split {
 }
 
 export interface PlayerStatsOverview {
-    statsDesc: {
+    statsDesc?: {
         label: string;
         name: string;
     }[];
-    splits: {
+    splits?: {
         name: string;
         values: string[];
     }[];
@@ -100,9 +100,9 @@ export interface PlayerStatsOverview {
  * The advanced splits page will have all the stats and all the splits (home/away, wins/losses, etc.)
  */
 export interface PlayerSplitsResponse {
-    labels: string[];
-    displayNames: string[];
-    descriptions: string[];
+    labels?: string[];
+    displayNames?: string[];
+    descriptions?: string[];
     splitCategories: SplitCategory[];
 }
 
@@ -114,12 +114,12 @@ interface SplitCategory {
 
 //this will be the final structure of the data we render for advanced splits
 export interface PlayerSplits {
-    statsDesc: {
+    statsDesc?: {
         label: string;
         name: string;
         description: string;
     }[];
-    categories: {
+    categories?: {
         index: number;
         name: string;
         splits: {

@@ -79,6 +79,10 @@ export interface Roster {
             href: string
         }
 
+        hand?: {
+            abbreviation: string
+        }
+
         status: {
             name: string
         }
@@ -134,6 +138,7 @@ export interface RosterData {
             yearsExperience: number
             headshot: string
             status: string
+            shoots?: string
             bats?: string
             throws?: string
         }[]

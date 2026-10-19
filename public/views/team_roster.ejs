@@ -51,7 +51,13 @@
 
                             <tr>
                                 <th>Player</th>
-                                <th>Position</th>
+                                <th>
+                                    <% if (sport != "hockey") { %>
+                                        Position
+                                    <% } else { %>
+                                        Shoots
+                                    <% } %>
+                                </th>
                                 <th>Jersey No.</th>
                                 <% if (league == "MLB"){ %>
                                     <th>Bats</th>
@@ -69,10 +75,20 @@
 
                                 <tr>
                                     <td class="imgTD">
-                                        <img class="headshot" src="<%= athlete.headshot %>">
+                                        <% if (!athlete.headshot){ %>
+                                            <img class="altHeadshot" src="/images/default_headshot.png">
+                                        <% } else { %>
+                                            <img class="headshot" src="<%= athlete.headshot %>">
+                                        <% } %>
                                         <%= athlete.fullName %>
                                     </td>
-                                    <td><%= athlete.position.abbr %></td>
+                                    <td>
+                                        <% if (sport != "hockey"){ %>
+                                            <%= athlete.position.abbr %>
+                                        <% } else { %>
+                                            <%= athlete.shoots %>
+                                        <% } %>
+                                    </td>
                                     <td><%= athlete.jersey %></td>
                                     <% if (league == "MLB"){ %>
                                         <td><%= athlete.bats %></td>
