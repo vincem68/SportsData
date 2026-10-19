@@ -77,7 +77,7 @@ export async function parseRosterData(league: string, sport: string, team: strin
                             abbr: athlete.position.abbreviation
                         },
                         yearsExperience: athlete.experience ? athlete.experience.years : 0,
-                        headshot: athlete.headshot ? athlete.headshot.href : "/images/default_headshot.png",
+                        headshot: athlete.headshot ? athlete.headshot.href : undefined,
                         status: athlete.injuries.length > 0 ? athlete.injuries[0].status : athlete.status.name,
                     }
                 })
