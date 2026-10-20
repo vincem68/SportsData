@@ -165,7 +165,8 @@ app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
     // the leaders endpoint. If the season and season type query params are provided, we will use those 
     // instead to send the request
     const yearAndTypeResponse = await getBasicResponseInfo(
-        `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard`);
+        `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/scoreboard`
+    );
     
     //get the current year and season type to use in case query params aren't provided
     if (req.query.season !== undefined && req.query.seasonType !== undefined){

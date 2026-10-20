@@ -18,8 +18,8 @@ export async function getBasicResponseInfo(endpoint: string): Promise<BasicTeamI
         .then(res => res.json())
         .then((data: DataResponse) => {
             const basicInfo: BasicTeamInfo = {
-                seasonYear: Math.max(data.season.year, data.requestedSeason.year),
-                seasonType: data.season.type == 4 && data.requestedSeason.year > data.season.year 
+                seasonYear: data.requestedSeason ? Math.max(data.season.year, data.requestedSeason.year) : data.season.year,
+                seasonType: data.season.type == 4 && data.requestedSeason && data.requestedSeason.year > data.season.year 
                     ? data.requestedSeason.type : data.season.type,
                 teamName: data.team ? data.team.displayName : undefined,
                 teamLogo: data.team ? data.team.logo : undefined
