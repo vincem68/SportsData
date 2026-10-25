@@ -35,19 +35,40 @@ export async function getBasicResponseInfo(endpoint: string): Promise<BasicTeamI
 
 }
 
+
+/**
+ * Function to check to see if the inputted url parameters are valid before sending the request
+ * @param sport string value of sport (hockey, basketball, football, baseball)
+ * @param league string value of league name (nba, mlb, etc)
+ * @param team string value of team abbreviaion
+ * @returns true or false depending on if url parameters are valid or not
+ */
 export function checkRequestParams(sport: string, league: string, team?: string): boolean {
-    //console.log("Checking request params:", sport, league, team);
-    const validSports = ['football', 'basketball', 'baseball', 'hockey'];
-    const validLeagues = ['nfl', 'nba', 'mlb', 'nhl'];
+    
     const teams: string[] = (league.toLowerCase() === 'nfl') ? nflTeams :
         (league.toLowerCase() === 'nba') ? nbaTeams :
         (league.toLowerCase() === 'mlb') ? mlbTeams :
         (league.toLowerCase() === 'nhl') ? nhlTeams : [];
+
     //return true if sport and league are valid, and if team is provided, check that too
-    return validSports.includes(sport.toLowerCase()) && validLeagues.includes(league.toLowerCase()) && 
-        (team === undefined || teams.includes(team.toUpperCase()));
+    return (
+        (sport.toLowerCase() == "football" && league.toLowerCase() == "nfl")
+        || ((sport.toLowerCase() == "baseball" && league.toLowerCase() == "mlb"))
+        || (sport.toLowerCase() == "basketball" && league.toLowerCase() == "nba")
+        || (sport.toLowerCase() == "hockey" && league.toLowerCase() == "nhl")
+    ) && (!team || teams.includes(team.toUpperCase()))
 }
 
+
+/**
+ * 
+ * @param league 
+ * @param year 
+ * @param type 
+ * @param week 
+ * @param date 
+ * @returns 
+ */
 export function checkQueryParams(league: string, year: number, type: number, week?: number, date?: string): boolean {
     if (type > 4 || type < 1){
         return false;
@@ -59,7 +80,7 @@ export function checkQueryParams(league: string, year: number, type: number, wee
         return false;
     }
     if ((league.toLowerCase() == 'nba' || league.toLowerCase() == 'nhl') && 
-        (new Date().getFullYear() < year + 1 && new Date().getMonth() >= 8) || (new Date().getFullYear() < year && new Date().getMonth() < 6)){
+        (new Date().getFullYear() == year + 1 && new Date().getMonth() >= 8) || (new Date().getFullYear() < year && new Date().getMonth() < 6)){
         return false;
     }
     if (week !== undefined && (week < 1 || week > 18)){

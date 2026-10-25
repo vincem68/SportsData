@@ -59,7 +59,7 @@ if (league == "NFL" && gameState == "in"){ //set arrow to correct side
     footballPosArrow.src = (overview.situation.possession == overview.awayTeam.id) 
         ? '/images/left_arrow.png' : '/images/right_arrow.png';
     footballPosArrow.style.display = 'flex';
-} else if (league == "NFL") {
+} else {
     footballPosArrow.style.display = 'none';
 }
 
@@ -587,7 +587,7 @@ async function parseOverview() {
 
         situation: competition.situation ? {
 
-            play: competition.situation ? competition.situation.lastPlay.type.text + ": " + competition.situation.lastPlay.text : "",
+            play: competition.situation ? competition.situation.lastPlay.text : "",
             
             downDistanceText: league == "NFL" ? competition.situation.downDistanceText : undefined,
             possession: league == "NFL" ? competition.situation.possession : undefined,

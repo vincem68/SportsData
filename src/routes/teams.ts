@@ -64,6 +64,7 @@ router.get('/:team/schedule', async function(req: Request, res: Response){
 
     //get the current season and year as default values
     const defaultQueries = await getBasicResponseInfo(`https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/teams/${team}/schedule`);
+
     let requestedYear = defaultQueries.seasonYear;
     let requestedType = defaultQueries.seasonType;
 
