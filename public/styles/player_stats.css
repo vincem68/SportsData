@@ -1,12 +1,13 @@
 @import "general_styles/general_styles.css";
 @import "general_styles/table_styles.css";
 @import "general_styles/select_styles.css";
+@import "general_styles/form_styles.css";
 
 #playerInfoDiv {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;    
 }
 
 #playerTitleDiv {
@@ -26,8 +27,8 @@
 }
 
 #teamLogo {
-    height: 60px;
-    width: 60px;
+    height: 40px;
+    width: 40px;
 }
 
 #teamLogo h3 {

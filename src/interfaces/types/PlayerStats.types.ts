@@ -2,44 +2,55 @@
 /**
  * This section of interfaces is dedicated to mapping out the response for the basic player info
  */
-export interface BasicPlayerStatsResponse {
-    athlete: Athlete
+export interface PlayerInfoResponse {
+
+    athlete: {
+
+        displayName: string;
+
+        headshot: {
+            href: string
+        }
+
+        position: {
+            abbreviation: string;
+            displayName: string;
+        }
+
+        team: {
+            abbreviation: string;
+            displayName: string;
+            logos: {
+                href: string
+            }[];
+        }
+
+        hand?: { //for hockey
+            displayValue: string
+        }
+
+        displayHeight: string;
+        displayWeight: string;
+        displayDOB: string;
+        age: number;
+        displayDraft: string;
+        displayJersey: string;
+        displayExperience: string;
+        debutYear?: number;
+        displayBatsThrows?: string;
+    }
+
+    season : {
+        year: number
+        type: {
+            type: number
+        }
+    }
 }
 
-interface Athlete {
-    displayName: string;
-    headshot: Headshot;
-    position: Position
-    team: Team;
-    displayHeight: string;
-    displayWeight: string;
-    displayDOB: string;
-    age: number;
-    displayDraft: string;
-    displayJersey: string;
-}
-
-interface Headshot {
-    href: string;
-}
-
-interface Position {
-    abbreviation: string;
-    displayName: string;
-}
-
-interface Team {
-    abbreviation: string;
-    displayName: string;
-    logos: Logo[];
-}
-
-interface Logo {
-    href: string;
-}
 
 //the main interface we'll render
-export interface BasicPlayerStats {
+export interface PlayerInfo {
     playerName: string;
     playerHeadshot: string;
     playerPosition: string;
@@ -52,6 +63,13 @@ export interface BasicPlayerStats {
     playerWeight: string;
     playerAge: number;
     playerDraft: string;
+    debutYear: number
+    playerExp: string;
+    currentSeason: number
+    currentSeasonType: number
+
+    playerShoots?: string
+    playerBatsThrows?: string
 }
 
 
@@ -59,37 +77,36 @@ export interface BasicPlayerStats {
  * This section of interfaces is dedicated to mapping out the response for the main overall player stats
  */
 export interface PlayerStatsOverviewResponse {
-  statistics: Statistics
-}
 
-interface Statistics {
-  displayName: string
-  categories: Category[]
-  labels: string[]
-  displayNames: string[]
-  splits: Split[]
-}
+    splits: {
 
-interface Category {
-  name: string
-  displayName: string
-  count: number
-}
+        categories: {
 
-interface Split {
-    displayName: string;
-    stats: string[];
+            displayName: string
+            stats: {
+                displayName: string
+                abbreviation: string
+                description: string
+                value: string
+            }[]
+        }[]
+    }
 }
 
 export interface PlayerStatsOverview {
-    statsDesc?: {
-        label: string;
-        name: string;
-    }[];
-    splits?: {
-        name: string;
-        values: string[];
-    }[];
+
+    requestedSeason: number
+    requestedSeasonType: string
+
+    categories: {
+        name: string
+        stats: {
+            abbr: string
+            name: string
+            desc: string
+            value: string
+        }[]
+    }[]
 }
 
 
@@ -100,25 +117,30 @@ export interface PlayerStatsOverview {
  * The advanced splits page will have all the stats and all the splits (home/away, wins/losses, etc.)
  */
 export interface PlayerSplitsResponse {
+
     labels?: string[];
     displayNames?: string[];
     descriptions?: string[];
-    splitCategories: SplitCategory[];
-}
 
-interface SplitCategory {
-    displayName: string;
-    splits: Split[];
+    splitCategories: {
+        displayName: string;
+        splits: {
+            displayName: string;
+            stats: string[]; 
+        }[];
+    }[];
 }
 
 
 //this will be the final structure of the data we render for advanced splits
 export interface PlayerSplits {
+
     statsDesc?: {
         label: string;
         name: string;
         description: string;
     }[];
+
     categories?: {
         index: number;
         name: string;

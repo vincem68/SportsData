@@ -20,21 +20,55 @@
             </div>
             <!--when the player headshot is not in response-->
             <div id="secondaryInfoDiv">
-                <div id="extraPlayerInfo">
-                    <img id="teamLogo" src="<%= playerInfo.teamLogo %>">
-                    <h2><%= playerInfo.teamName + " " + playerInfo.playerPosition %></h2>
-                </div>
                 <h4>
-                    Jersey <%= playerInfo.playerJersey %><br>
+                    <div id="extraPlayerInfo">
+                        <img id="teamLogo" src="<%= playerInfo.teamLogo %>">
+                        <h2><%= playerInfo.teamName %></h2>
+                    </div>
+                    <br>
+                    Position: <%= playerInfo.playerPosition %><br>
+                    Jersey No.: <%= playerInfo.playerJersey %><br>
                     Date of Birth: <%= playerInfo.playerDOB %> (Age: <%= playerInfo.playerAge %>)<br>
+                    Draft Selection: <%= playerInfo.playerDraft %><br>
+                    Experience: <%= playerInfo.playerExp %><br>
                     Height: <%= playerInfo.playerHeight %><br>
-                    Weight: <%= playerInfo.playerWeight %>
+                    Weight: <%= playerInfo.playerWeight %><br>
+                    <% if (playerInfo.playerShoots){ %>
+                        Shoots: <%= playerInfo.playerShoots %><br>
+                    <% } %>
+                    <% if (playerInfo.playerBatsThrows){ %>
+                        B/T: <%= playerInfo.playerBatsThrows %><br>
+                    <% } %>
                 </h4>
+            </div>
+
+            <div class="form-container">
+                <form method="GET">
+
+                    <div class="form-group">
+                        <label for="season">Select Year</label>
+                        <select name="season">
+                            <% for (let i = playerInfo.currentSeason; i >= playerInfo.debutYear; i--){ %>
+                                <option value="<%= i %>"><%= i %></option>
+                            <% } %>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="seasonType">Select Season Type</label>
+                        <select name="seasonType">
+                            <option value="2">Regular Season</option>
+                            <option value="3">Postseason</option>
+                        </select>
+                    </div>
+
+                    <button>Submit</button>
+                </form>
             </div>
         </div>
 
         <!--If the response returned null for the main stats, we have no stats to show for this player-->
-        <% if (!playerOverview.statsDesc){ %>
+        <% if (!playerOverview.categories){ %>
 
             <h1 class="errorMessage">Data is Not Available</h1>
 
@@ -42,34 +76,52 @@
         <% } else { %>
 
             <!--This is the overall stats section of the player-->
-            <h3 class="importantHeadline">Overall Stats</h3>
+            <h3 class="importantHeadline">Stats for <%= playerOverview.requestedSeason %> 
+                <%= playerOverview.requestedSeasonType %> Season</h3>
+
             <div id="mainStats">
 
-                <table>
-                    <!--get col names and descriptions-->
-                    <tr>
-                        <th>Category</th>
-                        <% playerOverview.statsDesc.forEach(stat => { %>
-                            <th>
-                                <div class="tooltip"><%= stat.label %>
-                                    <span class="tooltip-text">
-                                        <%= stat.name %>
-                                    </span>
-                                </div>
-                            </th>
-                        <% }) %>
-                    </tr>
+                <div class="select-wrapper">
 
-                    <!--Now do rows for reg season, postseason, and career-->
-                    <% playerOverview.splits.forEach(split => { %>
-                        <tr>
-                            <th><%= split.name %></th>
-                            <% split.values.forEach(stat => { %>
-                                <td><%= stat %></td>
-                            <% }) %>
-                        </tr>
-                    <% }) %>
-                </table>
+                    <!--This will be for selecting the split category-->
+                    <label for="splitSelect">Select a Category</label>
+                    <select id="splitSelect" name="splitSelect">
+
+                        <!--use the category index and name for each option-->
+                        <% playerOverview.categories.forEach((cat, index) => { %>
+                            <option value="<%= index %>"><%= cat.name %></option>
+                        <% }) %>
+
+                    </select>
+                </div>
+
+                <% playerOverview.categories.forEach(cat => { %>
+
+                    <div class="splitsTable">
+                        <h2><%= cat.name %></h2>
+                        <table>
+                            <tr>
+                                <% cat.stats.forEach(stat => { %>
+                                    <th>
+                                        <div class="tooltip"><%= stat.abbr %>
+                                            <span class="tooltip-text">
+                                                <u><%= stat.name %></u>
+                                                <br>
+                                                <%= stat.desc %> 
+                                            </span>
+                                        </div>
+                                    </th>
+                                <% }) %>
+                            </tr>
+                            <tr>
+                                <% cat.stats.forEach(stat => { %>
+                                    <td><%= stat.value %></td>
+                                <% }) %>
+                            </tr>
+                        </table>
+
+                    </div>
+                <% }) %>
             </div>
 
             <% if (playerSplits.categories.length === 0){ %>
@@ -80,13 +132,13 @@
                 <div id="advancedStatsSection">
 
                     <!--Show the advanced split stats here-->
-                    <h3 class="importantHeadline">Advanced Splits %></h3>
+                    <h3 class="importantHeadline">Advanced Splits For Current Season Only</h3>
 
                     <div class="select-wrapper">
 
                         <!--This will be for selecting the split category-->
-                        <label for="catSelect">Select a Category</label>
-                        <select id="catSelect" name="catSelect">
+                        <label for="advancedCatSelect">Select a Category</label>
+                        <select id="advancedCatSelect" name="advancedCatSelect">
 
                             <!--use the category index and name for each option-->
                             <% playerSplits.categories.forEach(category => { %>
@@ -96,10 +148,10 @@
                         </select>
 
                         <!--For each category, list all the splits when that category is selected above-->
-                        <label for="splitSelect">Select a Stat:</label>
+                        <label for="advancedSplitSelect">Select a Stat:</label>
                         <% playerSplits.categories.forEach(category => { %>
 
-                            <select name="splitSelect" class="splitSelect">
+                            <select name="advancedSplitSelect" class="advancedSplitSelect">
                                 <% category.splits.forEach(split => { %>
                                     <option value="<%= split.index %>"><%= split.name %></option>
                                 <% }) %>
@@ -136,25 +188,33 @@
 
                 <script>
                     //get the category selector, stat selectors, and advanced splits table
-                    const categorySelector = document.getElementById('catSelect');
-                    const statSelectors = document.querySelectorAll('.splitSelect');
+                    const splitsTables = document.querySelectorAll('.splitsTable');
+                    const splitSelect = document.getElementById('splitSelect');
+                    const advancedCatSelector = document.getElementById('advancedCatSelect');
+                    const advancedSplitSelectors = document.querySelectorAll('.advancedSplitSelect');
                     const advancedSplitsTable = document.getElementById('advancedSplitsTable');
 
                     //get the player splits data from the server
                     const playerSplits = <%- JSON.stringify(playerSplits) %>;
 
+                    //The function to toggle the correct div for the regular splits. 
+                    function toggleSplitsTable(){
+                        splitsTables.forEach(table => table.style.display = 'none');
+                        splitsTables[splitSelect.value].style.display = 'flex';
+                    }
+
                     //make stat selects and tables appear
                     function toggleStatSelect(){
-                        const index = categorySelector.value;
-                        statSelectors.forEach(select => select.style.display = 'none');
-                        statSelectors[index].style.display = 'inline';
+                        const index = advancedCatSelector.value;
+                        advancedSplitSelectors.forEach(select => select.style.display = 'none');
+                        advancedSplitSelectors[index].style.display = 'inline';
                         getSplits();
                     }
 
                     function getSplits(){
                         //get the index of the selected category and stat
-                        const catIndex = categorySelector.value;
-                        const splitIndex = statSelectors[catIndex].value;
+                        const catIndex = advancedCatSelector.value;
+                        const splitIndex = advancedSplitSelectors[catIndex].value;
                         for (let i = 0; i < playerSplits.statsDesc.length; i++){
                             const cell = document.getElementById(`cell-${i}`);
                             cell.textContent = playerSplits.categories[catIndex].splits[splitIndex].values[i];

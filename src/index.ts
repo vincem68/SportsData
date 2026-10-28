@@ -10,7 +10,7 @@ import gameRoutes from './routes/games';
 import type { LeagueStats } from './interfaces/types/LeagueStats.types';
 import type { News } from './interfaces/types/News.types';
 import type { Standings, TeamRecord } from './interfaces/types/Standings.types';
-import type { BasicPlayerStats, PlayerSplits, PlayerStatsOverview } from './interfaces/types/PlayerStats.types';
+import type { PlayerInfo, PlayerSplits, PlayerStatsOverview } from './interfaces/types/PlayerStats.types';
 import type { Transactions } from './interfaces/types/Transactions.types';
 
 //parsers
@@ -169,7 +169,7 @@ app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
     );
     
     //get the current year and season type to use in case query params aren't provided
-    if (req.query.season !== undefined && req.query.seasonType !== undefined){
+    if (req.query.season && req.query.seasonType){
         if (!checkQueryParams(league, Number(req.query.season), Number(req.query.seasonType))){
             res.status(400).send("Invalid query params");
             return;
@@ -254,10 +254,20 @@ app.get('/:sport/:league/player/:playerID', async function(req: Request, res: Re
         return;
     }
 
+    //get the current year and season type to use in case query params aren't provided
+    if (req.query.season && req.query.seasonType){
+        if (!checkQueryParams(league, Number(req.query.season), Number(req.query.seasonType))){
+            res.status(400).send("Invalid query params");
+            return;
+        }
+    }
+
     //get the basic info of player like name, position, team, etc
-    const playerInfo: BasicPlayerStats = await parseBasicPlayerStats(league.toLowerCase(), sport, playerID);
+    const playerInfo: PlayerInfo = await parseBasicPlayerStats(league.toLowerCase(), sport, playerID);
     //get the basic stats of player, like regular season stats, career, postseason
-    const playerOverview: PlayerStatsOverview = await parseMainPlayerStats(league.toLowerCase(), sport, playerID);
+    const playerOverview: PlayerStatsOverview = req.query.season && req.query.seasonType ?
+     await parseMainPlayerStats(league.toLowerCase(), sport, playerID, Number(req.query.season), Number(req.query.seasonType))
+     : await parseMainPlayerStats(league.toLowerCase(), sport, playerID, playerInfo.currentSeason, playerInfo.currentSeasonType);
 
     //if the main stats aren't available, neither will the splits, so just render the basic stats
     if (playerOverview === null){
@@ -267,7 +277,9 @@ app.get('/:sport/:league/player/:playerID', async function(req: Request, res: Re
     }
 
     //get advanced splits of a player
-    const playerSplits: PlayerSplits = await parsePlayerSplits(league.toLowerCase(), sport, playerID);
+    const playerSplits: PlayerSplits = req.query.season && req.query.seasonType 
+     ? await parsePlayerSplits(league.toLowerCase(), sport, playerID, Number(req.query.season))
+     : await parsePlayerSplits(league.toLowerCase(), sport, playerID, playerInfo.currentSeason);
 
     res.render('player_stats', {port: port, sport: sport, league: league, playerInfo: playerInfo, 
         playerOverview: playerOverview, playerSplits: playerSplits});

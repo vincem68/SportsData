@@ -1,5 +1,5 @@
 import type { 
-    BasicPlayerStatsResponse, BasicPlayerStats, 
+    PlayerInfoResponse, PlayerInfo, 
     PlayerStatsOverviewResponse, PlayerStatsOverview,
     PlayerSplitsResponse, PlayerSplits 
 } from '../types/PlayerStats.types';
@@ -9,10 +9,10 @@ import type {
  * @param data The JSON response data for basic player info
  * @returns better formatted data for rendering
  */
-export async function parseBasicPlayerStats(league: string, sport: string, playerID: string): Promise<BasicPlayerStats> {
+export async function parseBasicPlayerStats(league: string, sport: string, playerID: string): Promise<PlayerInfo> {
 
     //get the data
-    const res: BasicPlayerStatsResponse = await (
+    const res: PlayerInfoResponse = await (
         await fetch(`https://site.web.api.espn.com/apis/common/v3/sports/${sport}/${league.toLowerCase()}/athletes/${playerID}`)
     ).json();
 
@@ -30,7 +30,16 @@ export async function parseBasicPlayerStats(league: string, sport: string, playe
         playerHeight: athlete.displayHeight,
         playerWeight: athlete.displayWeight,
         playerAge: athlete.age,
-        playerDraft: athlete.displayDraft
+        playerDraft: athlete.displayDraft,
+        playerExp: athlete.displayExperience,
+        debutYear: athlete.debutYear ? athlete.debutYear : 
+            league.toLowerCase() == "nfl" ? Number(athlete.displayDraft.substring(0, 4))
+            : Number(athlete.displayDraft.substring(0, 4)) + 1,
+        currentSeason: res.season.year,
+        currentSeasonType: res.season.type.type,
+
+        playerShoots: athlete.hand ? athlete.hand.displayValue : undefined,
+        playerBatsThrows: athlete.displayBatsThrows ? athlete.displayBatsThrows : undefined
     };
 }
 
@@ -41,30 +50,34 @@ export async function parseBasicPlayerStats(league: string, sport: string, playe
  * @returns PlayerStatsOverview instance for rendering the file. Contains all the main stats of the season
  * and career
  */
-export async function parseMainPlayerStats(league: string, sport: string, playerID: string): Promise<PlayerStatsOverview> {
+export async function parseMainPlayerStats(league: string, sport: string, playerID: string, year: number, seasonType: number): Promise<PlayerStatsOverview> {
+
+    console.log(`https://sports.core.api.espn.com/v2/sports/${sport}/leagues/${league.toLowerCase()}/seasons/${year}/types/${seasonType}/athletes/${playerID}/statistics`);
 
     const res: PlayerStatsOverviewResponse = await (
-        await fetch(`https://site.web.api.espn.com/apis/common/v3/sports/${sport}/${league.toLowerCase()}/athletes/${playerID}/overview`)
+        await fetch(`https://sports.core.api.espn.com/v2/sports/${sport}/leagues/${league.toLowerCase()}/seasons/${year}/types/${seasonType}/athletes/${playerID}/statistics`)
     ).json();
 
-    const data = res.statistics;
-    if (data.displayNames === undefined){
-        return {
-            statsDesc: undefined,
-            splits: undefined
-        }
-    }
-    const statsDesc = data.displayNames.map((name, index) => ({
-        label: data.labels[index],
-        name: name
-    }));
     return {
-        statsDesc: statsDesc,
-        splits: data.splits.map(split => ({
-            name: split.displayName,
-            values: split.stats
-        }))
-    };
+
+        requestedSeason: year,
+        requestedSeasonType: seasonType == 2 ? "Regular Season" : "Postseason",
+
+        categories: res.splits.categories.map(cat => {
+
+            return {
+                name: cat.displayName,
+                stats: cat.stats.map(stat => {
+                    return {
+                        abbr: stat.abbreviation, 
+                        name: stat.displayName,
+                        desc: stat.description,
+                        value: stat.value
+                    }
+                })
+            }
+        })
+    }
 }
 
 
@@ -74,11 +87,11 @@ export async function parseMainPlayerStats(league: string, sport: string, player
  * @param response - JSON response for advanced splits of a player
  * @returns - better structured data for rendering the advanced splits
  */
-export async function parsePlayerSplits(league: string, sport: string, playerID: string): Promise<PlayerSplits> {
+export async function parsePlayerSplits(league: string, sport: string, playerID: string, year: number): Promise<PlayerSplits> {
 
     //get the data
     const response: PlayerSplitsResponse = await (
-        await fetch(`https://site.web.api.espn.com/apis/common/v3/sports/${sport}/${league.toLowerCase()}/athletes/${playerID}/splits`)
+        await fetch(`https://site.web.api.espn.com/apis/common/v3/sports/${sport}/${league.toLowerCase()}/athletes/${playerID}/splits?season=${year}`)
     ).json()
 
     if (!response.displayNames){
