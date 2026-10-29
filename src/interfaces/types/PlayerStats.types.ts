@@ -78,7 +78,7 @@ export interface PlayerInfo {
  */
 export interface PlayerStatsOverviewResponse {
 
-    splits: {
+    splits?: {
 
         categories: {
 
@@ -98,7 +98,7 @@ export interface PlayerStatsOverview {
     requestedSeason: number
     requestedSeasonType: string
 
-    categories: {
+    categories?: {
         name: string
         stats: {
             abbr: string

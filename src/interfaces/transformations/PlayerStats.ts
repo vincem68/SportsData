@@ -63,7 +63,7 @@ export async function parseMainPlayerStats(league: string, sport: string, player
         requestedSeason: year,
         requestedSeasonType: seasonType == 2 ? "Regular Season" : "Postseason",
 
-        categories: res.splits.categories.map(cat => {
+        categories: res.splits ? res.splits.categories.map(cat => {
 
             return {
                 name: cat.displayName,
@@ -76,7 +76,7 @@ export async function parseMainPlayerStats(league: string, sport: string, player
                     }
                 })
             }
-        })
+        }) : undefined
     }
 }
 

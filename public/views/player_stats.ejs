@@ -70,7 +70,7 @@
         <!--If the response returned null for the main stats, we have no stats to show for this player-->
         <% if (!playerOverview.categories){ %>
 
-            <h1 class="errorMessage">Data is Not Available</h1>
+            <h1 class="errorMessage">No Player Data Available</h1>
 
         <!--Else, show the stats if we do have them-->
         <% } else { %>
@@ -97,29 +97,30 @@
 
                 <% playerOverview.categories.forEach(cat => { %>
 
-                    <div class="splitsTable">
+                    <div class="splitsTableDiv">
                         <h2><%= cat.name %></h2>
-                        <table>
-                            <tr>
-                                <% cat.stats.forEach(stat => { %>
-                                    <th>
-                                        <div class="tooltip"><%= stat.abbr %>
-                                            <span class="tooltip-text">
-                                                <u><%= stat.name %></u>
-                                                <br>
-                                                <%= stat.desc %> 
-                                            </span>
-                                        </div>
-                                    </th>
-                                <% }) %>
-                            </tr>
-                            <tr>
-                                <% cat.stats.forEach(stat => { %>
-                                    <td><%= stat.value %></td>
-                                <% }) %>
-                            </tr>
-                        </table>
-
+                        <div>
+                            <table>
+                                <tr>
+                                    <% cat.stats.forEach(stat => { %>
+                                        <th>
+                                            <div class="tooltip"><%= stat.abbr %>
+                                                <span class="tooltip-text">
+                                                    <u><%= stat.name %></u>
+                                                    <br>
+                                                    <%= stat.desc %> 
+                                                </span>
+                                            </div>
+                                        </th>
+                                    <% }) %>
+                                </tr>
+                                <tr>
+                                    <% cat.stats.forEach(stat => { %>
+                                        <td><%= stat.value %></td>
+                                    <% }) %>
+                                </tr>
+                            </table>
+                        </div>
                     </div>
                 <% }) %>
             </div>
@@ -188,7 +189,7 @@
 
                 <script>
                     //get the category selector, stat selectors, and advanced splits table
-                    const splitsTables = document.querySelectorAll('.splitsTable');
+                    const splitsTables = document.querySelectorAll('.splitsTableDiv');
                     const splitSelect = document.getElementById('splitSelect');
                     const advancedCatSelector = document.getElementById('advancedCatSelect');
                     const advancedSplitSelectors = document.querySelectorAll('.advancedSplitSelect');
@@ -204,14 +205,14 @@
                     }
 
                     //make stat selects and tables appear
-                    function toggleStatSelect(){
+                    function toggleAdvancedCatSelect(){
                         const index = advancedCatSelector.value;
                         advancedSplitSelectors.forEach(select => select.style.display = 'none');
                         advancedSplitSelectors[index].style.display = 'inline';
-                        getSplits();
+                        getAdvancedSplits();
                     }
 
-                    function getSplits(){
+                    function getAdvancedSplits(){
                         //get the index of the selected category and stat
                         const catIndex = advancedCatSelector.value;
                         const splitIndex = advancedSplitSelectors[catIndex].value;
@@ -222,13 +223,16 @@
                     }
 
                     //run function to show the correct stat select and advanced splits table upon page load
-                    toggleStatSelect();
-                    getSplits();
+                    toggleSplitsTable();
+                    toggleAdvancedCatSelect();
+                    getAdvancedSplits();
 
                     //add event listeners
-                    categorySelector.addEventListener('change', toggleStatSelect);
-                    statSelectors.forEach(selector => {
-                        selector.addEventListener('change', getSplits);
+                    splitSelect.addEventListener('change', toggleSplitsTable);
+
+                    advancedCatSelector.addEventListener('change', toggleAdvancedCatSelect);
+                    advancedSplitSelectors.forEach(selector => {
+                        selector.addEventListener('change', getAdvancedSplits);
                     });
 
                 </script>

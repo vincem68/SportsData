@@ -23,7 +23,9 @@
 }
 
 #extraPlayerInfo {
-    display: inline-flex;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 #teamLogo {
@@ -31,26 +33,41 @@
     width: 40px;
 }
 
-#teamLogo h3 {
-    display: block;
-}
-
 #headshot {
     height: 200px;
     width: 275px;
 }
 
-h3, h1 {
+h3, h2, h1 {
     text-align: center;
+}
+
+table {
+    margin-top: 70px;
 }
 
 #advancedStatsTables, #mainStats {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+}
+
+.splitsTableDiv {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
 }
 
-.select-wrapper > label {
+.splitsTableDiv > div {
+    overflow-x: auto;
+}
 
+.select-wrapper {
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+}
+
+.select-wrapper > label {
     margin-top: 15px;
 }
