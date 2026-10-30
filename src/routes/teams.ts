@@ -21,6 +21,8 @@ import { parsePostseasonScheduleResponse } from '../interfaces/transformations/P
 import { parseRosterData } from '../interfaces/transformations/Roster';
 import { parseTeamInfoResponse, parseNewsResponse } from '../interfaces/transformations/TeamInfo';
 import { parseDepthChartResponse } from '../interfaces/transformations/DepthChart';
+import { Transactions } from '../interfaces/types/Transactions.types';
+import { parseTransactionResponse } from '../interfaces/transformations/Transactions';
 
 const router = Router({ mergeParams: true });
 
@@ -118,6 +120,48 @@ router.get('/:team/stats', async function(req: Request, res: Response){
 
     res.render('team_stats', {port: port, league: league.toUpperCase(), teamStats: teamStats });
 })
+
+/**
+ * This will be the route for team specific transaction data. Roster moves, signings, call ups, etc
+ */
+router.get('/:team/transactions', async function(req: Request, res: Response){
+
+    const sport = req.params.sport;
+    const league = req.params.league;
+    const team = req.params.team;
+
+    if (!checkRequestParams(sport, league, team)){
+        res.status(400).send("Bad Request: Invalid sport or league parameter.");
+        return;
+    }
+
+    //if the queries exist
+    if (req.query.page && req.query.season){
+
+        if (isNaN(Number(req.query.page)) || isNaN(Number(req.query.season))){
+            res.status(400).send("Invalid Queries");
+            return;
+        }
+
+        const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport, team, Number(req.query.season), Number(req.query.page));
+
+        res.render('team_transactions', {port: port, sport: sport, league: league.toUpperCase(), data: data});
+
+    } else if (req.query.season && !req.query.page) {
+
+        console.log("only year exists");
+
+        const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport, team, Number(req.query.season));
+        res.render('team_transactions', {port: port, sport: sport, league: league.toUpperCase(), data: data});
+        
+    } else {
+
+        console.log("Neither exist");
+        const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport, team);
+        res.render('team_transactions', {port: port, sport: sport, league: league.toUpperCase(), data: data});
+    }
+})
+
 
 /**
  * This will act as sort of the home page for the selected team. Will feature the logo, any scheduled games, 

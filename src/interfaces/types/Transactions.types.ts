@@ -1,5 +1,11 @@
 export interface TransactionResponse {
 
+    team?: {
+        displayName: string
+        logo: string
+        abbreviation: string
+    }
+
     season: {
         year: number
         type: number
@@ -19,7 +25,7 @@ export interface TransactionResponse {
 
         date: string
         description: string
-        team: {
+        team?: {
             abbreviation: string
             displayName: string
             logos: {
@@ -32,6 +38,7 @@ export interface TransactionResponse {
 
 
 export interface Transactions {
+
     currentYear: number
     requestedYear: number
     requestedSeasonName: string
@@ -39,11 +46,19 @@ export interface Transactions {
     pageCount: number
     pageIndex: number
 
+    team?: {
+        name: string
+        logo: string
+        abbr: string
+    }
+
     transactions: {
         date: string
         desc: string
-        teamAbbr: string
-        teamName: string
-        teamLogo: string
+        team?: {
+            abbr: string
+            logo: string
+            name: string
+        }
     }[]
 }

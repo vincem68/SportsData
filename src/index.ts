@@ -205,7 +205,7 @@ app.get('/:sport/:league/transactions', async function(req: Request, res: Respon
     }
 
     //if the queries exist
-    if (req.query.page  && req.query.season){
+    if (req.query.page && req.query.season){
 
         console.log("page and year exist");
 
@@ -214,7 +214,7 @@ app.get('/:sport/:league/transactions', async function(req: Request, res: Respon
             return;
         }
 
-        const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport, Number(req.query.season), Number(req.query.page));
+        const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport, "", Number(req.query.season), Number(req.query.page));
 
         res.render('league_transactions', {port: port, sport: sport, league: league.toUpperCase(), data: data});
 
@@ -222,7 +222,7 @@ app.get('/:sport/:league/transactions', async function(req: Request, res: Respon
 
         console.log("only year exists");
 
-        const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport, Number(req.query.season));
+        const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport, "", Number(req.query.season));
         res.render('league_transactions', {port: port, sport: sport, league: league.toUpperCase(), data: data});
         
     } else {

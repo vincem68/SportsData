@@ -1,10 +1,17 @@
 import type { TransactionResponse, Transactions } from "../types/Transactions.types";
 import { parseDate } from "../../utility_functions";
 
-export async function parseTransactionResponse(league: string, sport: string, year?: number, page?: number): Promise<Transactions> {
+export async function parseTransactionResponse(league: string, sport: string, team: string = "", year: number = -1, page: number = -1): Promise<Transactions> {
 
-    const endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/transactions` 
-        + ((year && page) ? `?season=${year}&page=${page}` : (year && !page) ? `?season=${year}` : "");
+    const endpoint = `https://site.api.espn.com/apis/site/v2/sports/${sport}/${league}/transactions?` 
+        + ((year != -1 && page != -1 && team != "") ? `season=${year}&page=${page}&team=${team}`
+        : (year != -1 && team != "") ? `season=${year}&team=${team}`
+        : (year != -1 && page != -1) ? `season=${year}&page=${page}` 
+        : (year != -1 && page == -1) ? `season=${year}` 
+        : (team != "") ? `team=${team}`
+        : "");
+
+    console.log(endpoint);
 
     const data: TransactionResponse = await (
         await fetch(endpoint)
@@ -19,14 +26,22 @@ export async function parseTransactionResponse(league: string, sport: string, ye
         pageCount: data.pageCount,
         pageIndex: data.pageIndex,
 
+        team: data.team ? {
+            name: data.team.displayName,
+            logo: data.team.logo,
+            abbr: data.team.abbreviation
+        } : undefined,
+
         transactions: data.transactions ? data.transactions.map(trans => {
 
             return {
                 date: cleanUpDate(parseDate(trans.date)),
                 desc: trans.description,
-                teamAbbr: trans.team.abbreviation,
-                teamName: trans.team.displayName,
-                teamLogo: trans.team.logos[0].href
+                team : trans.team ? {
+                    abbr: trans.team.abbreviation,
+                    logo: trans.team.logos[0].href,
+                    name: trans.team.displayName
+                } : undefined
             }
         }) : []
     }

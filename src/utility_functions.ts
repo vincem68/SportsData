@@ -53,7 +53,7 @@ export function checkRequestParams(sport: string, league: string, team?: string)
     //return true if sport and league are valid, and if team is provided, check that too
     return (
         (sport.toLowerCase() == "football" && league.toLowerCase() == "nfl")
-        || ((sport.toLowerCase() == "baseball" && league.toLowerCase() == "mlb"))
+        || (sport.toLowerCase() == "baseball" && league.toLowerCase() == "mlb")
         || (sport.toLowerCase() == "basketball" && league.toLowerCase() == "nba")
         || (sport.toLowerCase() == "hockey" && league.toLowerCase() == "nhl")
     ) && (!team || teams.includes(team.toUpperCase()))
