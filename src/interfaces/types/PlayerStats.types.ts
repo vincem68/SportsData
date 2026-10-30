@@ -33,8 +33,9 @@ export interface PlayerInfoResponse {
         displayWeight: string;
         displayDOB: string;
         age: number;
-        displayDraft: string;
-        displayJersey: string;
+        displayDraft?: string;
+        displayJersey?: string;
+        jersey?: string
         displayExperience: string;
         debutYear?: number;
         displayBatsThrows?: string;
@@ -62,7 +63,7 @@ export interface PlayerInfo {
     playerHeight: string;
     playerWeight: string;
     playerAge: number;
-    playerDraft: string;
+    playerDraft?: string;
     debutYear: number
     playerExp: string;
     currentSeason: number
@@ -150,4 +151,9 @@ export interface PlayerSplits {
             values: string[];
         }[];
     }[];
+}
+
+
+export interface PlayerContractResponse {
+    
 }

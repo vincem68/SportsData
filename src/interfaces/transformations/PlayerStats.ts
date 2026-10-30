@@ -21,7 +21,7 @@ export async function parseBasicPlayerStats(league: string, sport: string, playe
         playerName: athlete.displayName,
         playerHeadshot: (athlete.headshot !== undefined) ? athlete.headshot.href : "",
         playerPosition: athlete.position.displayName,
-        playerJersey: athlete.displayJersey,
+        playerJersey: athlete.displayJersey ? athlete.displayJersey : athlete.jersey!,
         teamName: athlete.team.displayName,
         teamAbbreviation: athlete.team.abbreviation,
         teamLogo: athlete.team.logos[0].href,
@@ -30,11 +30,11 @@ export async function parseBasicPlayerStats(league: string, sport: string, playe
         playerHeight: athlete.displayHeight,
         playerWeight: athlete.displayWeight,
         playerAge: athlete.age,
-        playerDraft: athlete.displayDraft,
+        playerDraft: athlete.displayDraft ? athlete.displayDraft : undefined,
         playerExp: athlete.displayExperience,
         debutYear: athlete.debutYear ? athlete.debutYear : 
-            league.toLowerCase() == "nfl" ? Number(athlete.displayDraft.substring(0, 4))
-            : Number(athlete.displayDraft.substring(0, 4)) + 1,
+            isNaN(Number(athlete.displayExperience.charAt(1))) ? Number(athlete.displayExperience.substring(0, 0)) 
+            : Number(athlete.displayExperience.substring(0, 1)),
         currentSeason: res.season.year,
         currentSeasonType: res.season.type.type,
 
