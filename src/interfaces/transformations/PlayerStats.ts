@@ -52,8 +52,6 @@ export async function parseBasicPlayerStats(league: string, sport: string, playe
  */
 export async function parseMainPlayerStats(league: string, sport: string, playerID: string, year: number, seasonType: number): Promise<PlayerStatsOverview> {
 
-    console.log(`https://sports.core.api.espn.com/v2/sports/${sport}/leagues/${league.toLowerCase()}/seasons/${year}/types/${seasonType}/athletes/${playerID}/statistics`);
-
     const res: PlayerStatsOverviewResponse = await (
         await fetch(`https://sports.core.api.espn.com/v2/sports/${sport}/leagues/${league.toLowerCase()}/seasons/${year}/types/${seasonType}/athletes/${playerID}/statistics`)
     ).json();
@@ -72,7 +70,7 @@ export async function parseMainPlayerStats(league: string, sport: string, player
                         abbr: stat.abbreviation, 
                         name: stat.displayName,
                         desc: stat.description,
-                        value: stat.value
+                        value: stat.displayValue
                     }
                 })
             }

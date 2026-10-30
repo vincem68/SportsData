@@ -88,7 +88,7 @@ export interface PlayerStatsOverviewResponse {
                 displayName: string
                 abbreviation: string
                 description: string
-                value: string
+                displayValue: string
             }[]
         }[]
     }
