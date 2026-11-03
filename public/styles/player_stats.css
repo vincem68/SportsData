@@ -1,12 +1,13 @@
 @import "general_styles/general_styles.css";
 @import "general_styles/table_styles.css";
 @import "general_styles/select_styles.css";
+@import "general_styles/form_styles.css";
 
 #playerInfoDiv {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-evenly;    
 }
 
 #playerTitleDiv {
@@ -22,16 +23,14 @@
 }
 
 #extraPlayerInfo {
-    display: inline-flex;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 
 #teamLogo {
-    height: 60px;
-    width: 60px;
-}
-
-#teamLogo h3 {
-    display: block;
+    height: 40px;
+    width: 40px;
 }
 
 #headshot {
@@ -39,17 +38,43 @@
     width: 275px;
 }
 
-h3, h1 {
+h3, h2, h1 {
     text-align: center;
+}
+
+table {
+    margin-top: 70px;
 }
 
 #advancedStatsTables, #mainStats {
     display: flex;
+    flex-direction: column;
+}
+
+#advancedStatsSection {
+    display: flex;
+    flex-direction: column;
     align-items: center;
+}
+
+.splitsTableDiv {
+    display: flex;
+    flex-direction: column;
     justify-content: center;
 }
 
-.select-wrapper > label {
+.splitsTableDiv > div {
+    overflow-x: auto;
+    z-index: 100;
+}
 
+.select-wrapper {
+    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+}
+
+.select-wrapper > label {
     margin-top: 15px;
 }

@@ -4,6 +4,7 @@ table {
     margin-bottom: 30px;
     width: max-content;
     border-style: inset;
+    margin-left: 50px;
 }
 
 th, td {
@@ -27,7 +28,7 @@ td {
     position: relative;
     display: inline-block;
     cursor: help;
-    z-index: 10;
+    z-index: 100;
 }
 
 .tooltip .tooltip-text {
