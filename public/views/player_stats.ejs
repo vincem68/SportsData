@@ -70,14 +70,14 @@
         <!--If the response returned null for the main stats, we have no stats to show for this player-->
         <% if (!playerOverview.categories){ %>
 
-            <h1 class="errorMessage">No Player Data Available</h1>
+            <h1 class="errorMessage">No Player Splits Available</h1>
 
         <!--Else, show the stats if we do have them-->
         <% } else { %>
 
             <!--This is the overall stats section of the player-->
             <h3 class="importantHeadline">Stats for <%= playerOverview.requestedSeason %> 
-                <%= playerOverview.requestedSeasonType %> Season</h3>
+                <%= playerOverview.requestedSeasonType %></h3>
 
             <div id="mainStats">
 
@@ -98,7 +98,6 @@
                 <% playerOverview.categories.forEach(cat => { %>
 
                     <div class="splitsTableDiv">
-                        <h2><%= cat.name %></h2>
                         <div>
                             <table>
                                 <tr>
@@ -130,10 +129,10 @@
             <% } else { %>
 
                 <!--For the advanced splits section-->
+                <!--Show the advanced split stats here-->
+                <h3 class="importantHeadline">Advanced Splits For <%= playerOverview.requestedSeason %> 
+                    <%= playerOverview.requestedSeasonType %></h3>
                 <div id="advancedStatsSection">
-
-                    <!--Show the advanced split stats here-->
-                    <h3 class="importantHeadline">Advanced Splits For Current Season Only</h3>
 
                     <div class="select-wrapper">
 

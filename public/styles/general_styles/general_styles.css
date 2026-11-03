@@ -8,6 +8,7 @@ body {
     border-top-color: lightgreen; border-bottom-color: lightgreen;
     border-top-width: 5px; border-bottom-width: 5px;
     text-align: center;
+    z-index: 0;
 }
 
 .topSection {

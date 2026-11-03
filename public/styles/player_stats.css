@@ -51,6 +51,12 @@ table {
     flex-direction: column;
 }
 
+#advancedStatsSection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .splitsTableDiv {
     display: flex;
     flex-direction: column;
@@ -59,6 +65,7 @@ table {
 
 .splitsTableDiv > div {
     overflow-x: auto;
+    z-index: 100;
 }
 
 .select-wrapper {
