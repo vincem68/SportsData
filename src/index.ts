@@ -1,5 +1,6 @@
 import express, {Request, Response} from 'express';
 import path from 'path';
+import dotenv from 'dotenv';
 
 import { checkRequestParams, getBasicResponseInfo, checkQueryParams } from './utility_functions';
 
@@ -9,7 +10,6 @@ import gameRoutes from './routes/games';
 //interfaces
 import type { LeagueStats } from './interfaces/types/LeagueStats.types';
 import type { News } from './interfaces/types/News.types';
-import type { Standings, TeamRecord } from './interfaces/types/Standings.types';
 import type { PlayerInfo, PlayerSplits, PlayerStatsOverview } from './interfaces/types/PlayerStats.types';
 import type { Transactions } from './interfaces/types/Transactions.types';
 
@@ -20,9 +20,8 @@ import { parseLeaderData } from './interfaces/transformations/Leaders';
 import { parseStandingsResponse } from './interfaces/transformations/Standings';
 import { parseNewsResponse } from './interfaces/transformations/TeamInfo';
 import { parseTransactionResponse } from './interfaces/transformations/Transactions';
-import { Team } from './interfaces/types/Team.types';
 
-
+dotenv.config();
 const app = express();
 app.set('view engine', 'ejs');
 app.set('views', path.join(process.cwd(), 'public', 'views'));
@@ -32,7 +31,8 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static('public'));
 app.use('/js', express.static(path.join(__dirname, 'public', 'js')));
 
-const port: number = 8000; //the port we will listen on, change this for whatever port you will use
+const port = process.env.PORT || 8000;
+const domain = process.env.DOMAIN || 'localhost';
 
 /**
  * These arrays contain every team abbreviation for the 4 major sports leagues. We use these when sending 
@@ -98,7 +98,7 @@ app.get('/:sport/:league/stats', async function(req: Request, res: Response){
         await parseLeageStatsResponse(teams, league.toUpperCase(), sport.toLowerCase());
 
     
-    res.render('league_stats', {port: port, sport: sport, league: league.toUpperCase(), leagueStats: leagueStats});
+    res.render('league_stats', {sport: sport, league: league.toUpperCase(), leagueStats: leagueStats});
     
 })
 
@@ -115,7 +115,7 @@ app.get('/:sport/:league/news', async function(req: Request, res: Response){
 
     const news: News[] = await parseNewsResponse(league.toLowerCase(), sport);
 
-    res.render('league_news', {port: port, sport: sport, league: league.toUpperCase(), news: news});
+    res.render('league_news', {sport: sport, league: league.toUpperCase(), news: news});
 })
 
 
@@ -146,7 +146,7 @@ app.get('/:sport/:league/standings', async function(req: Request, res: Response)
 
     console.log(standings);
 
-    res.render('league_standings', { port: port, sport: sport, league: league.toUpperCase(), standings: standings });
+    res.render('league_standings', {sport: sport, league: league.toUpperCase(), standings: standings });
 })
 
 
@@ -186,7 +186,7 @@ app.get('/:sport/:league/leaders', async function(req: Request, res: Response){
         (req.query.seasonType == "2") ? "Regular Season" : "Postseason"
         : (yearAndTypeResponse.seasonType == 2) ? "Regular Season" : "Postseason";
 
-    res.render('league_leaders', {port: port, sport: sport, league: league.toUpperCase(), 
+    res.render('league_leaders', {sport: sport, league: league.toUpperCase(), 
         data: data, currentYear: yearAndTypeResponse.seasonYear, reqYear: reqYear, reqSeasonName: reqSeasonName});
 })
 
@@ -216,20 +216,20 @@ app.get('/:sport/:league/transactions', async function(req: Request, res: Respon
 
         const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport, "", Number(req.query.season), Number(req.query.page));
 
-        res.render('league_transactions', {port: port, sport: sport, league: league.toUpperCase(), data: data});
+        res.render('league_transactions', {sport: sport, league: league.toUpperCase(), data: data});
 
     } else if (req.query.season && !req.query.page) {
 
         console.log("only year exists");
 
         const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport, "", Number(req.query.season));
-        res.render('league_transactions', {port: port, sport: sport, league: league.toUpperCase(), data: data});
+        res.render('league_transactions', {sport: sport, league: league.toUpperCase(), data: data});
         
     } else {
 
         console.log("Neither exist");
         const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport);
-        res.render('league_transactions', {port: port, sport: sport, league: league.toUpperCase(), data: data});
+        res.render('league_transactions', {sport: sport, league: league.toUpperCase(), data: data});
     }
 
 })
@@ -271,7 +271,7 @@ app.get('/:sport/:league/player/:playerID', async function(req: Request, res: Re
 
     //if the main stats aren't available, neither will the splits, so just render the basic stats
     if (playerOverview === null){
-        res.render('player_stats', {port: port, sport: sport, league: league, playerInfo: playerInfo, 
+        res.render('player_stats', {sport: sport, league: league, playerInfo: playerInfo, 
             playerOverview: null, playerSplits: null});
         return;
     }
@@ -281,7 +281,7 @@ app.get('/:sport/:league/player/:playerID', async function(req: Request, res: Re
      ? await parsePlayerSplits(league.toLowerCase(), sport, playerID, Number(req.query.season))
      : await parsePlayerSplits(league.toLowerCase(), sport, playerID, playerInfo.currentSeason);
 
-    res.render('player_stats', {port: port, sport: sport, league: league, playerInfo: playerInfo, 
+    res.render('player_stats', {sport: sport, league: league, playerInfo: playerInfo, 
         playerOverview: playerOverview, playerSplits: playerSplits});
 })
 
@@ -289,7 +289,7 @@ app.get('/:sport/:league/player/:playerID', async function(req: Request, res: Re
  * For the home page, gets index.ejs
  */
 app.get('/', (req: Request, res: Response) => {
-    res.render('index', {port: port});
+    res.render('index', {port: port, domain: domain});
 }) 
 
 app.listen(port, () => {

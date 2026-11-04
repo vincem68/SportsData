@@ -1,5 +1,7 @@
 import {Router, Request, Response} from 'express';
 import port from '../index';
+import domain from '../index';
+
 
 import { checkRequestParams } from '../utility_functions';
 
@@ -41,7 +43,7 @@ router.get('/:id', async function(req: Request, res: Response){
 
     //maybe we need to see what kinds of data is available in the pre state
     //overview will be used for selected_game, boxscore will be used for the more specific subfile
-    res.render('selected_game', {port: port, league: league.toUpperCase(), overview: overview, summary: summary});
+    res.render('selected_game', {league: league.toUpperCase(), overview: overview, summary: summary});
 })
 
 /**
@@ -68,7 +70,7 @@ router.get('/', async function(req: Request, res: Response) {
 
 
     //render all the data onto the scheduled games page
-    res.render('scheduled_games', { port: port, sport: sport, league: league.toUpperCase(),
+    res.render('scheduled_games', {sport: sport, league: league.toUpperCase(),
         leagueSchedule: leagueSchedule});
 })
 

@@ -1,5 +1,6 @@
 import {Router, Request, Response} from 'express';
 import port from '../index';
+import domain from '../index';
 
 import { checkRequestParams, checkQueryParams, getBasicResponseInfo } from '../utility_functions';
 
@@ -45,7 +46,7 @@ router.get('/:team/roster', async function(req: Request, res: Response){
     const depthChartData: DepthChart | null = sport != "hockey" ? 
         await parseDepthChartResponse(league.toLowerCase(), sport, team) : null;
 
-    res.render('team_roster', {port: port, league: league, sport: sport, team: team, rosterData: rosterData,
+    res.render('team_roster', {league: league, sport: sport, team: team, rosterData: rosterData,
         depthChartData: depthChartData
     });
 })
@@ -88,7 +89,7 @@ router.get('/:team/schedule', async function(req: Request, res: Response){
 
     console.log(data);
 
-    res.render('team_schedules/team_schedule', {port: port, team: team, league: league.toUpperCase(), 
+    res.render('team_schedules/team_schedule', {team: team, league: league.toUpperCase(), 
         sport: sport, data: data});
 
 })
@@ -118,7 +119,7 @@ router.get('/:team/stats', async function(req: Request, res: Response){
             : await parseTeamStatsResponse(league.toUpperCase(), sport, team);
     
 
-    res.render('team_stats', {port: port, league: league.toUpperCase(), teamStats: teamStats });
+    res.render('team_stats', {league: league.toUpperCase(), teamStats: teamStats });
 })
 
 /**
@@ -145,20 +146,20 @@ router.get('/:team/transactions', async function(req: Request, res: Response){
 
         const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport, team, Number(req.query.season), Number(req.query.page));
 
-        res.render('team_transactions', {port: port, sport: sport, league: league.toUpperCase(), data: data});
+        res.render('team_transactions', {sport: sport, league: league.toUpperCase(), data: data});
 
     } else if (req.query.season && !req.query.page) {
 
         console.log("only year exists");
 
         const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport, team, Number(req.query.season));
-        res.render('team_transactions', {port: port, sport: sport, league: league.toUpperCase(), data: data});
+        res.render('team_transactions', {sport: sport, league: league.toUpperCase(), data: data});
         
     } else {
 
         console.log("Neither exist");
         const data: Transactions = await parseTransactionResponse(league.toUpperCase(), sport, team);
-        res.render('team_transactions', {port: port, sport: sport, league: league.toUpperCase(), data: data});
+        res.render('team_transactions', {sport: sport, league: league.toUpperCase(), data: data});
     }
 })
 
@@ -183,7 +184,7 @@ router.get('/:team', async function(req: Request, res: Response){
     //get news on team
     const newsArticles: News[] = await parseNewsResponse(league, sport, team, );
 
-    res.render('selected_team', {port: port, sport: sport, league: league.toUpperCase(), 
+    res.render('selected_team', {sport: sport, league: league.toUpperCase(), 
         team: team, data: teamData, news: newsArticles});
 })
 
@@ -203,7 +204,7 @@ router.get('/', async function(req: Request, res: Response){
     //get the teams for the league
     const teams: Team[] = await parseTeamResponse(league, sport);
     
-    res.render('team_selection', {port: port, sport: sport, league: league.toUpperCase(), teams: teams});
+    res.render('team_selection', {sport: sport, league: league.toUpperCase(), teams: teams});
 })
 
 export default router;

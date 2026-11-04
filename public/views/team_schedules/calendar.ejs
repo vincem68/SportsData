@@ -46,7 +46,7 @@
                                     <p>Postponed</p>
                                 <% } else { %>
 
-                                    <a href="http://localhost:<%= port %>/<%= sport %>/<%= league.toLowerCase() %>/games/<%= game.id %>">
+                                    <a href="/<%= sport %>/<%= league.toLowerCase() %>/games/<%= game.id %>">
 
                                         <% if (game.status == "pre"){ %> 
                                             <%= game.startTime %>
@@ -61,7 +61,7 @@
 
                                         <% const doubleHeader = gamesInDay[1]; %>
 
-                                        <a href="http://localhost:<%= port %>/<%= sport %>/<%= league.toLowerCase() %>/games/<%= doubleHeader.id %>">
+                                        <a href="/<%= sport %>/<%= league.toLowerCase() %>/games/<%= doubleHeader.id %>">
 
                                             <% if (doubleHeader.status == "pre"){ %> 
                                                 <%= doubleHeader.startTime %>

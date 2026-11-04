@@ -53,7 +53,7 @@
             <!--This will be where we have the buttons to switch pages-->
             <div id="pageDiv">
                 
-                <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/teams/<%= data.team.abbr %>/transactions?season=<%= data.requestedYear %>&page=<%= data.pageIndex - 1 %>">
+                <a href="/<%= sport %>/<%= league %>/teams/<%= data.team.abbr %>/transactions?season=<%= data.requestedYear %>&page=<%= data.pageIndex - 1 %>">
                     <button id="prevButton" type="button" class="pageButton">
                         <img class="arrowIcon" src="/images/left_arrow_button.png">
                     </button>
@@ -61,7 +61,7 @@
 
                 <p id="pageText"><%= data.pageIndex %> Of <%= data.pageCount %></p>
 
-                <a href="http://localhost:<%= port %>/<%= sport %>/<%= league %>/teams/<%= data.team.abbr %>/transactions?season=<%= data.requestedYear %>&page=<%= data.pageIndex + 1 %>">
+                <a href="/<%= sport %>/<%= league %>/teams/<%= data.team.abbr %>/transactions?season=<%= data.requestedYear %>&page=<%= data.pageIndex + 1 %>">
                     <button id="nextButton" type="button" class="pageButton">
                         <img class="arrowIcon" src="/images/right_arrow_button.png">
                     </button>
