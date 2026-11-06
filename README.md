@@ -4,4 +4,4 @@ Here, you can look at team data, their stats, player data, league standings, lea
 
 All data on this website is through an API from ESPN. ESPN owns all data and news articles throughout this website. This website was made strictly for learning purposes. 
 
-Link: http://18.234.238.3/ 
+Link: http://vincentsportsdata.com/
