@@ -37,5 +37,3 @@ jobs:
 
           # Restart Express using PM2
           pm2 restart my-website
-
-          EOF
