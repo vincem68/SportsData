@@ -4,7 +4,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
   deploy:
@@ -37,7 +37,7 @@ jobs:
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
             # Pull latest changes
-            git pull --ff-only origin main
+            git pull --ff-only origin master
 
             # Install dependencies
             npm ci
